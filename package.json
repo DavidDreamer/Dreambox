@@ -1,0 +1,11 @@
+{
+	"name": "com.david-dreamer.yandex-games-sdk",
+	"version": "1.0.0",
+	"displayName": "Yandex Games SDK",
+	"unity": "2021.3",
+	"author": 
+	{
+		"name": "David Dreamer",
+		"email": "davidb.gamedev@gmail.com"
+	}
+}
