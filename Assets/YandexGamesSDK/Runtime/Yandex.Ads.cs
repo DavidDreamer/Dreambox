@@ -3,7 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
 
-namespace YandexSDK
+namespace YandexGamesSDK
 {
 	public partial class Yandex
 	{

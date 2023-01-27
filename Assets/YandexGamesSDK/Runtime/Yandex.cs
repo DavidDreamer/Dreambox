@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace YandexSDK
+namespace YandexGamesSDK
 {
 	public partial class Yandex: MonoBehaviour
 	{
