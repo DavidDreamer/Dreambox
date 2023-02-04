@@ -1,3 +1,14 @@
 {
-	"name": "Dreambox.Core"
+    "name": "Dreambox.Core",
+    "rootNamespace": "Dreambox.Core",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
