@@ -5,6 +5,6 @@ namespace YandexGamesSDK
 	public static class Environment
 	{
 		[DllImport("__Internal")]
-		public static extern string GetLanguage(string data);
+		public static extern string GetLanguage();
 	}
 }
