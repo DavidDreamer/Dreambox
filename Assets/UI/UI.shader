@@ -19,6 +19,13 @@ Shader "Dreambox/UI"
         
         [KeywordEnum(Off, On)] Rounding("Rounding", int) = 0
         RoundingRadius ("Rounding Radius", Float) = 0.1
+        
+        [KeywordEnum(Off, On)] Gradient("Gradient", int) = 0
+        [KeywordEnum(Horizontal, Vertical)] GradientDirection("Gradient Direction", int) = 0
+        [KeywordEnum(Simple, Bidirectional)] GradientMode("Gradient Mode", int) = 0
+        GradientStartColor ("Gradient Start Color", Color) = (1,1,1,1)
+        GradientEndColor ("Gradient End Color", Color) = (1, 1, 1, 1)
+        GradientStart ("Gradient Start", Range(0, 1)) = 0
     }
 
     SubShader
@@ -63,6 +70,7 @@ Shader "Dreambox/UI"
             #pragma multi_compile_local _ UNITY_UI_ALPHACLIP
 
             #pragma shader_feature_local ROUNDING_OFF ROUNDING_ON
+            #pragma shader_feature_local GRADIENT_OFF GRADIENT_ON
         
             struct appdata_t
             {
@@ -92,6 +100,12 @@ Shader "Dreambox/UI"
             int _UIVertexColorAlwaysGammaSpace;
 
             float RoundingRadius;
+
+            float GradientDirection;
+            float GradientMode;
+            float4 GradientStartColor;
+            float4 GradientEndColor;
+            float GradientStart;
         
             v2f vert(appdata_t v)
             {
@@ -131,6 +145,14 @@ Shader "Dreambox/UI"
                 const float fwd = max(fwidth(d), 1e-5);
                 return saturate((1 - d) / fwd);
             }
+
+            float4 EvaluateGradient(const float2 uv)
+            {
+                float gradientFactor = GradientDirection == 0 ? uv.x : uv.y;
+                gradientFactor = GradientMode == 0 ? gradientFactor : length(0.5 - gradientFactor) / 0.5;
+                gradientFactor = saturate((gradientFactor - GradientStart ) / (1 - GradientStart));
+                return lerp(GradientStartColor, GradientEndColor, gradientFactor);        
+            }
         
             fixed4 frag(v2f IN) : SV_Target
             {
@@ -143,6 +165,10 @@ Shader "Dreambox/UI"
 
                 half4 color = IN.color * (tex2D(_MainTex, IN.texcoord) + _TextureSampleAdd);
 
+                #ifdef GRADIENT_ON
+                color *= EvaluateGradient(IN.texcoord);
+                #endif
+                
                 #ifdef UNITY_UI_CLIP_RECT
                 half2 m = saturate((_ClipRect.zw - _ClipRect.xy - abs(IN.mask.xy)) * IN.mask.zw);
                 color.a *= m.x * m.y;
