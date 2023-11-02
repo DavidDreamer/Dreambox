@@ -169,6 +169,11 @@ Shader "Dreambox/UI"
                 color *= EvaluateGradient(IN.texcoord);
                 #endif
                 
+                #ifdef ROUNDING_ON
+                color.a *= EvaluateRounding(IN.texcoord, 1, 1);
+                color.rgb *= color.a;
+                #endif
+                
                 #ifdef UNITY_UI_CLIP_RECT
                 half2 m = saturate((_ClipRect.zw - _ClipRect.xy - abs(IN.mask.xy)) * IN.mask.zw);
                 color.a *= m.x * m.y;
@@ -176,11 +181,6 @@ Shader "Dreambox/UI"
 
                 #ifdef UNITY_UI_ALPHACLIP
                 clip (color.a - 0.001);
-                #endif
-
-                #ifdef ROUNDING_ON
-                color.a *= EvaluateRounding(IN.texcoord, 1, 1);
-                color.rgb *= color.a;
                 #endif
 
                 return color;
