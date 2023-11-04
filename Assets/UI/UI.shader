@@ -163,7 +163,7 @@ Shader "Dreambox/UI"
             float4 EvaluateSaturation(const float4 color)
             {
                 const float luminance = Luminance(color);
-                return float4(lerp(color, luminance, SaturationFactor).rgb, color.a);
+                return float4(lerp(luminance, color, SaturationFactor).rgb, color.a);
             }
         
             fixed4 frag(v2f IN) : SV_Target
