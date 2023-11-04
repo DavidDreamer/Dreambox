@@ -26,6 +26,9 @@ Shader "Dreambox/UI"
         GradientStartColor ("Gradient Start Color", Color) = (1,1,1,1)
         GradientEndColor ("Gradient End Color", Color) = (1, 1, 1, 1)
         GradientStart ("Gradient Start", Range(0, 1)) = 0
+        
+        [KeywordEnum(Off, On)] Rounding("Saturation", int) = 0
+        SaturationFactor ("Saturation Factor", Float) = 1
     }
 
     SubShader
@@ -71,6 +74,7 @@ Shader "Dreambox/UI"
 
             #pragma shader_feature_local ROUNDING_OFF ROUNDING_ON
             #pragma shader_feature_local GRADIENT_OFF GRADIENT_ON
+            #pragma shader_feature_local SATURATION_OFF SATURATION_ON
         
             struct appdata_t
             {
@@ -106,6 +110,8 @@ Shader "Dreambox/UI"
             float4 GradientStartColor;
             float4 GradientEndColor;
             float GradientStart;
+
+            float SaturationFactor;
         
             v2f vert(appdata_t v)
             {
@@ -153,6 +159,12 @@ Shader "Dreambox/UI"
                 gradientFactor = saturate((gradientFactor - GradientStart ) / (1 - GradientStart));
                 return lerp(GradientStartColor, GradientEndColor, gradientFactor);        
             }
+
+            float4 EvaluateSaturation(const float4 color)
+            {
+                const float luminance = Luminance(color);
+                return float4(lerp(color, luminance, SaturationFactor).rgb, color.a);
+            }
         
             fixed4 frag(v2f IN) : SV_Target
             {
@@ -172,6 +184,10 @@ Shader "Dreambox/UI"
                 #ifdef ROUNDING_ON
                 color.a *= EvaluateRounding(IN.texcoord, 1, 1);
                 color.rgb *= color.a;
+                #endif
+
+                #ifdef SATURATION_ON
+                color = EvaluateSaturation(color);
                 #endif
                 
                 #ifdef UNITY_UI_CLIP_RECT
