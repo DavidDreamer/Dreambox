@@ -27,7 +27,7 @@ Shader "Dreambox/UI"
         GradientEndColor ("Gradient End Color", Color) = (1, 1, 1, 1)
         GradientStart ("Gradient Start", Range(0, 1)) = 0
         
-        [KeywordEnum(Off, On)] Rounding("Saturation", int) = 0
+        [KeywordEnum(Off, On)] Saturation("Saturation", int) = 0
         SaturationFactor ("Saturation Factor", Float) = 1
     }
 
