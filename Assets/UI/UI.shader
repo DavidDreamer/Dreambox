@@ -28,7 +28,7 @@ Shader "Dreambox/UI"
         GradientStart ("Gradient Start", Range(0, 1)) = 0
         
         [KeywordEnum(Off, On)] Saturation("Saturation", int) = 0
-        SaturationFactor ("Saturation Factor", Float) = 1
+        SaturationFactor ("Saturation Factor", Range(0, 1)) = 1
     }
 
     SubShader
