@@ -1,12 +1,8 @@
 {
-    "name": "Dreambox.Editor",
-    "rootNamespace": "Dreambox.Editor",
-    "references": [
-        "GUID:7900f524ca37ee847a70422f636ab5c5"
-    ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "name": "Dreambox.Core",
+    "rootNamespace": "Dreambox.Core",
+    "references": [],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

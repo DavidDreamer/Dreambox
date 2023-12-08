@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Dreambox
+namespace Dreambox.Core
 {
 	[Serializable]
 	public struct IntRange

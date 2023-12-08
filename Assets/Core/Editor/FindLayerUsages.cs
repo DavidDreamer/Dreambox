@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace Dreambox.Editor
+namespace Dreambox.Core.Editor
 {
 	public class FindLayerUsages: EditorWindow
 	{

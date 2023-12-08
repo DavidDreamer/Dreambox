@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEditor;
 
-namespace Dreambox.Editor
+namespace Dreambox.Core.Editor
 {
 	public static class PrefabTools
 	{

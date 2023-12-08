@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Dreambox.Editor
+namespace Dreambox.Core.Editor
 {
 	[CustomPropertyDrawer(typeof(FloatRangeLimitsAttribute))]
 	public class FloatRangeLimitsDrawer: PropertyDrawer

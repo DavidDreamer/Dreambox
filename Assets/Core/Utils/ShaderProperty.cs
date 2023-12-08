@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Dreambox
+namespace Dreambox.Core
 {
 	public static class ShaderPropertyID
 	{
