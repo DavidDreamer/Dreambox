@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Dreambox.Core
 {
-	public static class ShaderPropertyID
+	public static class ShaderProperty
 	{
 		private static Dictionary<string, int> Cache { get; } = new();
 	
