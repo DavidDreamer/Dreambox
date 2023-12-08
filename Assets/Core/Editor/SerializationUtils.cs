@@ -1,4 +1,4 @@
-﻿namespace Dreambox.Core.Editor
+﻿namespace Dreambox.Editor
 {
 	public static class SerializationUtils
 	{

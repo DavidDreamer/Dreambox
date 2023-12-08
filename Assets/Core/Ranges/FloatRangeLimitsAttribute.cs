@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Dreambox.Core
+namespace Dreambox
 {
 	public class FloatRangeLimitsAttribute: PropertyAttribute
 	{

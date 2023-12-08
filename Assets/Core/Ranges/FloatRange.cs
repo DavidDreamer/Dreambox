@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Dreambox.Core
+namespace Dreambox
 {
 	[Serializable]
 	public struct FloatRange

@@ -1,7 +1,7 @@
 {
-	"name": "com.david-dreamer.dreambox.core",
+	"name": "com.david-dreamer.dreambox",
 	"version": "1.0.0",
-	"displayName": "Dreambox Core",
+	"displayName": "Dreambox",
 	"unity": "2021.3",
 	"author": 
 	{

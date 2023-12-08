@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 
-namespace DCD.Editor
+namespace Dreambox.Editor
 {
 	public abstract class OverridableInspector: UnityEditor.Editor
 	{
