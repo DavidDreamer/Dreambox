@@ -1,10 +1,10 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Dreambox.Core.Abilities
+namespace Omniverse
 {
 	[Serializable]
-	public class Presentation
+	public class AbilityPresentation
 	{
 		[field: SerializeField]
 		public Sprite Icon { get; private set; }
