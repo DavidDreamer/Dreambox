@@ -1,5 +1,8 @@
+using System;
+
 namespace Omniverse
 {
+	[Flags]
 	public enum UnitTargetTypeFlags
 	{
 		Self = 0,
