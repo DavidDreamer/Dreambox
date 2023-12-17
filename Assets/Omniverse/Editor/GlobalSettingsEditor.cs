@@ -1,15 +1,13 @@
-﻿using System.Linq;
+using System.Linq;
 using UnityEditor;
-using UnityEngine;
 
 namespace Omniverse.Editor
 {
-	[CustomPropertyDrawer(typeof(ResourceNameAttribute))]
-	public class ResourceNameDrawer: PropertyDrawer
+	public static class GlobalSettingsEditor
 	{
 		private static GlobalSettings _globalSettings;
 
-		private static GlobalSettings GlobalSettings
+		public static GlobalSettings GlobalSettings
 		{
 			get
 			{
@@ -22,11 +20,6 @@ namespace Omniverse.Editor
 
 				return _globalSettings;
 			}
-		}
-
-		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-		{
-			property.intValue = EditorGUI.Popup(position, property.intValue, GlobalSettings.Resources);
 		}
 	}
 }

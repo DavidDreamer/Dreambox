@@ -7,7 +7,7 @@ namespace Omniverse
 	public class ResourceDescriptor
 	{
 		[field: SerializeField]
-		[field: ResourceName]
+		[field: Resource]
 		public int ID { get; private set; }
 
 		[field: SerializeField]

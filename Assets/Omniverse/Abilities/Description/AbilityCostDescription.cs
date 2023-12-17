@@ -7,7 +7,7 @@ namespace Omniverse
 	public class AbilityCostDescription
 	{
 		[field: SerializeField]
-		[field: ResourceName]
+		[field: Resource]
 		public int ResourceID { get; private set; }
 		
 		[field: SerializeField]

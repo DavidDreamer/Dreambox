@@ -29,6 +29,8 @@ namespace Omniverse
 		
 		public UnitDescriptor Descriptor { get; }
 
+		public int Faction { get; set; }
+
 		public Dictionary<int, Resource> Resources { get; }
 
 		public List<Ability> Abilities { get; } = new();
@@ -47,10 +49,11 @@ namespace Omniverse
 
 		public UnitStatus Status { get; private set; }
 
-		public Unit(UnitDescriptor descriptor)
+		public Unit(UnitDescriptor descriptor, int faction)
 		{
 			Descriptor = descriptor;
-
+			Faction = faction;
+			
 			Resources = new Dictionary<int, Resource>();
 			foreach (ResourceDescriptor resourceDescription in Descriptor.Resources)
 			{

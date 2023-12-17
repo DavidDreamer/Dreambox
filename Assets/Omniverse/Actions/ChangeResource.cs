@@ -9,7 +9,7 @@ namespace Omniverse
 	public class ChangeResource: IAction
 	{
 		[field: SerializeField]
-		[field: ResourceName]
+		[field: Resource]
 		public int ResourceID { get; private set; }
 
 		[field: SerializeField]
