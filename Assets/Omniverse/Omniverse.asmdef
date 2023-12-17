@@ -1,0 +1,18 @@
+{
+    "name": "Omniverse",
+    "rootNamespace": "Omniverse",
+    "references": [
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:7900f524ca37ee847a70422f636ab5c5",
+        "GUID:27955ab605692424a85f77ff6cf21d7d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
