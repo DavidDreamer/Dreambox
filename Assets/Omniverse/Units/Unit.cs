@@ -39,7 +39,7 @@ namespace Omniverse
 
 		public bool Locked { get; set; }
 
-		public UnitPresenter Presenter { get; private set; }
+		public UnitPresenter Presenter { get; set; }
 
 		private CancellationTokenSource DeathCancellationTokenSource { get; set; } = new();
 
