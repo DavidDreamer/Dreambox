@@ -29,7 +29,7 @@ namespace Omniverse
 		
 		public UnitDescriptor Descriptor { get; }
 
-		public int Faction { get; set; }
+		public int FactionID { get; set; }
 
 		public Dictionary<int, Resource> Resources { get; }
 
@@ -49,10 +49,10 @@ namespace Omniverse
 
 		public UnitStatus Status { get; private set; }
 
-		public Unit(UnitSpawnData data)
+		public Unit(UnitDescriptor descriptor, int factionID)
 		{
-			Descriptor = data.Descriptor;
-			Faction = data.Faction;
+			Descriptor = descriptor;
+			FactionID = factionID;
 			
 			Resources = new Dictionary<int, Resource>();
 			foreach (ResourceDescriptor resourceDescription in Descriptor.Resources)

@@ -4,13 +4,13 @@ using UnityEngine;
 namespace Omniverse
 {
 	[Serializable]
-	public class UnitSpawnData
+	public struct UnitSpawnData
 	{
 		[field: SerializeField]
 		public UnitDescriptor Descriptor { get; private set; }
 		
 		[field: SerializeField]
 		[field: Faction]
-		public int Faction { get; private set; }
+		public int FactionID { get; private set; }
 	}
 }
