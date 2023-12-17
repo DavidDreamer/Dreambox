@@ -1,0 +1,15 @@
+{
+	"name": "com.david-dreamer.dreambox.physics",
+	"version": "1.0.0",
+	"displayName": "Dreambox Physics",
+	"unity": "2021.3",
+	"author": 
+	{
+		"name": "David Dreamer",
+		"email": "davidb.gamedev@gmail.com"
+	},
+	"dependencies":
+	{
+		"com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
+	}
+}

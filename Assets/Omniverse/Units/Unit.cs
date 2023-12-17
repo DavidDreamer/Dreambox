@@ -76,6 +76,16 @@ namespace Omniverse
 
 		public void Tick()
 		{
+			if (!Alive)
+			{
+				return;
+			}
+
+			if (Locked)
+			{
+				return;
+			}
+			
 			Presenter.Tick();
 		}
 
