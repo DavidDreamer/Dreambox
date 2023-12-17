@@ -49,10 +49,10 @@ namespace Omniverse
 
 		public UnitStatus Status { get; private set; }
 
-		public Unit(UnitDescriptor descriptor, int faction)
+		public Unit(UnitSpawnData data)
 		{
-			Descriptor = descriptor;
-			Faction = faction;
+			Descriptor = data.Descriptor;
+			Faction = data.Faction;
 			
 			Resources = new Dictionary<int, Resource>();
 			foreach (ResourceDescriptor resourceDescription in Descriptor.Resources)
@@ -60,7 +60,7 @@ namespace Omniverse
 				Resources.Add(resourceDescription.ID, resourceDescription.Build());
 			}
 
-			foreach (AbilityDescription abilityDescription in descriptor.AbilityDescriptions)
+			foreach (AbilityDescription abilityDescription in Descriptor.AbilityDescriptions)
 			{
 				Ability ability = abilityDescription.Build(this);
 				Abilities.Add(ability);

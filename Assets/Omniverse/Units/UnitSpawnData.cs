@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Omniverse
 {
 	[Serializable]
-	public class UniSpawnData
+	public class UnitSpawnData
 	{
 		[field: SerializeField]
 		public UnitDescriptor Descriptor { get; private set; }
