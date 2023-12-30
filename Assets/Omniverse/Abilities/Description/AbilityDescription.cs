@@ -14,6 +14,7 @@ namespace Omniverse
 		public AbilityCastDescription Cast { get; private set; }
 
 		[field: SerializeReference]
+		[field: Versatile(typeof(ITarget))]
 		public ITarget Target { get; private set; }
 
 		[field: SerializeReference]

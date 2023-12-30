@@ -12,19 +12,12 @@ namespace Omniverse.Editor
 		{
 			get
 			{
-				yield return nameof(AbilityDescription.Target).ToBackingField();
 				yield return nameof(AbilityDescription.Cooldown).ToBackingField();
 			}
 		}
 		
 		protected override void DrawCustomProperty(SerializedProperty property)
 		{
-			if (property.name == nameof(AbilityDescription.Target).ToBackingField())
-			{
-				property.DrawManagedReferenceFromInterface(typeof(ITarget));
-				return;
-			}
-			
 			if (property.name == nameof(AbilityDescription.Cooldown).ToBackingField())
 			{
 				property.DrawManagedReference(typeof(CooldownDescriptor));
