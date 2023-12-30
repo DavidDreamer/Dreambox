@@ -8,18 +8,25 @@ namespace Dreambox.Core.Editor
 	{
 		private static Dictionary<Type, List<Type>> InheritedTypes { get; } = new();
 
-		public static List<Type> GetInheritedTypes(this Type type)
+		public static List<Type> GetInheritedTypes(this Type sourceType, bool includeAbstract = false)
 		{
-			if (!InheritedTypes.ContainsKey(type))
+			if (!InheritedTypes.ContainsKey(sourceType))
 			{
 				var types = AppDomain.CurrentDomain.GetAssemblies()
 					.SelectMany(assembly => assembly.GetTypes())
-					.Where(t => t.IsClass && type.IsAssignableFrom(t)).ToList();
+					.Where(type => type.IsClass && sourceType.IsAssignableFrom(type));
 
-				InheritedTypes.Add(type, types);
+				if (includeAbstract is false)
+				{
+					types = types.Where(type => !type.IsAbstract);
+				}
+
+				var typesList = types.ToList();
+
+				InheritedTypes.Add(sourceType, typesList);
 			}
 
-			return InheritedTypes[type];
+			return InheritedTypes[sourceType];
 		}
 	}
 }
