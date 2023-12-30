@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Omniverse.Abilities.Runtime
+namespace Omniverse.Abilities.Description
 {
 	[Serializable]
 	public class MoveInDirection: IAction

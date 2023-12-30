@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Dreambox.Core;
 using UnityEngine;
 
-namespace Omniverse.Abilities.Runtime
+namespace Omniverse.Abilities.Description
 {
 	[Serializable]
-	public class AnimationTrigger: IAction
+	public class ApplyEffect: IAction
 	{
 		[field: SerializeField]
-		public string Name { get; private set; }
+		private EffectDescriptor Effect { get; set; }
 
 		public UniTask Perform(AbilityContext context, CancellationToken token)
 		{
 			foreach (Unit unit in context.Units)
 			{
-				unit.Presenter.Animator.SetTrigger(AnimatorParameter.Get(Name));
+				var effect = new Effect(Effect);
+				
+				unit.ApplyEffect(effect);
 			}
 			
 			return UniTask.CompletedTask;
