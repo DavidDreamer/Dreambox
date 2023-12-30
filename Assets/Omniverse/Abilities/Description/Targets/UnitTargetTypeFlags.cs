@@ -1,6 +1,6 @@
 using System;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Description
 {
 	[Flags]
 	public enum UnitTargetTypeFlags

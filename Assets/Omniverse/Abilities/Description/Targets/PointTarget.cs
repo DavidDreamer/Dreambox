@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Description
 {
 	public class PointTarget: ITarget
 	{
