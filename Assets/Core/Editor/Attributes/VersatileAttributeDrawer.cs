@@ -25,7 +25,7 @@ namespace Dreambox.Core.Editor
 				height = EditorGUIUtility.singleLineHeight
 			};
 
-			selectedOption = EditorGUI.Popup(selectorPosition, selectedOption, displayedOptions);
+			selectedOption = EditorGUI.Popup(selectorPosition, label, selectedOption, displayedOptions);
 
 			Type selectedType = inheritedTypes[selectedOption];
 
