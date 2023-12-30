@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Omniverse.Abilities.Description;
 using UnityEngine;
 
 namespace Omniverse
@@ -16,6 +17,6 @@ namespace Omniverse
 		public CharacterStats Stats { get; private set; }
 
 		[field: SerializeField]
-		public List<AbilityDescription> AbilityDescriptions { get; private set; }
+		public List<Ability> AbilityDescriptions { get; private set; }
 	}
 }

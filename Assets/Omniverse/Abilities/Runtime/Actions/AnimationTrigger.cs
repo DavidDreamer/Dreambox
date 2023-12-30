@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 using Dreambox.Core;
 using UnityEngine;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Runtime
 {
 	[Serializable]
 	public class AnimationTrigger: IAction

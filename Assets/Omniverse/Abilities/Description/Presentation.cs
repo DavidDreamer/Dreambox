@@ -1,10 +1,10 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Description
 {
 	[Serializable]
-	public class AbilityPresentation
+	public class Presentation
 	{
 		[field: SerializeField]
 		public Sprite Icon { get; private set; }

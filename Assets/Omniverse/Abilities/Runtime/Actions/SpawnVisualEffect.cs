@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.VFX;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Runtime
 {
 	public class SpawnVisualEffect: IAction
 	{

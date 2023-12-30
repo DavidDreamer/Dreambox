@@ -6,7 +6,7 @@ using Dreambox.Math;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Runtime
 {
 	[Serializable]
 	public class LaunchProjectile: IAction

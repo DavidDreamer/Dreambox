@@ -1,10 +1,10 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Description
 {
 	[Serializable]
-	public class AbilityCostDescription
+	public class Cost
 	{
 		[field: SerializeField]
 		[field: Resource]
@@ -14,6 +14,6 @@ namespace Omniverse
 		public float Amount { get; set; }
 		
 		[field: SerializeField]
-		public AbilityCostMode Mode { get; private set; }
+		public CostMode Mode { get; private set; }
 	}
 }

@@ -1,26 +1,27 @@
 ﻿using System.Collections.Generic;
 using Dreambox.Core.Editor;
+using Omniverse.Abilities.Description;
 using UnityEditor;
 
 namespace Omniverse.Editor
 {
 	[CanEditMultipleObjects]
-	[CustomEditor(typeof(AbilityDescription))]
+	[CustomEditor(typeof(Ability))]
 	public class AbilityEditor: OverridableInspector
 	{
 		protected override IEnumerable<string> CustomProperties
 		{
 			get
 			{
-				yield return nameof(AbilityDescription.Cooldown).ToBackingField();
+				yield return nameof(Ability.Cooldown).ToBackingField();
 			}
 		}
 		
 		protected override void DrawCustomProperty(SerializedProperty property)
 		{
-			if (property.name == nameof(AbilityDescription.Cooldown).ToBackingField())
+			if (property.name == nameof(Ability.Cooldown).ToBackingField())
 			{
-				property.DrawManagedReference(typeof(CooldownDescriptor));
+				property.DrawManagedReference(typeof(Cooldown));
 			}
 		}
 	}

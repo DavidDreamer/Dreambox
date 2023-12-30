@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using Omniverse.Abilities.Runtime;
 using UnityEngine;
 
 namespace Omniverse
@@ -57,12 +58,12 @@ namespace Omniverse
 			Resources = new Dictionary<int, Resource>();
 			foreach (ResourceDescriptor resourceDescription in Descriptor.Resources)
 			{
-				Resources.Add(resourceDescription.ID, resourceDescription.Build());
+				Resources.Add(resourceDescription.ID, new Resource(resourceDescription));
 			}
 
-			foreach (AbilityDescription abilityDescription in Descriptor.AbilityDescriptions)
+			foreach (Abilities.Description.Ability abilityDescription in Descriptor.AbilityDescriptions)
 			{
-				Ability ability = abilityDescription.Build(this);
+				var ability = new Ability(abilityDescription, this);
 				Abilities.Add(ability);
 			}
 		}

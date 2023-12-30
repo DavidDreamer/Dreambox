@@ -5,7 +5,7 @@ using Cysharp.Threading.Tasks;
 using Dreambox.Math;
 using UnityEngine;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Runtime
 {
 	[Serializable]
 	public class MoveToTarget: IAction

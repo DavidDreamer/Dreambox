@@ -1,12 +1,13 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Descriptor = Omniverse.Abilities.Description.Cooldown;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Runtime
 {
 	public class Cooldown
 	{
-		public CooldownDescriptor Descriptor { get; }
+		public Descriptor Descriptor { get; }
 		
 		public float TimeLeft { get; private set; }
 
@@ -14,7 +15,7 @@ namespace Omniverse
 
 		public bool IsActive { get; private set; }
 
-		public Cooldown(CooldownDescriptor descriptor)
+		public Cooldown(Descriptor descriptor)
 		{
 			Descriptor = descriptor;
 		}

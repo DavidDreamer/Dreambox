@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Dreambox.Core;
+using Omniverse.Abilities.Description;
+using Descriptor = Omniverse.Abilities.Description.Ability;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Runtime
 {
 	public class Ability
 	{
-		public AbilityDescription Description { get; }
+		public Descriptor Descriptor { get; }
 
 		public Unit Unit { get; }
 		
@@ -22,13 +24,13 @@ namespace Omniverse
 
 		public bool InProcess { get; private set; }
 		
-		public Ability(AbilityDescription description, Unit unit)
+		public Ability(Descriptor descriptor, Unit unit)
 		{
-			Description = description;
+			Descriptor = descriptor;
 			Unit = unit;
 
 			Context = new AbilityContext(unit);
-			Cooldown = Description.Cooldown == null ? null : new Cooldown(Description.Cooldown);
+			Cooldown = Descriptor.Cooldown == null ? null : new Cooldown(Descriptor.Cooldown);
 		}
 
 		public AbilityCastError CanBeCasted()
@@ -43,7 +45,7 @@ namespace Omniverse
 				return AbilityCastError.AlreadyInProcess;
 			}
 
-			foreach (AbilityCostDescription abilityCostDescription in Description.Cost)
+			foreach (Cost abilityCostDescription in Descriptor.Cost)
 			{
 				if (!Unit.Resources.ContainsKey(abilityCostDescription.ResourceID))
 				{
@@ -63,14 +65,14 @@ namespace Omniverse
 		{
 			InProcess = true;
 
-			if (!string.IsNullOrEmpty(Description.Cast.AnimationTrigger))
+			if (!string.IsNullOrEmpty(Descriptor.Cast.AnimationTrigger))
 			{
-				Unit.Presenter.Animator.SetTrigger(AnimatorParameter.Get(Description.Cast.AnimationTrigger));
+				Unit.Presenter.Animator.SetTrigger(AnimatorParameter.Get(Descriptor.Cast.AnimationTrigger));
 			}
 
-			await UniTask.Delay(TimeSpan.FromSeconds(Description.Cast.Time), cancellationToken: token);
+			await UniTask.Delay(TimeSpan.FromSeconds(Descriptor.Cast.Time), cancellationToken: token);
 			
-			foreach (AbilityCostDescription cost in Description.Cost)
+			foreach (Cost cost in Descriptor.Cost)
 			{
 				var data = new ChangeResourceData
 				{
@@ -85,7 +87,7 @@ namespace Omniverse
 
 			InProcess = false;
 			
-			foreach (IAction action in Description.Actions)
+			foreach (IAction action in Descriptor.Actions)
 			{
 				await action.Perform(Context, token);
 			}

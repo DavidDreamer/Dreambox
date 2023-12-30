@@ -1,27 +1,28 @@
 ﻿using System.Collections.Generic;
 using Dreambox.Core;
+using Omniverse.Abilities.Runtime;
 using UnityEngine;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Description
 {
 	[CreateAssetMenu]
-	public class AbilityDescription: ScriptableObject
+	public class Ability: ScriptableObject
 	{
 		[field: SerializeField]
-		public AbilityPresentation Presentation { get; private set; }
+		public Presentation Presentation { get; private set; }
 
 		[field: SerializeField]
-		public AbilityCastDescription Cast { get; private set; }
+		public Cast Cast { get; private set; }
 
 		[field: SerializeReference]
 		[field: Versatile(typeof(ITarget))]
 		public ITarget Target { get; private set; }
 
 		[field: SerializeReference]
-		public CooldownDescriptor Cooldown { get; private set; }
+		public Cooldown Cooldown { get; private set; }
 
 		[field: SerializeField]
-		public List<AbilityCostDescription> Cost { get; private set; }
+		public List<Cost> Cost { get; private set; }
 
 		[field: SerializeReference]
 		[field: Versatile(typeof(IAction))]

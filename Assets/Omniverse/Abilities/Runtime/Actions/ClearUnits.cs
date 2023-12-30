@@ -2,14 +2,14 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Runtime
 {
 	[Serializable]
-	public class Suicide: IAction
+	public class ClearUnits: IAction
 	{
 		public UniTask Perform(AbilityContext context, CancellationToken token)
 		{
-			context.Caster.Suicide();
+			context.Units.Clear();
 			return UniTask.CompletedTask;
 		}
 	}

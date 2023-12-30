@@ -1,10 +1,10 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Description
 {
 	[Serializable]
-	public class CooldownDescriptor
+	public class Cooldown
 	{
 		[field: SerializeField]
 		public float Time { get; private set; }

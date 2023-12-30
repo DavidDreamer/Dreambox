@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Runtime
 {
 	public interface IAction
 	{

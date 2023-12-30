@@ -2,7 +2,7 @@
 using Dreambox.Math;
 using UnityEngine;
 
-namespace Omniverse
+namespace Omniverse.Abilities.Runtime
 {
 	public class AbilityContext
 	{
