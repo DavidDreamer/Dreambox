@@ -7,7 +7,7 @@ using UnityEngine.AI;
 
 namespace Omniverse
 {
-	public class UnitPresenter: MonoBehaviour, IPoolable
+	public class UnitPresenter: MonoBehaviour, IPoolObject
 	{
 		[field: SerializeField]
 		public NavMeshAgent NavMeshAgent { get; private set; }

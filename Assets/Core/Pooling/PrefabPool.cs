@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace Dreambox.Core.Pooling
 {
-	public class PrefabInstancePool
+	public class PrefabPool
 	{
 		private Dictionary<GameObject, Stack<GameObject>> Items { get; } = new();
 
-		public GameObject Get(GameObject prefab)
+		public GameObject Take(GameObject prefab)
 		{
 			if (!Items.ContainsKey(prefab))
 			{
@@ -24,22 +24,22 @@ namespace Dreambox.Core.Pooling
 			return Object.Instantiate(prefab);
 		}
 
-		public T Get<T>(T prefab) where T : MonoBehaviour, IPoolable
+		public T Take<T>(T prefab) where T : MonoBehaviour, IPoolObject
 		{
-			GameObject gameObject = Get(prefab.gameObject);
+			GameObject gameObject = Take(prefab.gameObject);
 			return gameObject.GetComponent<T>();
 		}
 
-		public void Release(GameObject prefab, GameObject instance)
+		public void Return(GameObject prefab, GameObject instance)
 		{
 			instance.SetActive(false);
 			Items[prefab].Push(instance);
 		}
 
-		public void Release<T>(T prefab, T instance) where T : MonoBehaviour, IPoolable
+		public void Return<T>(T prefab, T instance) where T : MonoBehaviour, IPoolObject
 		{
 			instance.Cleanup();
-			Release(prefab.gameObject, instance.gameObject);
+			Return(prefab.gameObject, instance.gameObject);
 		}
 	}
 }

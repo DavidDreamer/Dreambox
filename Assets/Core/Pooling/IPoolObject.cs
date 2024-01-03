@@ -1,6 +1,6 @@
 ﻿namespace Dreambox.Core.Pooling
 {
-	public interface IPoolable
+	public interface IPoolObject
 	{
 		void Cleanup();
 	}
