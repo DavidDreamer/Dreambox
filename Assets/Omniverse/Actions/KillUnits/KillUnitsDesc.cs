@@ -3,7 +3,7 @@ using System;
 namespace Omniverse.Actions
 {
 	[Serializable]
-	public class SuicideDesc: IActionDesc
+	public class KillUnitsDesc: IActionDesc
 	{
 	}
 }

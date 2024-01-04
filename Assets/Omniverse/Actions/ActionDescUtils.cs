@@ -21,7 +21,7 @@ namespace Omniverse.Actions
 				MoveInDirectionDesc desc => new MoveInDirection(desc),
 				MoveToTargetDesc desc => new MoveToTarget(desc),
 				SpawnVisualEffectDesc desc => new SpawnVisualEffect(desc),
-				SuicideDesc desc => new Suicide(desc),
+				KillUnitsDesc desc => new KillUnits(desc),
 				_ => throw new ArgumentOutOfRangeException(nameof(actionDesc))
 			};
 		}

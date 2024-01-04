@@ -5,15 +5,19 @@ using JetBrains.Annotations;
 namespace Omniverse.Actions
 {
 	[UsedImplicitly]
-	public class Suicide: Action<SuicideDesc>
+	public class KillUnits: Action<KillUnitsDesc>
 	{
-		public Suicide(SuicideDesc desc): base(desc)
+		public KillUnits(KillUnitsDesc desc): base(desc)
 		{
 		}
 		
 		public override UniTask Perform(ExecutionContext context, CancellationToken token)
 		{
-			context.Caster.Suicide();
+			foreach (Unit unit in context.Units)
+			{
+				unit.Die();
+			}
+	
 			return UniTask.CompletedTask;
 		}
 	}

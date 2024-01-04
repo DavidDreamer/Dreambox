@@ -22,20 +22,22 @@ namespace Omniverse.Actions
 
 			foreach (Unit unit in GetUnits(context))
 			{
-				if (unit == context.Caster && !selfCastAllowed)
+				if (context.Caster != null)
 				{
-					continue;
-				}
-
-				bool hasSameFaction = unit.FactionID == context.Caster.FactionID;
-
-				switch (hasSameFaction)
-				{
-					case true when !allyCastAllowed:
-					case false when !enemyCastAllowed:
+					if (unit == context.Caster && !selfCastAllowed)
+					{
 						continue;
-				}
+					}
 
+					bool hasSameFaction = unit.FactionID == context.Caster.FactionID;
+					switch (hasSameFaction)
+					{
+						case true when !allyCastAllowed:
+						case false when !enemyCastAllowed:
+							continue;
+					}
+				}
+				
 				context.Units.Add(unit);
 			}
 

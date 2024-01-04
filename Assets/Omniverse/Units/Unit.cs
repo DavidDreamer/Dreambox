@@ -133,11 +133,6 @@ namespace Omniverse
 			Effects.Add(effect);
 		}
 
-		public void Suicide()
-		{
-			Die();
-		}
-
 		public void Die()
 		{
 			Alive = false;

@@ -18,7 +18,7 @@ namespace Omniverse.Actions
 			{
 				Vector3 force = (unit.Presenter.transform.position - context.Caster.Presenter.transform.position)
 				                .normalized *
-				                UnityEngine.Random.Range(10, 30);
+				                Random.Range(10, 30);
 
 				unit.AddForce(force);
 			}
