@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Dreambox.Core;
+using Omniverse.Actions;
 using UnityEngine;
 
 namespace Omniverse.Abilities.Description
@@ -24,7 +25,7 @@ namespace Omniverse.Abilities.Description
 		public List<Cost> Cost { get; private set; }
 
 		[field: SerializeReference]
-		[field: Versatile(typeof(IAction))]
-		public List<IAction> Actions { get; private set; }
+		[field: Versatile(typeof(IActionDesc))]
+		public IActionDesc[] Actions { get; private set; }
 	}
 }

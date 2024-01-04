@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Dreambox.Core;
 using Omniverse.Abilities.Description;
 using Descriptor = Omniverse.Abilities.Description.Ability;
+using ExecutionContext = Omniverse.Actions.ExecutionContext;
 
 namespace Omniverse.Abilities.Runtime
 {
@@ -16,9 +16,7 @@ namespace Omniverse.Abilities.Runtime
 		
 		public Cooldown Cooldown { get; }
 		
-		public List<Unit> Targets { get; } = new();
-
-		public AbilityContext Context { get; }
+		public ExecutionContext Context { get; }
 
 		public bool AwaitsTarget { get; set; }
 
@@ -29,7 +27,7 @@ namespace Omniverse.Abilities.Runtime
 			Descriptor = descriptor;
 			Unit = unit;
 
-			Context = new AbilityContext(unit);
+			Context = new ExecutionContext(unit, Descriptor.Actions);
 			Cooldown = Descriptor.Cooldown == null ? null : new Cooldown(Descriptor.Cooldown);
 		}
 
@@ -86,14 +84,8 @@ namespace Omniverse.Abilities.Runtime
 			Cooldown?.ActivateAsync(token);
 
 			InProcess = false;
-			
-			foreach (IAction action in Descriptor.Actions)
-			{
-				await action.Perform(Context, token);
-			}
 
-			Targets.Clear();
-			Context.Clear();
+			await Context.PerformAsync(token);
 		}
 	}
 }
