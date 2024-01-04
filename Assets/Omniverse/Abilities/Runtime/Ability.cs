@@ -28,7 +28,7 @@ namespace Omniverse.Abilities.Runtime
 			Unit = unit;
 
 			Context = new ExecutionContext(unit, Descriptor.Actions);
-			Cooldown = Descriptor.Cooldown == null ? null : new Cooldown(Descriptor.Cooldown);
+			Cooldown = new Cooldown(Descriptor.Cooldown);
 		}
 
 		public AbilityCastError CanBeCasted()

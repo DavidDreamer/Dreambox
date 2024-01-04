@@ -18,7 +18,7 @@ namespace Omniverse.Abilities.Description
 		[field: Versatile(typeof(ITarget))]
 		public ITarget Target { get; private set; }
 
-		[field: SerializeReference]
+		[field: SerializeField]
 		public Cooldown Cooldown { get; private set; }
 
 		[field: SerializeField]
