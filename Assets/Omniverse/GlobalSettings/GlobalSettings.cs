@@ -11,5 +11,10 @@ namespace Omniverse
 
 		[field: SerializeField]
 		public string[] Resources { get; private set; }
+		
+		[field: Header("Physics")]
+		[field: Layer]
+		[field: SerializeField]
+		public int HitboxLayer { get; private set; }
 	}
 }
