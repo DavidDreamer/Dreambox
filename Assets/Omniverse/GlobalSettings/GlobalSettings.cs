@@ -16,5 +16,18 @@ namespace Omniverse
 		[field: Layer]
 		[field: SerializeField]
 		public int HitboxLayer { get; private set; }
+		
+		[field: SerializeField]
+		[field: HideInInspector]
+		public LayerMask HitboxLayerMask { get; private set; }
+		
+#if UNITY_EDITOR
+		protected override void OnValidate()
+		{
+			base.OnValidate();
+
+			HitboxLayerMask = LayerMaskUtils.NumberToMask(HitboxLayer);
+		}
+#endif
 	}
 }

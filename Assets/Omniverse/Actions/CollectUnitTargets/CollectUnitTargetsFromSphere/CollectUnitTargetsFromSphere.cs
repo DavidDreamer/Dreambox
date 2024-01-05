@@ -15,7 +15,7 @@ namespace Omniverse.Actions
 		public override IEnumerable<Unit> GetUnits(ExecutionContext context)
 		{
 			Vector3 position = context.Points.First();
-			return PhysicsHelper.GetUnitsInSphere(position, Desc.Radius, GlobalSettings.Instance.HitboxLayer);
+			return PhysicsHelper.GetUnitsInSphere(position, Desc.Radius, GlobalSettings.Instance.HitboxLayerMask);
 		}
 	}
 }

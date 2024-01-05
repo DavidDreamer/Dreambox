@@ -9,7 +9,7 @@ namespace Dreambox.Core
 		public static T Instance { get; private set; }
 
 #if UNITY_EDITOR
-		private void OnValidate()
+		protected virtual void OnValidate()
 		{
 			var preloadedAssets = UnityEditor.PlayerSettings.GetPreloadedAssets();
 			if (preloadedAssets.Contains(this))

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
+using UnityEngine;
 
 namespace Omniverse.Actions
 {
@@ -16,7 +17,7 @@ namespace Omniverse.Actions
 				context.Caster.Direction,
 				Desc.Radius,
 				Desc.Angle,
-				GlobalSettings.Instance.HitboxLayer);
+				GlobalSettings.Instance.HitboxLayerMask);
 		}
 	}
 }
