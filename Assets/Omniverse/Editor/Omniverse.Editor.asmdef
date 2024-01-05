@@ -3,6 +3,7 @@
     "rootNamespace": "Omniverse.Editor",
     "references": [
         "GUID:a800ed0346bedf24b83a8334d9d79077",
+        "GUID:7900f524ca37ee847a70422f636ab5c5",
         "GUID:3fb1b789163aee44286c63be4af9384f"
     ],
     "includePlatforms": [],

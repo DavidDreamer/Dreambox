@@ -1,12 +1,14 @@
-﻿using UnityEngine;
+﻿using Dreambox.Core;
+using UnityEngine;
 
 namespace Omniverse
 {
-	public class GeneralSettings: ScriptableObject
+	[CreateAssetMenu]
+	public class GlobalSettings: PreloadedScriptableObject<GlobalSettings>
 	{
 		[field: SerializeField]
 		public Faction[] Factions { get; private set; }
-		
+
 		[field: SerializeField]
 		public string[] Resources { get; private set; }
 	}

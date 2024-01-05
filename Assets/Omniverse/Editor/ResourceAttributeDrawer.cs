@@ -8,7 +8,7 @@ namespace Omniverse.Editor
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
-			property.intValue = EditorGUI.Popup(position, property.intValue, GeneralSettingsEditor.GeneralSettings.Resources);
+			property.intValue = EditorGUI.Popup(position, property.intValue, GlobalSettings.Instance.Resources);
 		}
 	}
 }
