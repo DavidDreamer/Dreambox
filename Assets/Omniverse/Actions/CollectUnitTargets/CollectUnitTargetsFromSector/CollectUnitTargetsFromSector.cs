@@ -16,7 +16,7 @@ namespace Omniverse.Actions
 				context.Caster.Direction,
 				Desc.Radius,
 				Desc.Angle,
-				Desc.LayerMask);
+				GlobalSettings.Instance.HitboxLayer);
 		}
 	}
 }

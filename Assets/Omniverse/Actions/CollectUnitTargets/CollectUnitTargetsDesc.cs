@@ -7,9 +7,6 @@ namespace Omniverse.Actions
 	public abstract class CollectUnitTargetsDesc: IActionDesc
 	{
 		[field: SerializeField]
-		public LayerMask LayerMask { get; private set; }
-
-		[field: SerializeField]
 		public UnitTargetTypeFlags UnitTargetTypeFlags { get; private set; }
 	}
 }
