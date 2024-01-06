@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Dreambox.Core.Pooling
 {
+	[Preserve]
 	public class PrefabPool
 	{
 		private Dictionary<GameObject, Stack<GameObject>> Items { get; } = new();
