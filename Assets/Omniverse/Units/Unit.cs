@@ -7,28 +7,7 @@ namespace Omniverse
 {
 	public class Unit
 	{
-		public Vector3 Position
-		{
-			get => Presenter.transform.position;
-
-			set => Presenter.transform.position = value;
-		}
-
-		public Quaternion Rotation
-		{
-			get => Presenter.transform.rotation;
-
-			set => Presenter.transform.rotation = value;
-		}
-
-		public Vector3 Direction
-		{
-			get => Presenter.transform.forward;
-
-			set => Presenter.transform.forward = value;
-		}
-		
-		public UnitDescriptor Descriptor { get; }
+		public UnitDescription Description { get; }
 
 		public int FactionID { get; set; }
 
@@ -50,18 +29,18 @@ namespace Omniverse
 
 		public UnitStatus Status { get; private set; }
 
-		public Unit(UnitDescriptor descriptor, int factionID)
+		public Unit(UnitDescription description, int factionID)
 		{
-			Descriptor = descriptor;
+			Description = description;
 			FactionID = factionID;
 			
 			Resources = new Dictionary<int, Resource>();
-			foreach (ResourceDescriptor resourceDescription in Descriptor.Resources)
+			foreach (ResourceDescriptor resourceDescription in Description.Resources)
 			{
 				Resources.Add(resourceDescription.ID, new Resource(resourceDescription));
 			}
 
-			foreach (Abilities.Description.Ability abilityDescription in Descriptor.AbilityDescriptions)
+			foreach (Abilities.Description.Ability abilityDescription in Description.AbilityDescriptions)
 			{
 				var ability = new Ability(abilityDescription, this);
 				Abilities.Add(ability);

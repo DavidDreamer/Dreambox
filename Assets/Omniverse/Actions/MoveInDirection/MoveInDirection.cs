@@ -15,10 +15,10 @@ namespace Omniverse.Actions
 
 		public override async UniTask Perform(ExecutionContext context, CancellationToken token)
 		{
-			Unit unit = context.Caster;
+			Transform transform = context.Caster.Presenter.transform;
 
-			Vector3 worldSpaceDirection = unit.Rotation * Desc.Direction;
-			Vector3 sourcePoint = unit.Position;
+			Vector3 worldSpaceDirection = transform.rotation * Desc.Direction;
+			Vector3 sourcePoint = transform.position;
 			Vector3 targetPoint = sourcePoint + worldSpaceDirection * Desc.Distance;
 			if (NavMesh.SamplePosition(targetPoint, out NavMeshHit h, float.MaxValue, 1))
 			{
@@ -40,7 +40,7 @@ namespace Omniverse.Actions
 					currentPosition = hit.position;
 				}
 
-				unit.Position = currentPosition;
+				transform.position = currentPosition;
 			}
 		}
 	}

@@ -16,17 +16,17 @@ namespace Omniverse.Actions
 		
 		public override async UniTask Perform(ExecutionContext context, CancellationToken token)
 		{
-			Unit unit = context.Caster;
+			Transform transform = context.Caster.Presenter.transform;
 			
 			ParabolicTrajectory3D projectileTrajectory = context.Trajectories.First();
 			Vector3 targetPosition = projectileTrajectory.End;
 
-			Vector3 direction = (targetPosition - unit.Position).normalized;
-			unit.Direction = new Vector3(direction.x, 0, direction.z);
+			Vector3 direction = (targetPosition - transform.position).normalized;
+			transform.forward = new Vector3(direction.x, 0, direction.z);
 
 			context.Caster.Locked = true;
 
-			Vector3 startPosition = unit.Position;
+			Vector3 startPosition = transform.position;
 
 			float duration = projectileTrajectory.Parameters.Time;
 			float time = 0f;
@@ -37,7 +37,7 @@ namespace Omniverse.Actions
 
 				time = Mathf.MoveTowards(time, duration, Time.deltaTime * Desc.Speed);
 
-				unit.Position = projectileTrajectory.EvaluatePosition(time / duration);
+				transform.position = projectileTrajectory.EvaluatePosition(time / duration);
 			}
 
 			context.Caster.Locked = false;

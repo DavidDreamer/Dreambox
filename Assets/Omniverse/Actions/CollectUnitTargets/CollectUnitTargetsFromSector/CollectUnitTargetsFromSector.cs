@@ -13,8 +13,10 @@ namespace Omniverse.Actions
 
 		public override IEnumerable<Unit> GetUnits(ExecutionContext context)
 		{
-			return PhysicsHelper.GetUnitsInSector(context.Caster.Position,
-				context.Caster.Direction,
+			Transform transform = context.Caster.Presenter.transform;
+			
+			return PhysicsHelper.GetUnitsInSector(transform.position,
+				transform.forward,
 				Desc.Radius,
 				Desc.Angle,
 				GlobalSettings.Instance.HitboxLayerMask);

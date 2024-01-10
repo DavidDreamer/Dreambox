@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Omniverse
 {
 	[CreateAssetMenu]
-	public class UnitDescriptor: ScriptableObject
+	public class UnitDescription: ScriptableObject
 	{
 		[field: SerializeField]
 		public Presentation Presentation { get; private set; }
