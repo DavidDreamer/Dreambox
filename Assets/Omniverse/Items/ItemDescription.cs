@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Omniverse
 {
-	[CreateAssetMenu]
+	[CreateAssetMenu(menuName = nameof(Omniverse) + "/" + nameof(ItemDescription), fileName = nameof(ItemDescription))]
 	public class ItemDescription: ScriptableObject
 	{
 		[field: SerializeField]

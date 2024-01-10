@@ -2,8 +2,8 @@
 
 namespace Omniverse
 {
-	[CreateAssetMenu]
-	public class EffectDescriptor: ScriptableObject
+	[CreateAssetMenu(menuName = nameof(Omniverse) + "/" + nameof(EffectDescription), fileName = nameof(EffectDescription))]
+	public class EffectDescription: ScriptableObject
 	{
 		[field: SerializeField]
 		public Sprite Icon { get; private set; }

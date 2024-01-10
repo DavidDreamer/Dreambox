@@ -4,13 +4,13 @@ namespace Omniverse
 {
 	public class Effect
 	{
-		public EffectDescriptor Descriptor { get; }
+		public EffectDescription Descriptor { get; }
 
 		public float Time { get; private set; }
 
 		public bool OutOfTime => Time == 0;
 
-		public Effect(EffectDescriptor descriptor)
+		public Effect(EffectDescription descriptor)
 		{
 			Descriptor = descriptor;
 			Time = descriptor.Time;
