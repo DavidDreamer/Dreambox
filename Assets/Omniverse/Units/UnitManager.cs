@@ -65,7 +65,7 @@ namespace Omniverse
 
 			bool ShouldBeKilled(Unit unit)
 			{
-				if (unit.Alive)
+				if (unit.IsDead)
 				{
 					return false;
 				}
@@ -76,7 +76,7 @@ namespace Omniverse
 
 		private void Kill(Unit unit)
 		{
-			unit.OnDied();
+			unit.Die();
 			DropLoot(unit);
 		}
 

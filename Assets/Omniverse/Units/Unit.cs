@@ -17,7 +17,7 @@ namespace Omniverse
 
 		public List<Effect> Effects { get; } = new();
 
-		public bool Alive { get; set; } = true;
+		public bool IsDead { get; private set; }
 
 		public bool Locked { get; set; }
 
@@ -59,7 +59,7 @@ namespace Omniverse
 
 		public void Tick()
 		{
-			if (!Alive)
+			if (IsDead)
 			{
 				return;
 			}
@@ -107,9 +107,9 @@ namespace Omniverse
 			Effects.Add(effect);
 		}
 
-		internal void OnDied()
+		internal void Die()
 		{
-			Alive = false;
+			IsDead = true;
 
 			DeathCancellationTokenSource.Cancel();
 			DeathCancellationTokenSource.Dispose();
