@@ -10,7 +10,7 @@ namespace Omniverse
 		public UnitDescription Description { get; private set; }
 		
 		[field: SerializeField]
-		[field: FactionID]
+		[field: Faction]
 		public int FactionID { get; private set; }
 	}
 }
