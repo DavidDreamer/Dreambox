@@ -98,11 +98,6 @@ namespace Omniverse
 			Resource resource = Resources[data.ResourceID];
 
 			resource.Change(data.Amount);
-
-			if (resource.Vital && resource.OutOf)
-			{
-				Die();
-			}
 		}
 
 		public void AddForce(Vector3 force) => Presenter.AddForce(force);
@@ -112,7 +107,7 @@ namespace Omniverse
 			Effects.Add(effect);
 		}
 
-		public void Die()
+		internal void OnDied()
 		{
 			Alive = false;
 

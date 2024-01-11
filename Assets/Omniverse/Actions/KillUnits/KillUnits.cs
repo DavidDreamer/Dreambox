@@ -15,7 +15,7 @@ namespace Omniverse.Actions
 		{
 			foreach (Unit unit in context.Units)
 			{
-				unit.Die();
+				unit.Kill();
 			}
 	
 			return UniTask.CompletedTask;
