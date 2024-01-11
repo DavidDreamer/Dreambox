@@ -57,13 +57,21 @@ namespace Omniverse
 			{
 				Unit unit = Units[i];
 
-				if (ShouldBeDead(unit))
+				if (ShouldBeKilled(unit))
 				{
 					Kill(unit);
 				}
 			}
 
-			bool ShouldBeDead(Unit unit) => unit.Resources.Values.Any(resource => resource.Vital && resource.OutOf);
+			bool ShouldBeKilled(Unit unit)
+			{
+				if (unit.Alive)
+				{
+					return false;
+				}
+				
+				return unit.Resources.Values.Any(resource => resource.Vital && resource.OutOf);
+			}
 		}
 
 		private void Kill(Unit unit)
