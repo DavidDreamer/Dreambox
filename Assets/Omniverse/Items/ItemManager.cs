@@ -11,10 +11,10 @@ namespace Omniverse
 		[Inject]
 		private FactionManager FactionManager { get; set; }
 		
-		public void Spawn(ItemDesc description, Vector3 position, Quaternion rotation, Transform parent)
+		public void Spawn(ItemDesc desc, Vector3 position, Quaternion rotation, Transform parent)
 		{
-			ItemPresenter presenter = Object.Instantiate(description.Prefab, position, rotation, parent);
-			//var item = new Item(description, presenter);
+			ItemPresenter presenter = Object.Instantiate(desc.Prefab, position, rotation, parent);
+			desc.Build(presenter);
 		}
 
 		public void Consume(IConsumableItem item, Unit unit)

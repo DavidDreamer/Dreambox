@@ -1,6 +1,11 @@
 ﻿namespace Omniverse
 {
-	public abstract class Item<TDesc> 
+	public interface IItem
+	{
+		ItemPresenter Presenter { get; }
+	}
+	
+	public abstract class Item<TDesc>: IItem
 		where TDesc: ItemDesc
 	{
 		public TDesc Desc { get;  }
