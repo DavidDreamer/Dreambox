@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Omniverse
 {
 	[Serializable]
-	public class CurrencyItemDesc: ItemDesc
+	public class CurrencyItemDesc: ConsumableItemDesc
 	{
 		[field: SerializeField]
 		[field: Resource]

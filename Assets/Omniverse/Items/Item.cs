@@ -1,12 +1,13 @@
 ﻿namespace Omniverse
 {
-	public abstract class Item<T> where T: ItemDesc
+	public abstract class Item<TDesc> 
+		where TDesc: ItemDesc
 	{
-		public T Desc { get;  }
+		public TDesc Desc { get;  }
 		
 		public ItemPresenter Presenter { get; }
 
-		protected Item(T desc, ItemPresenter presenter)
+		protected Item(TDesc desc, ItemPresenter presenter)
 		{
 			Desc = desc;
 			Presenter = presenter;

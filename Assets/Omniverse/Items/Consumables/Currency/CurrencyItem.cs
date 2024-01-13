@@ -3,18 +3,18 @@ using Object = UnityEngine.Object;
 
 namespace Omniverse
 {
-	public class CurrencyItem: Item<CurrencyItemDesc>, IConsumableItem
+	public class CurrencyItem: ConsumableItem<CurrencyItemDesc>
 	{
 		[Inject]
 		private FactionManager FactionManager { get; set; }
-		
-		public CurrencyItem(CurrencyItemDesc desc, ItemPresenter presenter): base(desc, presenter)
+
+		public CurrencyItem(CurrencyItemDesc desc, ItemPresenter<ConsumableItem<CurrencyItemDesc>> presenter): base(desc, presenter)
 		{
 		}
+		
+		public override bool CanBeConsumed() => true;
 
-		bool IConsumableItem.CanBeConsumed() => true;
-
-		void IConsumableItem.OnConsumed(Unit unit)
+		public override void OnConsumed(Unit unit)
 		{
 			Faction faction = FactionManager.Factions[unit.FactionID];
 			faction.ChangeCurrency(Desc.CurrencyID, Desc.Amount);
