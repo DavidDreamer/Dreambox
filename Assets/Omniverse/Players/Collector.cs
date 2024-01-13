@@ -32,7 +32,7 @@ namespace Omniverse
 
 			for (int i = 0; i < count; ++i)
 			{
-				var consumableItem = Colliders[i].GetComponent<ItemPresenter<IConsumableItem>>();
+				var consumableItem = Colliders[i].GetComponent<ItemPresenter<CurrencyItem>>();
 
 				if (consumableItem == null)
 				{
@@ -44,7 +44,7 @@ namespace Omniverse
 					continue;
 				}
 
-				ItemManager.Consume(consumableItem.Item, Player.Unit);
+				ItemManager.Consume((IConsumableItem)consumableItem.Item, Player.Unit);
 			}
 		}
 	}
