@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 namespace Omniverse
 {
@@ -9,14 +10,14 @@ namespace Omniverse
 		//private List<Item> Items { get; } = new();
 		
 		[Inject]
-		private FactionManager FactionManager { get; set; }
-		
+		private IObjectResolver ObjectResolver { get; set; }
+
 		public void Spawn(ItemDesc desc, Vector3 position, Quaternion rotation, Transform parent)
 		{
 			IItem item = desc.Build();
 			
 			ItemPresenter presenter = Object.Instantiate(desc.Prefab, position, rotation, parent);
-
+			ObjectResolver.InjectGameObject(presenter.gameObject);
 			presenter.Item = item;
 			item.Presenter = presenter;
 		}
