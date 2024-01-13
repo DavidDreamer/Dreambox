@@ -1,8 +1,6 @@
-using UnityEngine;
-
 namespace Omniverse
 {
-	public class CurrencyItemPresenter: MonoBehaviour
+	public class CurrencyItemPresenter: ItemPresenter
 	{
 	}
 }
