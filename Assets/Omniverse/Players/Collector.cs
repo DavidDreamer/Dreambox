@@ -7,13 +7,13 @@ namespace Omniverse
 	public class Collector: IFixedTickable
 	{
 		[Inject]
-		private Player Player { get; }
+		private Player Player { get; set; }
 		
 		[Inject]
-		private ItemManager ItemManager { get; }
+		private ItemManager ItemManager { get; set; }
 		
 		[Inject]
-		private CollectorSettings Settings { get; }
+		private CollectorSettings Settings { get; set; }
 
 		private Collider[] Colliders { get; }
 
