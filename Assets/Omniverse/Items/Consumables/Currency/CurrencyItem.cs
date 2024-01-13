@@ -19,7 +19,7 @@ namespace Omniverse
 			Faction faction = FactionManager.Factions[unit.FactionID];
 			faction.ChangeCurrency(Desc.CurrencyID, Desc.Amount);
 
-			Object.Destroy(Presenter);
+			Object.Destroy(Presenter.gameObject);
 		}
 	}
 }
