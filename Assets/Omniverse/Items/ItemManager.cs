@@ -15,9 +15,11 @@ namespace Omniverse
 		public void Spawn(ItemDesc desc, Vector3 position, Quaternion rotation, Transform parent)
 		{
 			IItem item = desc.Build();
-			
+			ObjectResolver.Inject(item);
+
 			ItemPresenter presenter = Object.Instantiate(desc.Prefab, position, rotation, parent);
 			ObjectResolver.InjectGameObject(presenter.gameObject);
+			
 			presenter.Item = item;
 			item.Presenter = presenter;
 		}
