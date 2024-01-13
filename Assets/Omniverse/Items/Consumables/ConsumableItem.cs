@@ -7,10 +7,10 @@ namespace Omniverse
 		void OnConsumed(Unit unit);
 	}
 	
-	public abstract class ConsumableItem<TDesc>: Item<TDesc>
+	public abstract class ConsumableItem<TDesc>: Item<TDesc>, IConsumableItem
 		where TDesc: ConsumableItemDesc
 	{
-		protected ConsumableItem(TDesc desc, ItemPresenter presenter): base(desc, presenter)
+		protected ConsumableItem(TDesc desc): base(desc)
 		{
 		}
 		

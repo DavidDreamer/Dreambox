@@ -13,8 +13,12 @@ namespace Omniverse
 		
 		public void Spawn(ItemDesc desc, Vector3 position, Quaternion rotation, Transform parent)
 		{
+			IItem item = desc.Build();
+			
 			ItemPresenter presenter = Object.Instantiate(desc.Prefab, position, rotation, parent);
-			desc.Build(presenter);
+
+			presenter.Item = item;
+			item.Presenter = presenter;
 		}
 
 		public void Consume(IConsumableItem item, Unit unit)

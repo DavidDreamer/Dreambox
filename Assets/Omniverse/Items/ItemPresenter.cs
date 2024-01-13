@@ -2,12 +2,8 @@ using UnityEngine;
 
 namespace Omniverse
 {
-	public abstract class ItemPresenter: MonoBehaviour
+	public class ItemPresenter: MonoBehaviour 
 	{
-	}
-	
-	public abstract class ItemPresenter<TItem>: ItemPresenter 
-	{
-		public TItem Item { get; set; }
+		public IItem Item { get; set; }
 	}
 }

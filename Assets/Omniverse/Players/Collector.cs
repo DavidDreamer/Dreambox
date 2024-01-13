@@ -32,19 +32,26 @@ namespace Omniverse
 
 			for (int i = 0; i < count; ++i)
 			{
-				var consumableItem = Colliders[i].GetComponent<ItemPresenter<CurrencyItem>>();
+				var itemPresenter = Colliders[i].GetComponent<ItemPresenter>();
 
-				if (consumableItem == null)
+				if (itemPresenter == null)
 				{
 					continue;
 				}
 
-				if (consumableItem.Item.CanBeConsumed() is false)
+				var currencyItem = itemPresenter.Item as CurrencyItem;
+
+				if (currencyItem is null)
+				{
+					continue;
+				}
+				
+				if (currencyItem.CanBeConsumed() is false)
 				{
 					continue;
 				}
 
-				ItemManager.Consume((IConsumableItem)consumableItem.Item, Player.Unit);
+				ItemManager.Consume(currencyItem, Player.Unit);
 			}
 		}
 	}

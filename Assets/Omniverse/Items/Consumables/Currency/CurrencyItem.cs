@@ -8,7 +8,7 @@ namespace Omniverse
 		[Inject]
 		private FactionManager FactionManager { get; set; }
 
-		public CurrencyItem(CurrencyItemDesc desc, ItemPresenter presenter): base(desc, presenter)
+		public CurrencyItem(CurrencyItemDesc desc): base(desc)
 		{
 		}
 		

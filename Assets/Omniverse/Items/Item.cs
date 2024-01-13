@@ -2,7 +2,7 @@
 {
 	public interface IItem
 	{
-		ItemPresenter Presenter { get; }
+		ItemPresenter Presenter { get; set; }
 	}
 	
 	public abstract class Item<TDesc>: IItem
@@ -10,12 +10,11 @@
 	{
 		public TDesc Desc { get;  }
 		
-		public ItemPresenter Presenter { get; }
+		public ItemPresenter Presenter { get; set; }
 
-		protected Item(TDesc desc, ItemPresenter presenter)
+		protected Item(TDesc desc)
 		{
 			Desc = desc;
-			Presenter = presenter;
 		}
 	}
 }
