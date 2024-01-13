@@ -7,7 +7,7 @@ namespace Omniverse
 	public class LootDescription
 	{
 		[field: SerializeField]
-		public ItemDescription Item { get; private set; }
+		public ItemDesc Item { get; private set; }
 		
 		[field: SerializeField]
 		[field: Range(0f, 1f)]

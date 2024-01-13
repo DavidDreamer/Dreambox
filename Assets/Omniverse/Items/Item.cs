@@ -1,14 +1,14 @@
 ﻿namespace Omniverse
 {
-	public class Item
+	public abstract class Item<T> where T: ItemDesc
 	{
-		public ItemDescription Description { get;  }
+		public T Desc { get;  }
 		
-		private ItemPresenter Presenter { get; }
+		public ItemPresenter Presenter { get; }
 
-		public Item(ItemDescription description, ItemPresenter presenter)
+		protected Item(T desc, ItemPresenter presenter)
 		{
-			Description = description;
+			Desc = desc;
 			Presenter = presenter;
 		}
 	}
