@@ -10,7 +10,7 @@ namespace Omniverse
 		public CurrencyDescription[] Currencies { get; private set; }
 		
 		[field: SerializeField]
-		public Faction[] Factions { get; private set; }
+		public FactionDesc[] Factions { get; private set; }
 
 		[field: SerializeField]
 		public string[] Resources { get; private set; }
