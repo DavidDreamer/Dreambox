@@ -12,8 +12,7 @@ namespace Omniverse
 		[Inject]
 		private ItemManager ItemManager { get; set; }
 		
-		[Inject]
-		private CollectorSettings Settings { get; set; }
+		private CollectorSettings Settings { get; }
 
 		private Collider[] Colliders { get; }
 
