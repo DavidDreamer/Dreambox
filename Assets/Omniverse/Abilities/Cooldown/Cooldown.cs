@@ -1,13 +1,12 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using Descriptor = Omniverse.Abilities.Description.Cooldown;
 
-namespace Omniverse.Abilities.Runtime
+namespace Omniverse.Abilities
 {
 	public class Cooldown
 	{
-		public Descriptor Descriptor { get; }
+		public CooldownDesc Desc { get; }
 		
 		public float TimeLeft { get; private set; }
 
@@ -15,22 +14,22 @@ namespace Omniverse.Abilities.Runtime
 
 		public bool IsActive { get; private set; }
 
-		public Cooldown(Descriptor descriptor)
+		public Cooldown(CooldownDesc desc)
 		{
-			Descriptor = descriptor;
+			Desc = desc;
 		}
 		
 		public async UniTask ActivateAsync(CancellationToken token)
 		{
 			IsActive = true;
 
-			TimeLeft = Descriptor.Time;
+			TimeLeft = Desc.Time;
 
 			while (TimeLeft > 0f)
 			{
 				await UniTask.NextFrame(cancellationToken: token);
 				TimeLeft = Mathf.Max(0, TimeLeft - Time.deltaTime);
-				TimeLeftRatio = Mathf.Clamp01(TimeLeft / Descriptor.Time);
+				TimeLeftRatio = Mathf.Clamp01(TimeLeft / Desc.Time);
 			}
 
 			IsActive = false;

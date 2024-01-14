@@ -17,13 +17,13 @@ namespace Omniverse
 
 		public bool OutOf => Amount.Value == 0;
 		
-		public Resource(ResourceDescriptor descriptor)
+		public Resource(ResourceDesc desc)
 		{
-			Capacity = new AsyncReactiveProperty<float>(descriptor.Capacity);
-			Amount = new AsyncReactiveProperty<float>(descriptor.Capacity);
-			Regeneration = new AsyncReactiveProperty<float>(descriptor.Regeneration);
+			Capacity = new AsyncReactiveProperty<float>(desc.Capacity);
+			Amount = new AsyncReactiveProperty<float>(desc.Capacity);
+			Regeneration = new AsyncReactiveProperty<float>(desc.Regeneration);
 
-			Vital = descriptor.Vital;
+			Vital = desc.Vital;
 		}
 		
 		public void FixedTick()

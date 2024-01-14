@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Omniverse
 {
 	[Serializable]
-	public class LootDescription
+	public class LootDesc
 	{
 		[field: SerializeField]
 		public ItemDesc Item { get; private set; }

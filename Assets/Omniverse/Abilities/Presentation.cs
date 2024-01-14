@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Omniverse.Abilities.Description
+namespace Omniverse.Abilities
 {
 	[Serializable]
 	public class Presentation

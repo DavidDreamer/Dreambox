@@ -1,10 +1,10 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Omniverse.Abilities.Description
+namespace Omniverse.Abilities
 {
 	[Serializable]
-	public class Cost
+	public class CostDesc
 	{
 		[field: SerializeField]
 		[field: Resource]

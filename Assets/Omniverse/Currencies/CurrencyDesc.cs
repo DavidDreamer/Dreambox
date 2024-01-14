@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Omniverse
 {
 	[Serializable]
-	public class CurrencyDescription
+	public class CurrencyDesc
 	{
 		[field: SerializeField]
 		public string Name { get; private set; }

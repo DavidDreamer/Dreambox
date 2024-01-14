@@ -2,15 +2,13 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Dreambox.Core;
-using Omniverse.Abilities.Description;
-using Descriptor = Omniverse.Abilities.Description.Ability;
 using ExecutionContext = Omniverse.Actions.ExecutionContext;
 
-namespace Omniverse.Abilities.Runtime
+namespace Omniverse.Abilities
 {
 	public class Ability
 	{
-		public Descriptor Descriptor { get; }
+		public AbilityDesc Desc { get; }
 
 		public Unit Unit { get; }
 		
@@ -22,13 +20,13 @@ namespace Omniverse.Abilities.Runtime
 
 		public bool InProcess { get; private set; }
 		
-		public Ability(Descriptor descriptor, Unit unit)
+		public Ability(AbilityDesc desc, Unit unit)
 		{
-			Descriptor = descriptor;
+			Desc = desc;
 			Unit = unit;
 
-			Context = new ExecutionContext(unit, Descriptor.Actions);
-			Cooldown = new Cooldown(Descriptor.Cooldown);
+			Context = new ExecutionContext(unit, Desc.Actions);
+			Cooldown = new Cooldown(Desc.Cooldown);
 		}
 
 		public AbilityCastError CanBeCasted()
@@ -43,14 +41,14 @@ namespace Omniverse.Abilities.Runtime
 				return AbilityCastError.AlreadyInProcess;
 			}
 
-			foreach (Cost abilityCostDescription in Descriptor.Cost)
+			foreach (CostDesc costDesc in Desc.Cost)
 			{
-				if (!Unit.Resources.ContainsKey(abilityCostDescription.ResourceID))
+				if (!Unit.Resources.ContainsKey(costDesc.ResourceID))
 				{
 					return AbilityCastError.NotEnoughResources;
 				}
 
-				if (Unit.Resources[abilityCostDescription.ResourceID].Amount.Value < abilityCostDescription.Amount)
+				if (Unit.Resources[costDesc.ResourceID].Amount.Value < costDesc.Amount)
 				{
 					return AbilityCastError.NotEnoughResources;
 				}
@@ -63,14 +61,14 @@ namespace Omniverse.Abilities.Runtime
 		{
 			InProcess = true;
 
-			if (!string.IsNullOrEmpty(Descriptor.Cast.AnimationTrigger))
+			if (!string.IsNullOrEmpty(Desc.Cast.AnimationTrigger))
 			{
-				Unit.Presenter.Animator.SetTrigger(AnimatorParameter.Get(Descriptor.Cast.AnimationTrigger));
+				Unit.Presenter.Animator.SetTrigger(AnimatorParameter.Get(Desc.Cast.AnimationTrigger));
 			}
 
-			await UniTask.Delay(TimeSpan.FromSeconds(Descriptor.Cast.Time), cancellationToken: token);
+			await UniTask.Delay(TimeSpan.FromSeconds(Desc.Cast.Time), cancellationToken: token);
 			
-			foreach (Cost cost in Descriptor.Cost)
+			foreach (CostDesc cost in Desc.Cost)
 			{
 				var data = new ChangeResourceData
 				{

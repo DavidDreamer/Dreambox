@@ -7,7 +7,7 @@ namespace Omniverse
 	public struct UnitSpawnData
 	{
 		[field: SerializeField]
-		public UnitDescription Description { get; private set; }
+		public UnitDesc UnitDesc { get; private set; }
 		
 		[field: SerializeField]
 		[field: Faction]

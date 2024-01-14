@@ -1,4 +1,4 @@
-﻿namespace Omniverse.Abilities.Runtime
+﻿namespace Omniverse.Abilities
 {
 	public enum AbilityCastError
 	{

@@ -7,6 +7,6 @@ namespace Omniverse.Actions
 	public class ApplyEffectDesc: IActionDesc
 	{
 		[field: SerializeField]
-		public EffectDescription Effect { get; private set; }
+		public EffectDesc Effect { get; private set; }
 	}
 }

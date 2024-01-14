@@ -48,7 +48,7 @@ namespace Omniverse
 
 			if (NavMeshAgent != null)
 			{
-				NavMeshAgent.speed = Unit.Description.Stats.MovementSpeed;
+				NavMeshAgent.speed = Unit.Desc.Stats.MovementSpeed;
 			}
 		}
 
@@ -128,12 +128,12 @@ namespace Omniverse
 				}
 				else
 				{
-					float delta = Unit.Description.Stats.AngularSpeed * Time.deltaTime;
+					float delta = Unit.Desc.Stats.AngularSpeed * Time.deltaTime;
 					transform.forward = Vector3.RotateTowards(transform.forward, direction, delta, 1f);
 				}
 			}
 
-			Vector3 velocity = direction * Unit.Description.Stats.MovementSpeed * Time.deltaTime;
+			Vector3 velocity = direction * Unit.Desc.Stats.MovementSpeed * Time.deltaTime;
 			Vector3 nextPosition = transform.position + velocity;
 
 			if (NavMesh.SamplePosition(nextPosition, out NavMeshHit hit, NavMeshAgent.height * 2, 1))

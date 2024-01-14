@@ -21,13 +21,13 @@ namespace Omniverse
 			ItemManager = itemManager;
 		}
 
-		public Unit Spawn(UnitSpawnData data) => Spawn(data.Description, data.FactionID);
+		public Unit Spawn(UnitSpawnData data) => Spawn(data.UnitDesc, data.FactionID);
 
-		public Unit Spawn(UnitDescription description, int factionID)
+		public Unit Spawn(UnitDesc desc, int factionID)
 		{
-			var unit = new Unit(description, factionID)
+			var unit = new Unit(desc, factionID)
 			{
-				Presenter = PrefabPool.Take(description.Presentation.Prefab)
+				Presenter = PrefabPool.Take(desc.Presentation.Prefab)
 			};
 
 			unit.Presenter.Bind(unit);
@@ -39,7 +39,7 @@ namespace Omniverse
 
 		public void Despawn(Unit unit)
 		{
-			PrefabPool.Return(unit.Description.Presentation.Prefab, unit.Presenter);
+			PrefabPool.Return(unit.Desc.Presentation.Prefab, unit.Presenter);
 			Units.Remove(unit);
 		}
 
@@ -82,7 +82,7 @@ namespace Omniverse
 
 		private void DropLoot(Unit unit)
 		{
-			foreach (LootDescription loot in unit.Description.Loot)
+			foreach (LootDesc loot in unit.Desc.Loot)
 			{
 				float random = Random.Range(0f, 1f);
 

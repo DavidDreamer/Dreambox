@@ -1,4 +1,4 @@
-namespace Omniverse.Abilities.Description
+namespace Omniverse.Abilities
 {
 	public class NonTarget: ITarget
 	{

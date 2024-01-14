@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
-using Omniverse.Abilities.Runtime;
+using Omniverse.Abilities;
 using UnityEngine;
 
 namespace Omniverse
 {
 	public class Unit
 	{
-		public UnitDescription Description { get; }
+		public UnitDesc Desc { get; }
 
 		public int FactionID { get; set; }
 
@@ -29,20 +29,20 @@ namespace Omniverse
 
 		public UnitStatus Status { get; private set; }
 
-		public Unit(UnitDescription description, int factionID)
+		public Unit(UnitDesc desc, int factionID)
 		{
-			Description = description;
+			Desc = desc;
 			FactionID = factionID;
 			
 			Resources = new Dictionary<int, Resource>();
-			foreach (ResourceDescriptor resourceDescription in Description.Resources)
+			foreach (ResourceDesc resourceDesc in Desc.Resources)
 			{
-				Resources.Add(resourceDescription.ID, new Resource(resourceDescription));
+				Resources.Add(resourceDesc.ID, new Resource(resourceDesc));
 			}
 
-			foreach (Abilities.Description.Ability abilityDescription in Description.AbilityDescriptions)
+			foreach (AbilityDesc abilityDesc in Desc.Abilities)
 			{
-				var ability = new Ability(abilityDescription, this);
+				var ability = new Ability(abilityDesc, this);
 				Abilities.Add(ability);
 			}
 		}
@@ -88,7 +88,7 @@ namespace Omniverse
 				}
 				else
 				{
-					Status |= effect.Descriptor.UnitStatus;
+					Status |= effect.Desc.UnitStatus;
 				}
 			}
 		}

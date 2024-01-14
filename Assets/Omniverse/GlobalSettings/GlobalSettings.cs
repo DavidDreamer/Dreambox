@@ -7,7 +7,7 @@ namespace Omniverse
 	public class GlobalSettings: PreloadedScriptableObject<GlobalSettings>
 	{
 		[field: SerializeField]
-		public CurrencyDescription[] Currencies { get; private set; }
+		public CurrencyDesc[] Currencies { get; private set; }
 		
 		[field: SerializeField]
 		public FactionDesc[] Factions { get; private set; }

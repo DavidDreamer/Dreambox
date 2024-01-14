@@ -3,10 +3,10 @@ using Dreambox.Core;
 using Omniverse.Actions;
 using UnityEngine;
 
-namespace Omniverse.Abilities.Description
+namespace Omniverse.Abilities
 {
-	[CreateAssetMenu(menuName = nameof(Omniverse) + "/" + nameof(Ability), fileName = nameof(Ability))]
-	public class Ability: ScriptableObject
+	[CreateAssetMenu(menuName = nameof(Omniverse) + "/" + nameof(AbilityDesc), fileName = nameof(AbilityDesc))]
+	public class AbilityDesc: ScriptableObject
 	{
 		[field: SerializeField]
 		public Presentation Presentation { get; private set; }
@@ -19,10 +19,10 @@ namespace Omniverse.Abilities.Description
 		public ITarget Target { get; private set; }
 
 		[field: SerializeField]
-		public Cooldown Cooldown { get; private set; }
+		public CooldownDesc Cooldown { get; private set; }
 
 		[field: SerializeField]
-		public List<Cost> Cost { get; private set; }
+		public List<CostDesc> Cost { get; private set; }
 
 		[field: SerializeReference]
 		[field: Versatile(typeof(IActionDesc))]

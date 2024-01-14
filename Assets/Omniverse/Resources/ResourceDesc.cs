@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Omniverse
 {
 	[Serializable]
-	public class ResourceDescriptor
+	public class ResourceDesc
 	{
 		[field: SerializeField]
 		[field: Resource]
