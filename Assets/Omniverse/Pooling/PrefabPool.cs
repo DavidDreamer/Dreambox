@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Scripting;
+using VContainer;
+using VContainer.Unity;
 
-namespace Dreambox.Core.Pooling
+namespace Omniverse
 {
-	[Preserve]
+	[UnityEngine.Scripting.Preserve]
 	public class PrefabPool
 	{
+		[Inject]
+		private IObjectResolver ObjectResolver { get; set; }
+
 		private Dictionary<GameObject, Stack<GameObject>> Items { get; } = new();
 
 		public GameObject Take(GameObject prefab)
@@ -23,7 +27,7 @@ namespace Dreambox.Core.Pooling
 				return instance;
 			}
 
-			return Object.Instantiate(prefab);
+			return CreateInstance(prefab);
 		}
 
 		public T Take<T>(T prefab) where T : MonoBehaviour, IPoolObject
@@ -32,6 +36,13 @@ namespace Dreambox.Core.Pooling
 			return gameObject.GetComponent<T>();
 		}
 
+		private GameObject CreateInstance(GameObject prefab)
+		{
+			GameObject instance = Object.Instantiate(prefab);
+			ObjectResolver.InjectGameObject(instance);
+			return instance;
+		}
+		
 		public void Return(GameObject prefab, GameObject instance)
 		{
 			instance.SetActive(false);

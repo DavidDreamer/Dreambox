@@ -1,4 +1,4 @@
-﻿namespace Dreambox.Core.Pooling
+﻿namespace Omniverse
 {
 	public interface IPoolObject
 	{
