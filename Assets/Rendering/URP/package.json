@@ -2,7 +2,7 @@
 	"name": "com.david-dreamer.dreambox.rendering.urp",
 	"version": "1.0.0",
 	"displayName": "Dreambox Rendering URP",
-	"unity": "2022.3.24",
+	"unity": "2022.3",
 	"author": 
 	{
 		"name": "David Dreamer",
@@ -10,6 +10,7 @@
 	},
 	"dependencies":
 	{
-		"com.unity.render-pipelines.universal": "14.0.10"
+		"com.unity.render-pipelines.universal": "14.0.10",
+		"com.david-dreamer.dreambox.rendering.core": "https://github.com/DavidDreamer/Dreambox.git?path=Assets/Rendering/URP"
 	}
 }
