@@ -10,7 +10,6 @@
 	},
 	"dependencies":
 	{
-		"com.unity.render-pipelines.universal": "14.0.10",
-		"com.david-dreamer.dreambox.rendering.core": "https://github.com/DavidDreamer/Dreambox.git?path=Assets/Rendering/Core"
+		"com.unity.render-pipelines.universal": "14.0.10"
 	}
 }
