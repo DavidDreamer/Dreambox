@@ -28,10 +28,10 @@ v2f vert(appdata v)
     return o;
 }
 
-float3 SampleColor(const float2 uv)
+float4 SampleColor(const float2 uv)
 {
     const float2 uvCorrected = uv - 2 * (uv - saturate(uv));
-    const float3 color = tex2D(_MainTex, uvCorrected).xyz;
+    const float4 color = tex2D(_MainTex, uvCorrected);
     return saturate(color);
 }
 
@@ -62,13 +62,13 @@ float4 BlurBox(const float2 uv, const float2 direction)
 
 float4 BlurGaussian(const float2 uv, const float2 direction)
 {
-    float3 totalColor = float3(0.0f, 0.0f, 0.0f);
+    float4 totalColor = 0;
     float totalWeight = 0.0f;
 
     const float centerWeight = BlurGaussian(0);
     totalWeight += centerWeight;
 
-    const float3 centerColor = tex2D(_MainTex, uv).xyz;
+    const float4 centerColor = tex2D(_MainTex, uv);
     totalColor += centerColor * centerWeight;
 
     for (int i = 1; i <= Radius; ++i)
@@ -83,9 +83,9 @@ float4 BlurGaussian(const float2 uv, const float2 direction)
 
     totalColor /= totalWeight;
     
-    const float3 finalColor = lerp(centerColor, totalColor, Factor);
+    const float4 finalColor = lerp(centerColor, totalColor, Factor);
     
-    return float4(finalColor, 1.0f);
+    return finalColor;
 }
 
 float4 Frag(const float2 uv, const float2 direction)
