@@ -1,0 +1,15 @@
+{
+	"name": "com.david-dreamer.dreambox.rendering.core",
+	"version": "1.0.0",
+	"displayName": "Dreambox Rendering Core",
+	"unity": "2022.3.24",
+	"author": 
+	{
+		"name": "David Dreamer",
+		"email": "davidb.gamedev@gmail.com"
+	},
+	"dependencies":
+	{
+		"com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
+	}
+}
