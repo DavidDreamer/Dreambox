@@ -23,7 +23,7 @@ namespace Dreambox.Rendering.URP
 
 		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
 		{
-			var scope = new CommandBufferScope(nameof(BlurRendererFeature));
+			var scope = new CommandBufferContextScope(context, nameof(BlurRendererFeature));
 			CommandBuffer commandBuffer = scope.CommandBuffer;
 
 			RTHandle cameraColorTargetHandler = renderingData.cameraData.renderer.cameraColorTargetHandle;
