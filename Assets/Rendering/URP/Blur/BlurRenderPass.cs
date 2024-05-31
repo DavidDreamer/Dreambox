@@ -23,26 +23,17 @@ namespace Dreambox.Rendering.URP
 
 		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
 		{
-			CommandBuffer commandBuffer = CommandBufferPool.Get(nameof(BlurRendererFeature));
+			var scope = new CommandBufferScope(nameof(BlurRendererFeature));
+			CommandBuffer commandBuffer = scope.CommandBuffer;
 
 			RTHandle cameraColorTargetHandler = renderingData.cameraData.renderer.cameraColorTargetHandle;
 
-			commandBuffer.EnableKeyword(BlurRendererFeature.Material,
-				new LocalKeyword(BlurRendererFeature.Material.shader,
-					BlurRendererFeature.Settings.Algorithm.ToShaderName()));
-
-			BlurRendererFeature.Material.SetInt(BlurShaderVariables.Radius, BlurRendererFeature.Settings.Radius);
-			BlurRendererFeature.Material.SetFloat(BlurShaderVariables.Factor, BlurRendererFeature.Factor);
+			BlurRendererFeature.Settings.ApplyTo(BlurRendererFeature.Material);
 
 			commandBuffer.Blit(cameraColorTargetHandler, BlurRendererFeature.tempTexture, BlurRendererFeature.Material,
 				0);
 			commandBuffer.Blit(BlurRendererFeature.tempTexture, cameraColorTargetHandler, BlurRendererFeature.Material,
 				1);
-
-			context.ExecuteCommandBuffer(commandBuffer);
-
-			commandBuffer.Clear();
-			CommandBufferPool.Release(commandBuffer);
 		}
 	}
 }

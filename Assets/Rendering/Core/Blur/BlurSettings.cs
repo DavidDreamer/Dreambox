@@ -16,5 +16,16 @@ namespace Dreambox.Rendering.Core
 		[field: SerializeField]
 		[field: Range(1, 100)]
 		public int Radius { get; set; }
+
+		[field: SerializeField]
+		[field: Range(0f, 1f)]
+		public float Factor { get; set; }
+		
+		public void ApplyTo(Material material)
+		{
+			material.EnableKeyword(Algorithm.ToKeywordName());
+			material.SetInt(BlurShaderVariables.Radius, Radius);
+			material.SetFloat(BlurShaderVariables.Factor, Factor);
+		}
 	}
 }
