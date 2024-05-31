@@ -11,14 +11,15 @@ Shader "Hidden/Dreambox/Blur"
         HLSLINCLUDE
         #include "Blur.hlsl"
         ENDHLSL
-        
+
         Pass
         {
             Name "Horizontal"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment FragHorizontal
-            #pragma multi_compile_local ALGORITHM_BOX ALGORITHM_GAUSSIAN
+            #pragma multi_compile_fragment_local ALGORITHM_BOX ALGORITHM_GAUSSIAN
+            #pragma multi_compile_fragment_local WRAP_MODE_CLAMP WRAP_MODE_MIRROR
             ENDHLSL
         }
 
@@ -28,7 +29,8 @@ Shader "Hidden/Dreambox/Blur"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment FragVertical
-            #pragma multi_compile_local ALGORITHM_BOX ALGORITHM_GAUSSIAN
+            #pragma multi_compile_fragment_local ALGORITHM_BOX ALGORITHM_GAUSSIAN
+            #pragma multi_compile_fragment_local WRAP_MODE_CLAMP WRAP_MODE_MIRROR
             ENDHLSL
         }
     }

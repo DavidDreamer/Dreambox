@@ -30,9 +30,13 @@ v2f vert(appdata v)
 
 float4 SampleColor(const float2 uv)
 {
+    #ifdef WRAP_MODE_MIRROR
     const float2 uvCorrected = uv - 2 * (uv - saturate(uv));
-    const float4 color = tex2D(_MainTex, uvCorrected);
-    return color;
+    return tex2D(_MainTex, uvCorrected);
+    #else
+    const float2 uvCorrected = saturate(uv);
+    return tex2D(_MainTex, uvCorrected);
+    #endif
 }
 
 float BlurGaussian(const int distance)
