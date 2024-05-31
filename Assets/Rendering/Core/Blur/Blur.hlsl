@@ -32,7 +32,7 @@ float4 SampleColor(const float2 uv)
 {
     const float2 uvCorrected = uv - 2 * (uv - saturate(uv));
     const float4 color = tex2D(_MainTex, uvCorrected);
-    return saturate(color);
+    return color;
 }
 
 float BlurGaussian(const int distance)
