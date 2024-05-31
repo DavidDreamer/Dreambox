@@ -18,8 +18,8 @@ Shader "Hidden/Dreambox/Blur"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment FragHorizontal
-            #pragma multi_compile_local_fragment ALGORITHM_BOX ALGORITHM_GAUSSIAN
-            #pragma multi_compile_local_fragment WRAP_MODE_CLAMP WRAP_MODE_MIRROR
+            #pragma shader_feature_local_fragment ALGORITHM_BOX ALGORITHM_GAUSSIAN
+            #pragma shader_feature_local_fragment WRAP_MODE_CLAMP WRAP_MODE_MIRROR
             ENDHLSL
         }
 
@@ -29,8 +29,8 @@ Shader "Hidden/Dreambox/Blur"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment FragVertical
-            #pragma multi_compile_local_fragment ALGORITHM_BOX ALGORITHM_GAUSSIAN
-            #pragma multi_compile_local_fragment WRAP_MODE_CLAMP WRAP_MODE_MIRROR
+            #pragma shader_feature_local_fragment ALGORITHM_BOX ALGORITHM_GAUSSIAN
+            #pragma shader_feature_local_fragment WRAP_MODE_CLAMP WRAP_MODE_MIRROR
             ENDHLSL
         }
     }
