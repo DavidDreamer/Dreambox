@@ -7,7 +7,7 @@ namespace Dreambox.Rendering.Core
 	public class BlurSettings
 	{
 		[field: SerializeField]
-		public BlurAlgorithm Algorithm { get; set; }
+		public Algorithm Algorithm { get; set; }
 
 		[field: SerializeField]
 		public WrapMode WrapMode { get; set; }
@@ -26,8 +26,8 @@ namespace Dreambox.Rendering.Core
 		
 		public void ApplyTo(Material material)
 		{
-			material.EnableKeyword(Algorithm.ToKeywordName());
-			material.EnableKeyword(WrapMode.ToKeywordName());
+			material.SwitchKeyword(Algorithm);
+			material.SwitchKeyword(WrapMode);
 			material.SetInt(BlurShaderVariables.Radius, Radius);
 			material.SetFloat(BlurShaderVariables.Factor, Factor);
 		}

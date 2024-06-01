@@ -1,6 +1,6 @@
 ﻿namespace Dreambox.Rendering.Core
 {
-	public enum BlurAlgorithm
+	public enum Algorithm
 	{
 		Box,
 
