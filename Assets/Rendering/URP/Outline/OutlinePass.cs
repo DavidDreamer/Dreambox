@@ -77,10 +77,10 @@ namespace Dreambox.Rendering.URP
 		public void Dispose()
 		{
 			CoreUtils.Destroy(Material);
-			Mask.Release();
-			JumpBuffer1.Release();
-			JumpBuffer2.Release();
-			VariantsBuffer.Release();
+			Mask?.Release();
+			JumpBuffer1?.Release();
+			JumpBuffer2?.Release();
+			VariantsBuffer?.Release();
 		}
 
 		public void AddRenderer(OutlineRenderer outlineRenderer)
