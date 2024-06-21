@@ -1,48 +1,17 @@
 ﻿using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.URP
 {
-	public class OutlineRenderer: MonoBehaviour
+	public struct OutlineRenderer
 	{
-		[field: SerializeField]
-		private RenderPassEvent RenderPassEvent { get; set; }
+		public Renderer Renderer { get; }
 
-		[field: SerializeField]
-		private OutlineConfig Config { get; set; }
+		public int Variant { get; }
 
-		public OutlinePass Pass { get; private set; }
-
-		private void Awake()
+		public OutlineRenderer(Renderer renderer, int variant)
 		{
-			Pass = new OutlinePass(Config)
-			{
-				renderPassEvent = RenderPassEvent
-			};
-		}
-
-		private void OnDestroy()
-		{
-			Pass.Dispose();
-		}
-
-		private void OnEnable()
-		{
-			RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
-		}
-
-		private void OnDisable()
-		{
-			RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
-		}
-
-		private void OnBeginCameraRendering(ScriptableRenderContext context, Camera cam)
-		{
-			if (cam.cameraType is CameraType.Game or CameraType.SceneView)
-			{
-				cam.GetUniversalAdditionalCameraData().scriptableRenderer.EnqueuePass(Pass);
-			}
+			Renderer = renderer;
+			Variant = variant;
 		}
 	}
 }

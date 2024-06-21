@@ -43,7 +43,7 @@ namespace Dreambox.Rendering.URP
 		private ComputeBuffer VariantsBuffer { get; set; }
 		private float MaxOffsetWidthOfAllConfigs { get; set; }
 
-		private HashSet<Renderer> Renderers { get; } = new();
+		private HashSet<OutlineRenderer> OutlineRenderers { get; } = new();
 		
 		private OutlineConfig Config { get; set; }
 
@@ -83,19 +83,19 @@ namespace Dreambox.Rendering.URP
 			VariantsBuffer.Release();
 		}
 
-		public void AddRenderer(Renderer renderer)
+		public void AddRenderer(OutlineRenderer outlineRenderer)
 		{
-			Renderers.Add(renderer);
+			OutlineRenderers.Add(outlineRenderer);
 		}
 
-		public void RemoveRenderer(Renderer renderer)
+		public void RemoveRenderer(OutlineRenderer outlineRenderer)
 		{
-			Renderers.Remove(renderer);
+			OutlineRenderers.Remove(outlineRenderer);
 		}
 
 		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
 		{
-			if (Renderers.Count == 0)
+			if (OutlineRenderers.Count == 0)
 			{
 				return;
 			}
@@ -120,10 +120,10 @@ namespace Dreambox.Rendering.URP
 			{
 				CoreUtils.SetRenderTarget(commandBuffer, Mask, ClearFlag.Color);
 
-				foreach (Renderer renderer in Renderers)
+				foreach (OutlineRenderer outlineRenderer in OutlineRenderers)
 				{
-					commandBuffer.SetGlobalInteger(ShaderVariables.ConfigIndex, (int)1);
-					commandBuffer.DrawRenderer(renderer, Material, 0, ShaderPasses.Mask);
+					commandBuffer.SetGlobalInteger(ShaderVariables.ConfigIndex, outlineRenderer.Variant + 1);
+					commandBuffer.DrawRenderer(outlineRenderer.Renderer, Material, 0, ShaderPasses.Mask);
 				}
 			}
 
@@ -165,6 +165,6 @@ namespace Dreambox.Rendering.URP
 			VariantsBuffer.SetData(Config.Variants);
 		}
 
-		public void Clear() => Renderers?.Clear();
+		public void Clear() => OutlineRenderers?.Clear();
 	}
 }
