@@ -15,6 +15,8 @@ namespace Dreambox.Rendering.URP
 
 		public override void Create()
 		{
+			Pass?.Dispose();
+
 			Pass = new OutlinePass(Config)
 			{
 				renderPassEvent = RenderPassEvent
@@ -24,8 +26,8 @@ namespace Dreambox.Rendering.URP
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
-
-			Pass.Dispose();
+			Pass?.Dispose();
+			Pass = null;
 		}
 
 		public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
