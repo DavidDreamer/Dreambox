@@ -22,6 +22,7 @@ namespace Dreambox.Rendering.URP
 			public static int UnscaledTime { get; } = Shader.PropertyToID(nameof(UnscaledTime));
 			public static int ConfigIndex { get; } = Shader.PropertyToID(nameof(ConfigIndex));
 			public static int VariantsBuffer { get; } = Shader.PropertyToID(nameof(VariantsBuffer));
+			public static int BaseMap { get; } = Shader.PropertyToID($"_{nameof(BaseMap)}");
 		}
 
 		private static class ShaderPasses
@@ -123,6 +124,8 @@ namespace Dreambox.Rendering.URP
 				foreach (OutlineRenderer outlineRenderer in OutlineRenderers)
 				{
 					commandBuffer.SetGlobalInteger(ShaderVariables.ConfigIndex, outlineRenderer.Variant + 1);
+					Texture baseMap = outlineRenderer.Renderer.sharedMaterial.GetTexture(ShaderVariables.BaseMap);
+					commandBuffer.SetGlobalTexture(ShaderVariables.BaseMap, baseMap);
 					commandBuffer.DrawRenderer(outlineRenderer.Renderer, Material, 0, ShaderPasses.Mask);
 				}
 			}

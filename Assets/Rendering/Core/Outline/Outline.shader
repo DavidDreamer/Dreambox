@@ -72,7 +72,7 @@ Shader "Hidden/Dreambox/Outline"
         return result;
     }
     ENDHLSL
-    
+
     SubShader
     {
         Cull Off ZWrite Off ZTest Always
@@ -85,21 +85,33 @@ Shader "Hidden/Dreambox/Outline"
             #pragma vertex vert
             #pragma fragment frag
 
+            sampler2D _BaseMap;
             uint ConfigIndex;
 
             struct appdata
             {
                 float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
             };
 
-            float4 vert(appdata v) : SV_POSITION
+            struct v2f
             {
-                const float4 pos = UnityObjectToClipPos(v.vertex);
-                return pos;
+                float4 vertex : SV_POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+            v2f vert(appdata v)
+            {
+                v2f data;
+                data.vertex = UnityObjectToClipPos(v.vertex);
+                data.uv = v.uv;
+                return data;
             }
 
-            uint frag() : SV_Target
+            uint frag(v2f input) : SV_Target
             {
+                const float alpha = tex2D(_BaseMap, input.uv).a;
+                clip(alpha - 1);
                 return ConfigIndex;
             }
             ENDHLSL
