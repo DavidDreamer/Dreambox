@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Dreambox.Core.Editor
 {
@@ -27,6 +28,17 @@ namespace Dreambox.Core.Editor
 			}
 
 			return InheritedTypes[sourceType];
+		}
+
+		public static Type GetTypeFromFullName(string typeFullName)
+		{
+			string[] typeData = typeFullName.Split();
+			string assemblyName = typeData[0];
+			string typeName = typeData[1];
+			Assembly assembly = AppDomain.CurrentDomain.GetAssemblies()
+				.First(assemply => assemply.GetName().Name == assemblyName);
+			Type type = assembly.GetType(typeName);
+			return type;
 		}
 	}
 }

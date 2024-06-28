@@ -95,10 +95,15 @@ namespace Dreambox.Core.Editor
 		public static void DrawChildren(this SerializedProperty serializedProperty)
 		{
 			IEnumerator enumerator = serializedProperty.Copy().GetEnumerator();
-
+			int depth = serializedProperty.depth + 1;
+			
 			while (enumerator.MoveNext())
 			{
 				var property = (SerializedProperty)enumerator.Current;
+				if (property.depth != depth)
+				{
+					continue;
+				}
 				EditorGUILayout.PropertyField(property);
 			}
 		}
