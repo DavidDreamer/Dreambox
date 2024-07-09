@@ -30,11 +30,11 @@ Shader "Hidden/Dreambox/Outline"
 
     StructuredBuffer<OutlineVariant> VariantsBuffer;
 
-    uint PackToR14G14B4(const uint3 rgb)
+    uint PackToR14G14B4(const uint2 uv, const uint index)
     {
-        const uint r = rgb.x << 18 & 0xFFFC0000;
-        const uint g = rgb.y << 4 & 0x3FFF0;
-        const uint b = rgb.z & 0xF;
+        const uint r = uv.x << 18 & 0xFFFC0000;
+        const uint g = uv.y << 4 & 0x3FFF0;
+        const uint b = index & 0xF;
         return r | g | b;
     }
 
@@ -154,7 +154,7 @@ Shader "Hidden/Dreambox/Outline"
                 const float mainSample = samples._m11;
 
                 if (mainSample > 0.99)
-                    return PackToR14G14B4(uint3(position, configIndex));
+                    return PackToR14G14B4(position, configIndex);
 
                 if (mainSample < 0.01)
                     return 0;
@@ -167,12 +167,12 @@ Shader "Hidden/Dreambox/Outline"
                 );
 
                 if (abs(sobel.x) <= SOBEL_THRESHOLD && abs(sobel.y) <= SOBEL_THRESHOLD)
-                    return PackToR14G14B4(uint3(position, configIndex));
+                    return PackToR14G14B4(position, configIndex);
 
                 const float sobelNormalized = normalize(sobel);
                 const float2 offset = sobelNormalized * (1.0 - mainSample);
                 const float2 uvWithOffset = position + offset;
-                return PackToR14G14B4(uint3(uvWithOffset, configIndex));
+                return PackToR14G14B4(uvWithOffset, configIndex);
             }
             ENDHLSL
         }
@@ -245,7 +245,7 @@ Shader "Hidden/Dreambox/Outline"
                     return 0;
                 }
 
-                return PackToR14G14B4(uint3(finalPosition, finalIndex));
+                return PackToR14G14B4(finalPosition, finalIndex);
             }
             ENDHLSL
         }
@@ -290,8 +290,8 @@ Shader "Hidden/Dreambox/Outline"
                 if (calculatedSample.b == 0)
                     return 0;
 
-                const uint config_index = calculatedSample.b - 1;
-                const OutlineVariant variant = VariantsBuffer[config_index];
+                const uint configIndex = calculatedSample.b - 1;
+                const OutlineVariant variant = VariantsBuffer[configIndex];
                 const float distance = length(calculatedSample.rg - position) - variant.PixelOffset;
 
                 const float width = variant.Width * _MainTex_TexelSize.w;
