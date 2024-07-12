@@ -8,11 +8,9 @@ Shader "Hidden/Dreambox/Outline"
 
     HLSLINCLUDE
     #define FLOAT_INFINITY ((float)(1e1000))
-    #define SOBEL_THRESHOLD 0.005
 
     #pragma target 4.5
-    #pragma multi_compile_instancing
-
+    
     #include "UnityCG.cginc"
 
     struct OutlineVariant
@@ -44,32 +42,6 @@ Shader "Hidden/Dreambox/Outline"
         const uint g = rgb >> 4 & 0x3FFF;
         const uint b = rgb & 0xF;
         return uint3(r, g, b);
-    }
-
-    float3x3 Sample3x3(const Texture2D<uint> source, const float4 texelSize, const int2 uv)
-    {
-        float3x3 result;
-        UNITY_UNROLL
-        for (int u = 0; u < 3; u++)
-        {
-            UNITY_UNROLL
-            for (int v = 0; v < 3; v++)
-            {
-                const int2 offset = int2(u - 1, v - 1);
-                const uint2 positionWithOffset = clamp(uv + offset, 0, texelSize.zw - 1);
-                const uint calculatedSample = source.Load(int3(positionWithOffset, 0));
-                if (calculatedSample == 0)
-                {
-                    result[u][v] = 0;
-                }
-                else
-                {
-                    result[u][v] = 1;
-                }
-            }
-        }
-
-        return result;
     }
     ENDHLSL
 
@@ -137,7 +109,6 @@ Shader "Hidden/Dreambox/Outline"
             };
 
             Texture2D<uint> _MainTex;
-            float4 _MainTex_TexelSize;
 
             v2f vert(appdata v)
             {
@@ -150,29 +121,8 @@ Shader "Hidden/Dreambox/Outline"
             {
                 const uint2 position = i.pos.xy;
                 const uint configIndex = _MainTex.Load(int3(position, 0));
-                const float3x3 samples = Sample3x3(_MainTex, _MainTex_TexelSize, position);
-                const float mainSample = samples._m11;
-
-                if (mainSample > 0.99)
-                    return PackToR14G14B4(position, configIndex);
-
-                if (mainSample < 0.01)
-                    return 0;
-
-                const float2 sobel = -float2(
-                    samples[0][0] + samples[0][1] * 2.0 + samples[0][2] - samples[2][0] - samples[2][1] * 2.0 - samples[
-                        2][2],
-                    samples[0][0] + samples[1][0] * 2.0 + samples[2][0] - samples[0][2] - samples[1][2] * 2.0 - samples[
-                        2][2]
-                );
-
-                if (abs(sobel.x) <= SOBEL_THRESHOLD && abs(sobel.y) <= SOBEL_THRESHOLD)
-                    return PackToR14G14B4(position, configIndex);
-
-                const float sobelNormalized = normalize(sobel);
-                const float2 offset = sobelNormalized * (1.0 - mainSample);
-                const float2 uvWithOffset = position + offset;
-                return PackToR14G14B4(uvWithOffset, configIndex);
+                const uint dataPacked = PackToR14G14B4(position, configIndex);
+                return dataPacked;
             }
             ENDHLSL
         }
