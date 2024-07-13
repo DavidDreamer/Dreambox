@@ -15,15 +15,12 @@ Shader "Hidden/Dreambox/Outline"
 
     struct OutlineVariant
     {
-        float4 OutlineColor;
-        float4 FillColor;
+        float4 Color;
         float Width;
         float Softness;
-        float SoftnessPower;
-        float PixelOffset;
+        float4 FillColor;
         float4 FillFlickColor;
         float FillFlickRate;
-        float CutOffWidth;
     };
 
     StructuredBuffer<OutlineVariant> VariantsBuffer;
@@ -58,7 +55,7 @@ Shader "Hidden/Dreambox/Outline"
             #pragma fragment frag
 
             sampler2D _BaseMap;
-            uint ConfigIndex;
+            uint VariantIndex;
 
             struct appdata
             {
@@ -84,7 +81,7 @@ Shader "Hidden/Dreambox/Outline"
             {
                 const float alpha = tex2D(_BaseMap, input.uv).a;
                 clip(alpha - 1);
-                return ConfigIndex;
+                return VariantIndex;
             }
             ENDHLSL
         }
@@ -163,7 +160,7 @@ Shader "Hidden/Dreambox/Outline"
 
                 float minDistance = FLOAT_INFINITY;
                 float2 finalPosition;
-                float finalIndex;
+                float outputVariantIndex = 0;
 
                 UNITY_UNROLL
                 for (int u = -1; u <= 1; u++)
@@ -173,29 +170,29 @@ Shader "Hidden/Dreambox/Outline"
                     {
                         const int2 offset = int2(u, v) * StepWidth;
                         const int2 positionWithOffset = clamp(position + offset, 0, _MainTex_TexelSize.zw - 1);
-                        const float3 calculatedSample = UnpackFromR14G14B4(_MainTex.Load(int3(positionWithOffset, 0)));
-                        const float2 targetPosition = calculatedSample.rg;
+                        const uint sample = _MainTex.Load(int3(positionWithOffset, 0));
+                        const float3 data = UnpackFromR14G14B4(sample);
+                        const float2 targetPosition = data.rg;
+                        const float variantIndex = data.b;
 
-                        const float2 disp = position - targetPosition;
-                        const uint configIndex = calculatedSample.b - 1;
-                        const float cutOffWidth = VariantsBuffer[configIndex].CutOffWidth * _MainTex_TexelSize.w;
-                        const float distanceSqr = dot(disp, disp) - cutOffWidth * cutOffWidth;
-
-                        if (calculatedSample.b != 0 && distanceSqr < minDistance)
+                        if (variantIndex == 0)
                         {
-                            minDistance = distanceSqr;
-                            finalIndex = calculatedSample.b;
+                            continue;
+                        }
+                        
+                        const float2 disp = position - targetPosition;
+                        const float distance = dot(disp, disp);
+
+                        if (distance < minDistance)
+                        {
+                            minDistance = distance;
+                            outputVariantIndex = variantIndex;
                             finalPosition = targetPosition;
                         }
                     }
                 }
 
-                if (isinf(minDistance))
-                {
-                    return 0;
-                }
-
-                return PackToR14G14B4(finalPosition, finalIndex);
+                return PackToR14G14B4(finalPosition, outputVariantIndex);
             }
             ENDHLSL
         }
@@ -223,8 +220,6 @@ Shader "Hidden/Dreambox/Outline"
             Texture2D<uint> _MainTex;
             float4 _MainTex_TexelSize;
 
-            float UnscaledTime;
-
             v2f vert(appdata v)
             {
                 v2f o;
@@ -235,40 +230,23 @@ Shader "Hidden/Dreambox/Outline"
             float4 frag(v2f i) : SV_Target
             {
                 const uint2 position = i.pos.xy;
-                const float3 calculatedSample = UnpackFromR14G14B4(_MainTex.Load(int3(position, 0)));
-
-                if (calculatedSample.b == 0)
-                    return 0;
-
-                const uint configIndex = calculatedSample.b - 1;
-                const OutlineVariant variant = VariantsBuffer[configIndex];
-                const float distance = length(calculatedSample.rg - position) - variant.PixelOffset;
-
+                const uint sample = _MainTex.Load(int3(position, 0));
+                const float3 data = UnpackFromR14G14B4(sample);
+                const float index = data.b;
+                const OutlineVariant variant = VariantsBuffer[index - 1];
+                const float distance = length(data.rg - position);
                 const float width = variant.Width * _MainTex_TexelSize.w;
-
-                const float4 adjusted_outline_color = variant.OutlineColor * saturate(width);
-
-                // Calculate outline mask
-                // +1.0 is because encoded nearest position is float a pixel inset
-                // Not +0.5 because we want the anti-aliased edge to be aligned between pixels
-                // Distance is already in pixels, so this is already perfectly anti-aliased!
-                const float outline_weight = saturate(width + 1.0 - distance);
-
+                const float weight = pow(1 - saturate(distance / width), variant.Softness);
+                float4 outlineColor = variant.Color;
+                outlineColor.a *= weight;
+                
                 // Inner filling edge need +1.5 inset for good anti-aliasing
                 const float fill_weight = saturate(1.5 - distance);
-
-                const float outline_fade = 1 - saturate((distance - 1.0 - width * (1 - variant.Softness)) / width);
-
-                // Adjust outline alfa to proper anti-aliasing and softness
-                const float4 outline_color = adjusted_outline_color * float4(
-                    1, 1, 1, outline_weight * pow(outline_fade, variant.SoftnessPower));
-
-                // Blend fill with flickering
+                
                 const float4 fill_color = lerp(variant.FillColor, variant.FillFlickColor,
-                                               (cos(UnscaledTime * variant.FillFlickRate - UNITY_PI) + 1) / 2);
+                                               (cos(_Time.y * variant.FillFlickRate - UNITY_PI) + 1) / 2);
 
-                // Blend between outline and fill
-                float4 final_color = lerp(outline_color, fill_color, fill_weight);
+                float4 final_color = lerp(outlineColor, fill_color, fill_weight);
 
                 return final_color;
             }
