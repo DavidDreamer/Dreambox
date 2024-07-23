@@ -14,7 +14,8 @@ namespace Dreambox.Core.Editor
 			{
 				var togglePosition = new Rect(position)
 				{
-					height = EditorGUIUtility.singleLineHeight
+					height = EditorGUIUtility.singleLineHeight,
+					width = position.width / 2f
 				};
 				
 				hasValue = EditorGUI.ToggleLeft(togglePosition, label, hasValue);
