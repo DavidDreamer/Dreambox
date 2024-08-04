@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace Dreambox.Rendering.Core
 {
+	[Serializable]
 	public class DrawMeshParams
 	{
 		[field: SerializeField]
