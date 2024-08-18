@@ -1,7 +1,7 @@
 // Copyright (c) Saber BGS 2022. All rights reserved.
 // ---------------------------------------------------------------------------------------------
 
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Dreambox.Rendering.Core;
@@ -12,7 +12,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.URP
 {
-	public class OutlinePass : CustomRenderFeaturePass<OutlineRendererFeature>
+	public class OutlinePass : ScriptableRenderPass, IDisposable
 	{
 		private static class ShaderVariables
 		{
@@ -36,6 +36,10 @@ namespace Dreambox.Rendering.URP
 			public const int Decode = 3;
 		}
 
+		private OutlineRendererFeature RendererFeature { get; }
+
+		private OutlineConfig Config { get; }
+
 		private Material Material { get; set; }
 
 		private RTHandle Mask;
@@ -48,21 +52,26 @@ namespace Dreambox.Rendering.URP
 
 		private float MaxOffsetWidthOfAllConfigs { get; set; }
 
-		private HashSet<OutlineRenderer> OutlineRenderers { get; } = new();
-
-		private OutlineConfig Config { get; set; }
-
-		public override void Initialize(OutlineRendererFeature rendererFeature)
+		public OutlinePass(OutlineRendererFeature rendererFeature)
 		{
-			base.Initialize(rendererFeature);
+			RendererFeature = rendererFeature;
 
-			Config = RenderFeature.Config;
+			Config = RendererFeature.Config;
 
 			Material = CoreUtils.CreateEngineMaterial(Config.Shader);
 
 			VariantsBuffer = new ComputeBuffer(Config.Variants.Length, Marshal.SizeOf<OutlineVariant>());
 
 			Material.SetBuffer(ShaderVariables.VariantsBuffer, VariantsBuffer);
+		}
+
+		public void Dispose()
+		{
+			CoreUtils.Destroy(Material);
+			Mask?.Release();
+			JumpBuffer1?.Release();
+			JumpBuffer2?.Release();
+			VariantsBuffer?.Release();
 		}
 
 		public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
@@ -82,32 +91,8 @@ namespace Dreambox.Rendering.URP
 			RenderingUtils.ReAllocateIfNeeded(ref JumpBuffer2, renderTextureDescriptor);
 		}
 
-		public override void Dispose()
-		{
-			CoreUtils.Destroy(Material);
-			Mask?.Release();
-			JumpBuffer1?.Release();
-			JumpBuffer2?.Release();
-			VariantsBuffer?.Release();
-		}
-
-		public void AddRenderer(OutlineRenderer outlineRenderer)
-		{
-			OutlineRenderers.Add(outlineRenderer);
-		}
-
-		public void RemoveRenderer(OutlineRenderer outlineRenderer)
-		{
-			OutlineRenderers.Remove(outlineRenderer);
-		}
-
 		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
 		{
-			if (OutlineRenderers.Count == 0)
-			{
-				return;
-			}
-
 			using var scope = new CommandBufferContextScope(context, "Outline");
 			CommandBuffer commandBuffer = scope.CommandBuffer;
 
@@ -122,7 +107,7 @@ namespace Dreambox.Rendering.URP
 			{
 				CoreUtils.SetRenderTarget(commandBuffer, Mask, ClearFlag.Color);
 
-				foreach (OutlineRenderer outlineRenderer in OutlineRenderers)
+				foreach (OutlineRenderer outlineRenderer in RendererFeature.Renderers)
 				{
 					commandBuffer.SetGlobalInteger(ShaderVariables.VariantIndex, outlineRenderer.Variant + 1);
 					Texture baseMap = outlineRenderer.Renderer.sharedMaterial.GetTexture(ShaderVariables.BaseMap);
@@ -163,7 +148,5 @@ namespace Dreambox.Rendering.URP
 			MaxOffsetWidthOfAllConfigs = Config.Variants.Max(config => config.Width);
 			VariantsBuffer.SetData(Config.Variants);
 		}
-
-		public void Clear() => OutlineRenderers?.Clear();
 	}
 }

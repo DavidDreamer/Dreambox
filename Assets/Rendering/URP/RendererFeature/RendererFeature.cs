@@ -1,31 +1,29 @@
 using UnityEngine.Rendering.Universal;
 using UnityEngine;
+using System;
 
 namespace Dreambox.Rendering.URP
 {
-	public abstract class RendererFeature<TRenderFeature, TConfig, TPass> : ScriptableRendererFeature
-		where TRenderFeature : RendererFeature<TRenderFeature, TConfig, TPass>
+	public abstract class RendererFeature<TConfig, TPass> : ScriptableRendererFeature
 		where TConfig : RendererFeatureConfig
-		where TPass : CustomRenderFeaturePass<TRenderFeature>, new()
+		where TPass : ScriptableRenderPass, IDisposable
 	{
 		[field: SerializeField]
 		public TConfig Config { get; private set; }
 
 		public TPass Pass { get; private set; }
 
+		public abstract TPass CreatePass();
+
 		public override void Create()
 		{
-			Pass?.Dispose();
-			Pass = new TPass();
-			Pass.Initialize((TRenderFeature)this);
+			Pass = CreatePass();
 			Pass.renderPassEvent = Config.RenderPassEvent;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			base.Dispose(disposing);
-			Pass?.Dispose();
-			Pass = null;
+			Pass.Dispose();
 		}
 
 		public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
@@ -37,3 +35,4 @@ namespace Dreambox.Rendering.URP
 		}
 	}
 }
+
