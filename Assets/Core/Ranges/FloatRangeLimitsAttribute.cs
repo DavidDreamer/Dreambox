@@ -2,7 +2,7 @@
 
 namespace Dreambox.Core
 {
-	public class FloatRangeLimitsAttribute: PropertyAttribute
+	public class FloatRangeLimitsAttribute : PropertyAttribute
 	{
 		public float Min { get; }
 

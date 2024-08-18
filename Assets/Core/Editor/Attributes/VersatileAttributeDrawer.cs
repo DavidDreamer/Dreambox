@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Dreambox.Core.Editor
 {
 	[CustomPropertyDrawer(typeof(VersatileAttribute))]
-	public class VersatileAttributeDrawer: PropertyDrawer
+	public class VersatileAttributeDrawer : PropertyDrawer
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{

@@ -5,12 +5,12 @@ using UnityEngine;
 namespace Dreambox.Core.Editor
 {
 	[CustomPropertyDrawer(typeof(OptionalAttribute))]
-	public class OptionalAttributeDrawer: PropertyDrawer
+	public class OptionalAttributeDrawer : PropertyDrawer
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
 			bool hasValue = property.managedReferenceValue != null;
-			
+
 			using (new EditorGUI.IndentLevelScope(hasValue ? 1 : 0))
 			using (var changeCheckScope = new EditorGUI.ChangeCheckScope())
 			{
@@ -18,7 +18,7 @@ namespace Dreambox.Core.Editor
 				{
 					height = EditorGUIUtility.singleLineHeight
 				};
-				
+
 				bool toggle = EditorGUI.ToggleLeft(togglePosition, label, hasValue);
 
 				if (changeCheckScope.changed)
@@ -37,7 +37,7 @@ namespace Dreambox.Core.Editor
 					}
 				}
 			}
-			
+
 			if (hasValue)
 			{
 				EditorGUI.PropertyField(position, property, GUIContent.none, true);

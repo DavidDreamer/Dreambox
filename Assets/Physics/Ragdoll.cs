@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Dreambox.Physics
 {
-	public class Ragdoll: MonoBehaviour
+	public class Ragdoll : MonoBehaviour
 	{
 		[field: SerializeField]
 		private Rigidbody Pelvis { get; set; }

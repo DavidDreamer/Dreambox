@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Dreambox.Core
 {
-	public class PreloadedScriptableObject<T>: ScriptableObject where T : PreloadedScriptableObject<T>
+	public class PreloadedScriptableObject<T> : ScriptableObject where T : PreloadedScriptableObject<T>
 	{
 		public static T Instance { get; private set; }
 

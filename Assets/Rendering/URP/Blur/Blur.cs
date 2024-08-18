@@ -5,7 +5,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.URP
 {
-	public class Blur: PostProcessRenderFeature<BlurRenderPass>
+	public class Blur : PostProcessRenderFeature<BlurRenderPass>
 	{
 		[field: SerializeField]
 		public BlurSettings Settings { get; private set; }
@@ -13,7 +13,7 @@ namespace Dreambox.Rendering.URP
 		public RTHandle tempTexture;
 
 		public float Factor { get; private set; }
-		
+
 		public override void Create()
 		{
 			base.Create();
@@ -38,7 +38,7 @@ namespace Dreambox.Rendering.URP
 			}
 
 			Factor = blurVolumeComponent.Factor.value;
-			
+
 			CameraData cameraData = renderingData.cameraData;
 			if (cameraData.isSceneViewCamera || cameraData.isPreviewCamera)
 			{

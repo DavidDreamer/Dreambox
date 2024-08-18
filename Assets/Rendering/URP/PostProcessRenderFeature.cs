@@ -4,7 +4,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.URP
 {
-	public abstract class PostProcessRenderFeature<T>: ScriptableRendererFeature where T : ScriptableRenderPass, new()
+	public abstract class PostProcessRenderFeature<T> : ScriptableRendererFeature where T : ScriptableRenderPass, new()
 	{
 		[field: SerializeField]
 		protected RenderPassEvent RenderPassEvent { get; set; }

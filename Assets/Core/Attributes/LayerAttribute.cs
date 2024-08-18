@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Dreambox.Core
 {
-	public class LayerAttribute: PropertyAttribute
+	public class LayerAttribute : PropertyAttribute
 	{
 	}
 }

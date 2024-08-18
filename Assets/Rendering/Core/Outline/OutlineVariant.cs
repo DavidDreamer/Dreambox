@@ -7,7 +7,7 @@ namespace Dreambox.Rendering.URP
 	public struct OutlineVariant
 	{
 		public Color Color;
-		
+
 		[Range(0f, 1f)]
 		public float Width;
 

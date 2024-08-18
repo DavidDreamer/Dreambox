@@ -5,7 +5,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.URP
 {
-	public class BlurRenderPass: ScriptableRenderPass
+	public class BlurRenderPass : ScriptableRenderPass
 	{
 		public Blur BlurRendererFeature { get; set; }
 

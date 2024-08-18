@@ -5,7 +5,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.URP
 {
-	public class DesaturationRenderPass: ScriptableRenderPass
+	public class DesaturationRenderPass : ScriptableRenderPass
 	{
 		public Desaturation RendererFeature { get; set; }
 

@@ -11,7 +11,7 @@ namespace Dreambox.Core
 			{
 				throw new ArgumentOutOfRangeException(number.ToString());
 			}
-			
+
 			string layerName = LayerMask.LayerToName(number);
 			int bitMask = LayerMask.GetMask(layerName);
 			return bitMask;

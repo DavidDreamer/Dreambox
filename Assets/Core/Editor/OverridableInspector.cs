@@ -7,16 +7,16 @@ using UnityEditor;
 
 namespace Dreambox.Core.Editor
 {
-	public abstract class OverridableInspector: UnityEditor.Editor
+	public abstract class OverridableInspector : UnityEditor.Editor
 	{
 		private const string ScriptName = "m_Script";
 
 		protected abstract IEnumerable<string> CustomProperties { get; }
-		
+
 		public override void OnInspectorGUI()
 		{
 			serializedObject.UpdateIfRequiredOrScript();
-			
+
 			using (SerializedProperty iterator = serializedObject.GetIterator())
 			{
 				bool expanded = true;
@@ -30,10 +30,10 @@ namespace Dreambox.Core.Editor
 						{
 							EditorGUILayout.PropertyField(iterator, true);
 						}
-						
+
 						continue;
 					}
-					
+
 					if (CustomProperties.Contains(iterator.name))
 					{
 						DrawCustomProperty(iterator);
@@ -46,12 +46,12 @@ namespace Dreambox.Core.Editor
 			}
 
 			DrawAdditionalOptions();
-			
+
 			serializedObject.ApplyModifiedProperties();
 		}
 
 		protected abstract void DrawCustomProperty(SerializedProperty property);
-		
+
 		protected virtual void DrawAdditionalOptions()
 		{
 		}

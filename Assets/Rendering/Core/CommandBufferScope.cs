@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 
 namespace Dreambox.Rendering.Core
 {
-	public readonly struct CommandBufferScope: IDisposable
+	public readonly struct CommandBufferScope : IDisposable
 	{
 		public CommandBuffer CommandBuffer { get; }
 

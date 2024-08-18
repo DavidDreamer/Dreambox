@@ -3,10 +3,10 @@ using UnityEngine.Rendering;
 
 namespace Dreambox.Rendering.Core
 {
-	public readonly struct CommandBufferContextScope: IDisposable
+	public readonly struct CommandBufferContextScope : IDisposable
 	{
-		public  ScriptableRenderContext Context { get; }
-		
+		public ScriptableRenderContext Context { get; }
+
 		public CommandBuffer CommandBuffer { get; }
 
 		public CommandBufferContextScope(ScriptableRenderContext context, string name)

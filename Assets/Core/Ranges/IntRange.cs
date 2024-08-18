@@ -13,7 +13,7 @@ namespace Dreambox.Core
 		public int Max { get; set; }
 
 		public int Random() => UnityEngine.Random.Range(Min, Max + 1);
-		
+
 		public int Evaluate(float value) => Mathf.RoundToInt(Mathf.Lerp(Min, Max, value));
 	}
 }

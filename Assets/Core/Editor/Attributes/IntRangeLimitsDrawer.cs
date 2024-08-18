@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Dreambox.Core.Editor
 {
 	[CustomPropertyDrawer(typeof(IntRangeLimitsAttribute))]
-	public class IntRangeLimitsDrawer: PropertyDrawer
+	public class IntRangeLimitsDrawer : PropertyDrawer
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
@@ -15,7 +15,7 @@ namespace Dreambox.Core.Editor
 
 			int minValue = min.intValue;
 			int maxValue = max.intValue;
-			
+
 			position = EditorGUI.PrefixLabel(position, label);
 
 			Rect minValuePosition = position;
@@ -28,18 +28,18 @@ namespace Dreambox.Core.Editor
 
 			float minValueFloat = minValue;
 			float maxValueFloat = maxValue;
-			
+
 			EditorGUI.MinMaxSlider(position, ref minValueFloat, ref maxValueFloat, limits.Min, limits.Max);
 
 			minValue = (int)minValueFloat;
 			maxValue = (int)maxValueFloat;
-			
+
 			position.x += position.width;
 			position.width = EditorGUIUtility.fieldWidth;
-			
+
 			maxValue = EditorGUI.IntField(position, maxValue);
 			maxValue = Mathf.Clamp(maxValue, minValue, limits.Max);
-	
+
 			min.intValue = minValue;
 			max.intValue = maxValue;
 		}

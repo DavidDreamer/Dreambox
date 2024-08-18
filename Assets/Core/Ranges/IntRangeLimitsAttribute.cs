@@ -2,7 +2,7 @@
 
 namespace Dreambox.Core
 {
-	public class IntRangeLimitsAttribute: PropertyAttribute
+	public class IntRangeLimitsAttribute : PropertyAttribute
 	{
 		public int Min { get; }
 

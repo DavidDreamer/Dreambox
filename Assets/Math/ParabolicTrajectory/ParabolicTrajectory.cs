@@ -7,9 +7,9 @@ namespace Dreambox.Math
 		private const float Gravity = 9.81f;
 
 		private const float GravityDouble = Gravity * 2f;
-		
+
 		private const float GravityHalf = Gravity * 0.5f;
-		
+
 		public static Vector2 EvaluatePosition(float angle, float velocity, float time)
 		{
 			float velocityTime = velocity * time;
@@ -40,7 +40,7 @@ namespace Dreambox.Math
 				parameters = default;
 				return false;
 			}
-			
+
 			float angle = Mathf.Atan(b * time / target.x);
 			float velocity = b / Mathf.Sin(angle);
 

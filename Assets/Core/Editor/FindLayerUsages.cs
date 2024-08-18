@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Dreambox.Core.Editor
 {
-	public class FindLayerUsages: EditorWindow
+	public class FindLayerUsages : EditorWindow
 	{
 		private int Layer { get; set; }
 

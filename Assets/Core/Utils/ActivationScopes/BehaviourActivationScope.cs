@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Dreambox.Core
 {
-	public readonly struct BehaviourActivationScope: IDisposable
+	public readonly struct BehaviourActivationScope : IDisposable
 	{
 		private Behaviour Behaviour { get; }
 

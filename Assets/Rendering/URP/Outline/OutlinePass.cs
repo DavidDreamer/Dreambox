@@ -14,7 +14,7 @@ using UnityEngine.Rendering.Universal;
 namespace Dreambox.Rendering.URP
 {
 	[Serializable]
-	public class OutlinePass: ScriptableRenderPass
+	public class OutlinePass : ScriptableRenderPass
 	{
 		private static class ShaderVariables
 		{

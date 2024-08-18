@@ -5,7 +5,7 @@ namespace Dreambox.UI
 {
 	[ExecuteAlways]
 	[RequireComponent(typeof(Slider))]
-	public class GradientSlider: MonoBehaviour
+	public class GradientSlider : MonoBehaviour
 	{
 		[field: SerializeField]
 		private Gradient Gradient { get; set; }

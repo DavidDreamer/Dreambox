@@ -96,7 +96,7 @@ namespace Dreambox.Core.Editor
 		{
 			IEnumerator enumerator = serializedProperty.Copy().GetEnumerator();
 			int depth = serializedProperty.depth + 1;
-			
+
 			while (enumerator.MoveNext())
 			{
 				var property = (SerializedProperty)enumerator.Current;

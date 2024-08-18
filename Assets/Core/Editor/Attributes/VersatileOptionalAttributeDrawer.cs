@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Dreambox.Core.Editor
 {
 	[CustomPropertyDrawer(typeof(VersatileOptionalAttribute))]
-	public class VersatileOptionalAttributeDrawer: VersatileAttributeDrawer
+	public class VersatileOptionalAttributeDrawer : VersatileAttributeDrawer
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
@@ -17,10 +17,10 @@ namespace Dreambox.Core.Editor
 					height = EditorGUIUtility.singleLineHeight,
 					width = position.width / 2f
 				};
-				
+
 				hasValue = EditorGUI.ToggleLeft(togglePosition, label, hasValue);
 			}
-			
+
 			if (hasValue)
 			{
 				base.OnGUI(position, property, GUIContent.none);

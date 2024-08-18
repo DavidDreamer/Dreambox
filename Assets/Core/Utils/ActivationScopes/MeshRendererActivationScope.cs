@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Dreambox.Core
 {
-	public readonly struct MeshRendererActivationScope: IDisposable
+	public readonly struct MeshRendererActivationScope : IDisposable
 	{
 		private MeshRenderer MeshRenderer { get; }
 

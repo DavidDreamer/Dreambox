@@ -11,7 +11,7 @@ namespace Dreambox.Rendering.Core
 
 		[field: SerializeField]
 		public WrapMode WrapMode { get; set; }
-		
+
 		[field: SerializeField]
 		[field: Range(1, 4)]
 		public int Downsample { get; set; } = 1;
@@ -23,7 +23,7 @@ namespace Dreambox.Rendering.Core
 		[field: SerializeField]
 		[field: Range(0f, 1f)]
 		public float Factor { get; set; }
-		
+
 		public void ApplyTo(Material material)
 		{
 			material.SwitchKeyword(Algorithm);

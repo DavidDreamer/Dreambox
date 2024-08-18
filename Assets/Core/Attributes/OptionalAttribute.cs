@@ -2,7 +2,7 @@
 
 namespace Dreambox.Core
 {
-	public class OptionalAttribute: PropertyAttribute
+	public class OptionalAttribute : PropertyAttribute
 	{
 	}
 }

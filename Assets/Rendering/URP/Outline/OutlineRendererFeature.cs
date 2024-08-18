@@ -3,7 +3,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.URP
 {
-	public class OutlineRendererFeature: ScriptableRendererFeature
+	public class OutlineRendererFeature : ScriptableRendererFeature
 	{
 		[field: SerializeField]
 		private RenderPassEvent RenderPassEvent { get; set; }

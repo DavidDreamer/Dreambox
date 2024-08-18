@@ -5,11 +5,11 @@ namespace Dreambox.Math
 	public class ParabolicTrajectory3D
 	{
 		public Vector3 Start { get; set; }
-		
+
 		public Vector3 End { get; set; }
-		
+
 		public ParabolicTrajectoryParameters Parameters { get; set; }
-		
+
 		public Vector3 EvaluatePosition(float time)
 		{
 			Vector2 position =

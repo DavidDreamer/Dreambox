@@ -2,9 +2,9 @@
 
 namespace Dreambox.Core
 {
-	public class VersatileOptionalAttribute: VersatileAttribute
+	public class VersatileOptionalAttribute : VersatileAttribute
 	{
-		public VersatileOptionalAttribute(Type type): base(type)
+		public VersatileOptionalAttribute(Type type) : base(type)
 		{
 		}
 	}
