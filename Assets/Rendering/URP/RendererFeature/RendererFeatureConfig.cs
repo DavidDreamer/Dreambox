@@ -4,7 +4,7 @@ using Dreambox.Core;
 
 namespace Dreambox.Rendering.URP
 {
-	public abstract class CustomRendererConfig : ScriptableObject
+	public abstract class RendererFeatureConfig : ScriptableObject
 	{
 		[field: SerializeField]
 		public RenderPassEvent RenderPassEvent { get; private set; }

@@ -1,7 +1,6 @@
 // Copyright (c) Saber BGS 2022. All rights reserved.
 // ---------------------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -13,8 +12,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.URP
 {
-	[Serializable]
-	public class OutlinePass : ScriptableRenderPass
+	public class OutlinePass : CustomRenderFeaturePass<OutlineRendererFeature>
 	{
 		private static class ShaderVariables
 		{
@@ -54,11 +52,13 @@ namespace Dreambox.Rendering.URP
 
 		private OutlineConfig Config { get; set; }
 
-		public OutlinePass(OutlineConfig config)
+		public override void Initialize(OutlineRendererFeature rendererFeature)
 		{
-			Config = config;
+			base.Initialize(rendererFeature);
 
-			Material = CoreUtils.CreateEngineMaterial(config.Shader);
+			Config = RenderFeature.Config;
+
+			Material = CoreUtils.CreateEngineMaterial(Config.Shader);
 
 			VariantsBuffer = new ComputeBuffer(Config.Variants.Length, Marshal.SizeOf<OutlineVariant>());
 
@@ -82,7 +82,7 @@ namespace Dreambox.Rendering.URP
 			RenderingUtils.ReAllocateIfNeeded(ref JumpBuffer2, renderTextureDescriptor);
 		}
 
-		public void Dispose()
+		public override void Dispose()
 		{
 			CoreUtils.Destroy(Material);
 			Mask?.Release();
