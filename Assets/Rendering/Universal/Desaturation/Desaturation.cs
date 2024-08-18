@@ -1,15 +1,10 @@
-﻿using Dreambox.Rendering.Core;
-using UnityEngine;
-using UnityEngine.Rendering;
+﻿using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-namespace Dreambox.Rendering.URP
+namespace Dreambox.Rendering.Universal
 {
-	public class Blur : PostProcessRenderFeature<BlurRenderPass>
+	public class Desaturation : PostProcessRenderFeature<DesaturationRenderPass>
 	{
-		[field: SerializeField]
-		public BlurSettings Settings { get; private set; }
-
 		public RTHandle tempTexture;
 
 		public float Factor { get; private set; }
@@ -18,7 +13,7 @@ namespace Dreambox.Rendering.URP
 		{
 			base.Create();
 
-			Pass.BlurRendererFeature = this;
+			Pass.RendererFeature = this;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -30,14 +25,14 @@ namespace Dreambox.Rendering.URP
 
 		public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
 		{
-			var blurVolumeComponent = VolumeManager.instance.stack.GetComponent<BlurVolumeComponent>();
+			var volumeComponent = VolumeManager.instance.stack.GetComponent<DesaturationVolumeComponent>();
 
-			if (blurVolumeComponent is null || blurVolumeComponent.active is false)
+			if (volumeComponent is null || volumeComponent.active is false)
 			{
 				return;
 			}
 
-			Factor = blurVolumeComponent.Factor.value;
+			Factor = volumeComponent.Factor.value;
 
 			CameraData cameraData = renderingData.cameraData;
 			if (cameraData.isSceneViewCamera || cameraData.isPreviewCamera)

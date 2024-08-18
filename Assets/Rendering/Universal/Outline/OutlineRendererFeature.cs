@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine.Rendering.Universal;
 
-namespace Dreambox.Rendering.URP
+namespace Dreambox.Rendering.Universal
 {
-	public partial class OutlineRendererFeature : RendererFeature<OutlineConfig, OutlinePass>
+	public partial class OutlineRendererFeature : CustomRendererFeature<OutlineConfig, OutlinePass>
 	{
 		public HashSet<OutlineRenderer> Renderers { get; } = new();
 

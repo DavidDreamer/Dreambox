@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace YandexGamesSDK
 {
-	public partial class Yandex: MonoBehaviour
+	public partial class Yandex : MonoBehaviour
 	{
 		[DllImport("__Internal")]
 		public static extern void SavePlayerData(string data);

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Dreambox.Rendering.URP
+namespace Dreambox.Rendering.Universal
 {
 	public struct OutlineRenderer
 	{

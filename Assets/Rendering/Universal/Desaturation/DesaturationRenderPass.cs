@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-namespace Dreambox.Rendering.URP
+namespace Dreambox.Rendering.Universal
 {
 	public class DesaturationRenderPass : ScriptableRenderPass
 	{

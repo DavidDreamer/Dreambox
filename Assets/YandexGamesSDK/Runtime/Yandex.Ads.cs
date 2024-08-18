@@ -11,7 +11,7 @@ namespace YandexGamesSDK
 		public static extern void ShowFullscreenAdv();
 
 		private UniTaskCompletionSource AdvCompletionSource { get; set; }
-		
+
 		public async UniTask ShowFullscreenAdvAsync(CancellationToken token)
 		{
 			AdvCompletionSource = new UniTaskCompletionSource();
@@ -22,7 +22,7 @@ namespace YandexGamesSDK
 
 		[UsedImplicitly]
 		public void OnFullscrenAdvClosed() => AdvCompletionSource.TrySetResult();
-		
+
 		[UsedImplicitly]
 		public void OnFullscrenAdvError() => AdvCompletionSource.TrySetResult();
 	}

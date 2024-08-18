@@ -1,7 +1,7 @@
 {
-	"name": "com.david-dreamer.dreambox.rendering.urp",
+	"name": "com.david-dreamer.dreambox.rendering.universal",
 	"version": "1.0.0",
-	"displayName": "Dreambox Rendering URP",
+	"displayName": "Dreambox Rendering Universal",
 	"unity": "2022.3",
 	"author": 
 	{

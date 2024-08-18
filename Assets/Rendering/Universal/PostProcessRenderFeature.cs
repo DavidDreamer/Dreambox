@@ -2,7 +2,7 @@
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-namespace Dreambox.Rendering.URP
+namespace Dreambox.Rendering.Universal
 {
 	public abstract class PostProcessRenderFeature<T> : ScriptableRendererFeature where T : ScriptableRenderPass, new()
 	{

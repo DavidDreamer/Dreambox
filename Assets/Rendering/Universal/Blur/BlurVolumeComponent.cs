@@ -1,6 +1,6 @@
 ﻿using UnityEngine.Rendering;
 
-namespace Dreambox.Rendering.URP
+namespace Dreambox.Rendering.Universal
 {
 	public class BlurVolumeComponent : VolumeComponent
 	{

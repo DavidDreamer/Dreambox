@@ -10,7 +10,7 @@ using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-namespace Dreambox.Rendering.URP
+namespace Dreambox.Rendering.Universal
 {
 	public class OutlinePass : ScriptableRenderPass, IDisposable
 	{

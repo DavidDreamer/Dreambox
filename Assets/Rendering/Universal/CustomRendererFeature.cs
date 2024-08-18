@@ -1,11 +1,12 @@
-using UnityEngine.Rendering.Universal;
-using UnityEngine;
 using System;
+using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
-namespace Dreambox.Rendering.URP
+namespace Dreambox.Rendering.Universal
 {
-	public abstract class RendererFeature<TConfig, TPass> : ScriptableRendererFeature
-		where TConfig : RendererFeatureConfig
+
+	public abstract class CustomRendererFeature<TConfig, TPass> : ScriptableRendererFeature
+		where TConfig : CustomRendererConfig
 		where TPass : ScriptableRenderPass, IDisposable
 	{
 		[field: SerializeField]
