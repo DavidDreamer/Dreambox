@@ -4,7 +4,6 @@ using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.Universal
 {
-
 	public abstract class CustomRendererFeature<TConfig, TPass> : ScriptableRendererFeature
 		where TConfig : CustomRendererConfig
 		where TPass : ScriptableRenderPass, IDisposable
