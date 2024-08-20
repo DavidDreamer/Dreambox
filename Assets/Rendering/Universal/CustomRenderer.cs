@@ -26,6 +26,8 @@ namespace Dreambox.Rendering.Universal
 
 		private void OnDisable()
 		{
+			Pass.Dispose();
+
 			RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
 		}
 
