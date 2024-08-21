@@ -6,8 +6,8 @@ using UnityEngine;
 
 namespace Dreambox.Rendering
 {
-	[CreateAssetMenu(menuName = "Dreambox/Rendering/OutlineConfig", fileName = nameof(OutlineConfig))]
-	public class OutlineConfig : CustomRendererConfig
+	[CreateAssetMenu(menuName = "Dreambox/Configs/Rendering/Outline")]
+	public class OutlineRendererConfig : CustomRendererConfig
 	{
 		[field: SerializeField]
 		public Shader Shader { get; private set; }

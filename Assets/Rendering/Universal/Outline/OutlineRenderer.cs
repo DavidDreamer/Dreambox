@@ -1,17 +1,25 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
 
 namespace Dreambox.Rendering.Universal
 {
-	public struct OutlineRenderer
+	public partial class OutlineRenderer : CustomRenderer<OutlineRendererConfig, OutlinePass>
 	{
-		public Renderer Renderer { get; }
+		public HashSet<OutlineTarget> Targets { get; } = new();
 
-		public int Variant { get; }
+		protected override OutlinePass CreatePass() => new(this);
 
-		public OutlineRenderer(Renderer renderer, int variant)
+		public void AddTarget(OutlineTarget target)
 		{
-			Renderer = renderer;
-			Variant = variant;
+			Targets.Add(target);
 		}
+
+		public void RemoveTarget(OutlineTarget target)
+		{
+			Targets.Remove(target);
+		}
+
+		public void Clear() => Targets.Clear();
+
+		protected override bool IsInactive() => Targets.Count == 0;
 	}
 }

@@ -36,9 +36,9 @@ namespace Dreambox.Rendering.Universal
 			public const int Decode = 3;
 		}
 
-		private OutlineRendererFeature RendererFeature { get; }
+		private OutlineRenderer RendererFeature { get; }
 
-		private OutlineConfig Config { get; }
+		private OutlineRendererConfig Config { get; }
 
 		private Material Material { get; set; }
 
@@ -52,7 +52,7 @@ namespace Dreambox.Rendering.Universal
 
 		private float MaxOffsetWidthOfAllConfigs { get; set; }
 
-		public OutlinePass(OutlineRendererFeature rendererFeature)
+		public OutlinePass(OutlineRenderer rendererFeature)
 		{
 			RendererFeature = rendererFeature;
 
@@ -107,7 +107,7 @@ namespace Dreambox.Rendering.Universal
 			{
 				CoreUtils.SetRenderTarget(commandBuffer, Mask, ClearFlag.Color);
 
-				foreach (OutlineRenderer outlineRenderer in RendererFeature.Renderers)
+				foreach (OutlineTarget outlineRenderer in RendererFeature.Targets)
 				{
 					commandBuffer.SetGlobalInteger(ShaderVariables.VariantIndex, outlineRenderer.Variant + 1);
 					Texture baseMap = outlineRenderer.Renderer.sharedMaterial.GetTexture(ShaderVariables.BaseMap);
