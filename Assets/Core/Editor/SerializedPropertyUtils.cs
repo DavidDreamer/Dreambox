@@ -8,6 +8,14 @@ namespace Dreambox.Core.Editor
 {
 	public static class SerializedPropertyUtils
 	{
+		public static void DrawIcon(this SerializedProperty serializedProperty)
+		{
+			const float size = 64;
+			EditorGUILayout.LabelField(serializedProperty.displayName);
+			serializedProperty.objectReferenceValue =
+				EditorGUILayout.ObjectField(serializedProperty.objectReferenceValue, typeof(Texture2D), false, GUILayout.Width(size), GUILayout.Height(size));
+		}
+
 		public static void DrawManagedReference(this SerializedProperty serializedProperty, Type type)
 		{
 			bool hasValue = serializedProperty.managedReferenceValue is not null;
