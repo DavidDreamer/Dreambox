@@ -3,6 +3,20 @@ using UnityEngine;
 
 namespace Dreambox.Core
 {
+	//todo: move to separate file
+	public enum ArithmeticOperation
+	{
+		Addition,
+		Subtraction,
+		Multiplication,
+		Division
+	}
+
+	public static class MatrixUtils
+	{
+		public static Matrix4x4 WorldUpRotation = Matrix4x4.Rotate(Quaternion.Euler(90, 0, 0));
+	}
+
 	public static class LayerMaskUtils
 	{
 		public static LayerMask NumberToMask(int number)
