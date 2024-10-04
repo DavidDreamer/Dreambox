@@ -13,7 +13,7 @@ namespace Dreambox.Core.Editor
 			const float size = 64;
 			EditorGUILayout.LabelField(serializedProperty.displayName);
 			serializedProperty.objectReferenceValue =
-				EditorGUILayout.ObjectField(serializedProperty.objectReferenceValue, typeof(Texture2D), false, GUILayout.Width(size), GUILayout.Height(size));
+				EditorGUILayout.ObjectField(serializedProperty.objectReferenceValue, typeof(Sprite), false, GUILayout.Width(size), GUILayout.Height(size));
 		}
 
 		public static void DrawManagedReference(this SerializedProperty serializedProperty, Type type)
