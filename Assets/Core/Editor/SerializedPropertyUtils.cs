@@ -100,6 +100,14 @@ namespace Dreambox.Core.Editor
 			}
 		}
 
+		public static void DrawChildrenIndented(this SerializedProperty serializedProperty)
+		{
+			using (new EditorGUI.IndentLevelScope(1))
+			{
+				serializedProperty.DrawChildren();
+			}
+		}
+
 		public static void DrawChildren(this SerializedProperty serializedProperty)
 		{
 			IEnumerator enumerator = serializedProperty.Copy().GetEnumerator();
