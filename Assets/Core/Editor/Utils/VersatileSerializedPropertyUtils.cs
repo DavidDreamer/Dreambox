@@ -7,7 +7,7 @@ namespace Dreambox.Core.Editor
 {
 	public static class VersatileSerializedPropertyUtils
 	{
-		public static void DrawVersatileOptional(this SerializedProperty serializedProperty, Type type, bool includeChildren = true)
+		public static void OptionalVersatileField(this SerializedProperty serializedProperty, Type type, bool includeChildren = true)
 		{
 			using (new EditorGUILayout.HorizontalScope())
 			{
@@ -16,7 +16,7 @@ namespace Dreambox.Core.Editor
 
 				if (shouldHaveValue)
 				{
-					serializedProperty.DrawVersatile(type, GUIContent.none, false);
+					serializedProperty.VersatileField(type, GUIContent.none, false);
 				}
 				else
 				{
@@ -30,10 +30,10 @@ namespace Dreambox.Core.Editor
 			}
 		}
 
-		public static void DrawVersatile(this SerializedProperty serializedProperty, Type type, bool includeChildren = true)
-			=> serializedProperty.DrawVersatile(type, new GUIContent(serializedProperty.displayName), includeChildren);
+		public static void VersatileField(this SerializedProperty serializedProperty, Type type, bool includeChildren = true)
+			=> serializedProperty.VersatileField(type, new GUIContent(serializedProperty.displayName), includeChildren);
 	
-		public static void DrawVersatile(this SerializedProperty serializedProperty, Type type, GUIContent label, bool includeChildren = true)
+		public static void VersatileField(this SerializedProperty serializedProperty, Type type, GUIContent label, bool includeChildren = true)
 		{
 			var inheritedTypes = type.GetInheritedTypes();
 
@@ -71,7 +71,7 @@ namespace Dreambox.Core.Editor
 			}
 		}
 
-		private static GUIContent ToGUIContent(this Type type, Type parentType)
+		public static GUIContent ToGUIContent(this Type type, Type parentType)
 		{
 			string parentTypeName = parentType.Name;
 			if (parentTypeName.StartsWith("I") && parentTypeName.Length > 1)
