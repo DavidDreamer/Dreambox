@@ -11,6 +11,7 @@ namespace Dreambox.Core.Editor
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
 			var versatileTypeAttribute = (VersatileAttribute)attribute;
+			
 			var inheritedTypes = versatileTypeAttribute.Type.GetInheritedTypes();
 
 			var displayedOptions =
@@ -20,17 +21,8 @@ namespace Dreambox.Core.Editor
 				? 0
 				: inheritedTypes.IndexOf(property.managedReferenceValue.GetType());
 
-			var selectorPosition = new Rect(position)
-			{
-				height = EditorGUIUtility.singleLineHeight,
-				x = position.x + EditorGUIUtility.labelWidth,
-				width = position.width - EditorGUIUtility.labelWidth
-			};
-
-			using (new EditorGUI.IndentLevelScope(1))
-			{
-				selectedOption = EditorGUI.Popup(selectorPosition, label, selectedOption, displayedOptions);
-			}
+			var popupPosition = EditorGUI.PrefixLabel(position, label);
+			selectedOption = EditorGUI.Popup(popupPosition, GUIContent.none, selectedOption, displayedOptions);
 
 			Type selectedType = inheritedTypes[selectedOption];
 

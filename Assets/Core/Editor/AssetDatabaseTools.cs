@@ -16,6 +16,16 @@ namespace Dreambox.Core.Editor
 			}
 		}
 
+		[MenuItem("Dreambox/Assets/Set Dirty")]
+		public static void SetDirty()
+		{
+			Object[] assets = Selection.objects;
+			foreach (Object asset in assets)
+			{
+				EditorUtility.SetDirty(asset);
+			}
+		}
+
 		[MenuItem("Dreambox/Assets/Delete Selected SubAssets")]
 		public static void DeleteSelectedSubAssets()
 		{

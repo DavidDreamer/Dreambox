@@ -7,7 +7,7 @@ namespace Dreambox.Core.Editor
 {
 	public static class VersatileSerializedPropertyUtils
 	{
-		public static void DrawVersatileOptional(this SerializedProperty serializedProperty, Type type)
+		public static void DrawVersatileOptional(this SerializedProperty serializedProperty, Type type, bool includeChildren = true)
 		{
 			using (new EditorGUILayout.HorizontalScope())
 			{
@@ -16,16 +16,24 @@ namespace Dreambox.Core.Editor
 
 				if (shouldHaveValue)
 				{
-					serializedProperty.DrawVersatileOptional(type);
+					serializedProperty.DrawVersatile(type, GUIContent.none, false);
 				}
 				else
 				{
 					serializedProperty.managedReferenceValue = null;
 				}
 			}
+
+			if (includeChildren)
+			{
+				serializedProperty.DrawChildrenIndented();
+			}
 		}
 
-		public static void DrawVersatile(this SerializedProperty serializedProperty, Type type)
+		public static void DrawVersatile(this SerializedProperty serializedProperty, Type type, bool includeChildren = true)
+			=> serializedProperty.DrawVersatile(type, new GUIContent(serializedProperty.displayName), includeChildren);
+	
+		public static void DrawVersatile(this SerializedProperty serializedProperty, Type type, GUIContent label, bool includeChildren = true)
 		{
 			var inheritedTypes = type.GetInheritedTypes();
 
@@ -48,7 +56,7 @@ namespace Dreambox.Core.Editor
 				? 0
 				: inheritedTypes.IndexOf(serializedProperty.managedReferenceValue.GetType());
 
-			selectedIndex = EditorGUILayout.Popup(new GUIContent(serializedProperty.displayName), selectedIndex, displayedOptions);
+			selectedIndex = EditorGUILayout.Popup(label, selectedIndex, displayedOptions);
 
 			Type selectedType = inheritedTypes[selectedIndex];
 
@@ -57,7 +65,10 @@ namespace Dreambox.Core.Editor
 				serializedProperty.managedReferenceValue = Activator.CreateInstance(selectedType);
 			}
 
-			serializedProperty.DrawChildrenIndented();
+			if (includeChildren)
+			{
+				serializedProperty.DrawChildrenIndented();
+			}
 		}
 
 		private static GUIContent ToGUIContent(this Type type, Type parentType)
@@ -69,7 +80,10 @@ namespace Dreambox.Core.Editor
 			}
 
 			int indexOfGenericParameter = parentTypeName.IndexOf('`');
-			parentTypeName = parentTypeName[..indexOfGenericParameter];
+			if (indexOfGenericParameter != -1)
+			{
+				parentTypeName = parentTypeName[..indexOfGenericParameter];
+			}
 
 			string typeName = type.Name;
 			typeName = typeName.Replace(parentTypeName, string.Empty);
