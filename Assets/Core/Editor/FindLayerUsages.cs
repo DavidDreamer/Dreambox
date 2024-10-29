@@ -232,7 +232,7 @@ namespace Dreambox.Core.Editor
 					{
 						EditorSceneManager.OpenScene(path);
 
-						var transforms = FindObjectsOfType<Transform>(true);
+						var transforms = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
 						foreach (Transform transform in transforms)
 						{
