@@ -25,8 +25,8 @@ namespace Dreambox.UI
 			vertexHelper.Clear();
 			vertexHelper.AddVert(new Vector3(vector.x, vector.y), ColorLeftBottom, new Vector2(0f, 0f));
 			vertexHelper.AddVert(new Vector3(vector.x, vector.w), ColorLeftTop, new Vector2(0f, 1f));
-			vertexHelper.AddVert(new Vector3(vector.z, vector.w), ColorRightBottom, new Vector2(1f, 1f));
-			vertexHelper.AddVert(new Vector3(vector.z, vector.y), ColorRightTop, new Vector2(1f, 0f));
+			vertexHelper.AddVert(new Vector3(vector.z, vector.w), ColorRightTop, new Vector2(1f, 1f));
+			vertexHelper.AddVert(new Vector3(vector.z, vector.y), ColorRightBottom, new Vector2(1f, 0f));
 			vertexHelper.AddTriangle(0, 1, 2);
 			vertexHelper.AddTriangle(2, 3, 0);
 		}

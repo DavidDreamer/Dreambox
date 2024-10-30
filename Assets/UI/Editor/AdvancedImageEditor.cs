@@ -31,6 +31,8 @@ namespace Dreambox.UI.Editor
 			EditorGUILayout.PropertyField(ColorLeftTop);
 			EditorGUILayout.PropertyField(ColorRightBottom);
 			EditorGUILayout.PropertyField(ColorRightTop);
+
+			serializedObject.ApplyModifiedProperties();
 		}
 	}
 }
