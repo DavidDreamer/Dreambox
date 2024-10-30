@@ -23,16 +23,24 @@ namespace Dreambox.Core.Editor
 				: inheritedTypes.IndexOf(property.managedReferenceValue.GetType());
 
 			var popupPosition = EditorGUI.PrefixLabel(position, label);
-			selectedOption = EditorGUI.Popup(popupPosition, GUIContent.none, selectedOption, displayedOptions);
 
-			Type selectedType = inheritedTypes[selectedOption];
-
-			if (property.managedReferenceValue is null || property.managedReferenceValue.GetType() != selectedType)
+			if (inheritedTypes.Count == 0)
 			{
-				property.managedReferenceValue = Activator.CreateInstance(selectedType);
+				EditorGUI.HelpBox(popupPosition, "No matching types found.", MessageType.Error);
 			}
+			else
+			{
+				selectedOption = EditorGUI.Popup(popupPosition, GUIContent.none, selectedOption, displayedOptions);
 
-			EditorGUI.PropertyField(position, property, GUIContent.none, true);
+				Type selectedType = inheritedTypes[selectedOption];
+
+				if (property.managedReferenceValue is null || property.managedReferenceValue.GetType() != selectedType)
+				{
+					property.managedReferenceValue = Activator.CreateInstance(selectedType);
+				}
+
+				EditorGUI.PropertyField(position, property, GUIContent.none, true);
+			}
 		}
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label) =>

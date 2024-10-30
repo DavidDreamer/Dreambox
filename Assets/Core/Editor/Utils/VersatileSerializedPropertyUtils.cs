@@ -32,7 +32,46 @@ namespace Dreambox.Core.Editor
 
 		public static void VersatileField(this SerializedProperty serializedProperty, Type type, bool includeChildren = true)
 			=> serializedProperty.VersatileField(type, new GUIContent(serializedProperty.displayName), includeChildren);
-	
+
+		public static void VersatileField(this SerializedProperty serializedProperty, Rect rect, Type type)
+		{
+			var inheritedTypes = type.GetInheritedTypes();
+
+			if (inheritedTypes.Count == 0)
+			{
+				using (new EditorGUILayout.HorizontalScope())
+				{
+					EditorGUI.HelpBox(rect, "No matching types found.", MessageType.None);
+				}
+
+				serializedProperty.managedReferenceValue = null;
+
+				return;
+			}
+
+			var displayedOptions = inheritedTypes.Select(t => t.ToGUIContent(type)).ToArray();
+
+			int selectedIndex = 0;
+			if (serializedProperty.managedReferenceValue is not null)
+			{
+				Type currentType = serializedProperty.managedReferenceValue.GetType();
+				int currentIndex = inheritedTypes.IndexOf(currentType);
+				if (currentIndex != -1)
+				{
+					selectedIndex = currentIndex;
+				}
+			}
+
+			selectedIndex = EditorGUI.Popup(rect, GUIContent.none, selectedIndex, displayedOptions);
+
+			Type selectedType = inheritedTypes[selectedIndex];
+
+			if (serializedProperty.managedReferenceValue is null || serializedProperty.managedReferenceValue.GetType() != selectedType)
+			{
+				serializedProperty.managedReferenceValue = Activator.CreateInstance(selectedType);
+			}
+		}
+
 		public static void VersatileField(this SerializedProperty serializedProperty, Type type, GUIContent label, bool includeChildren = true)
 		{
 			var inheritedTypes = type.GetInheritedTypes();
