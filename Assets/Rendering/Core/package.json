@@ -12,5 +12,6 @@
 	{
 		"com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
 		"com.unity.render-pipelines.core": "14.0.10"
+		"com.david-dreamer.dreambox.core": "https://github.com/DavidDreamer/Dreambox.git?path=Assets/Core"
 	}
 }
