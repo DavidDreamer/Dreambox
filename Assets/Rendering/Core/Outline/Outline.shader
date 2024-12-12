@@ -25,21 +25,6 @@ Shader "Hidden/Dreambox/Outline"
 
     StructuredBuffer<OutlineVariant> VariantsBuffer;
 
-    uint PackToR14G14B4(const uint2 uv, const uint index)
-    {
-        const uint r = uv.x << 18 & 0xFFFC0000;
-        const uint g = uv.y << 4 & 0x3FFF0;
-        const uint b = index & 0xF;
-        return r | g | b;
-    }
-
-    uint3 UnpackFromR14G14B4(const uint rgb)
-    {
-        const uint r = rgb >> 18 & 0x3FFF;
-        const uint g = rgb >> 4 & 0x3FFF;
-        const uint b = rgb & 0xF;
-        return uint3(r, g, b);
-    }
     ENDHLSL
 
     SubShader
@@ -114,11 +99,11 @@ Shader "Hidden/Dreambox/Outline"
                 return o;
             }
 
-            uint frag(v2f i) : SV_Target
+            float4 frag(v2f i) : SV_Target
             {
-                const uint2 position = i.pos.xy;
+                const float2 position = i.pos;
                 const uint configIndex = _MainTex.Load(int3(position, 0));
-                const uint dataPacked = PackToR14G14B4(position, configIndex);
+                const float4 dataPacked = float4(position, configIndex, 0);
                 return dataPacked;
             }
             ENDHLSL
@@ -142,7 +127,7 @@ Shader "Hidden/Dreambox/Outline"
                 float4 pos : SV_POSITION;
             };
 
-            Texture2D<uint> _MainTex;
+            Texture2D _MainTex;
             float4 _MainTex_TexelSize;
 
             int StepWidth;
@@ -154,9 +139,9 @@ Shader "Hidden/Dreambox/Outline"
                 return o;
             }
 
-            uint frag(v2f i) : SV_Target
+            float4 frag(v2f i) : SV_Target
             {
-                const uint2 position = i.pos.xy;
+                const float2 position = i.pos;
 
                 float minDistance = FLOAT_INFINITY;
                 float2 finalPosition;
@@ -170,10 +155,9 @@ Shader "Hidden/Dreambox/Outline"
                     {
                         const int2 offset = int2(u, v) * StepWidth;
                         const int2 positionWithOffset = clamp(position + offset, 0, _MainTex_TexelSize.zw - 1);
-                        const uint sample = _MainTex.Load(int3(positionWithOffset, 0));
-                        const float3 data = UnpackFromR14G14B4(sample);
-                        const float2 targetPosition = data.rg;
-                        const float variantIndex = data.b;
+                        const float3 sample = _MainTex.Load(int3(positionWithOffset, 0));
+                        const float2 targetPosition = sample.rg;
+                        const float variantIndex = sample.b;
 
                         if (variantIndex == 0)
                         {
@@ -192,7 +176,7 @@ Shader "Hidden/Dreambox/Outline"
                     }
                 }
 
-                return PackToR14G14B4(finalPosition, outputVariantIndex);
+                return float4(finalPosition, outputVariantIndex, 0);
             }
             ENDHLSL
         }
@@ -217,7 +201,7 @@ Shader "Hidden/Dreambox/Outline"
                 float4 pos : SV_POSITION;
             };
 
-            Texture2D<uint> _MainTex;
+            Texture2D _MainTex;
             float4 _MainTex_TexelSize;
 
             v2f vert(appdata v)
@@ -229,12 +213,11 @@ Shader "Hidden/Dreambox/Outline"
 
             float4 frag(v2f i) : SV_Target
             {
-                const uint2 position = i.pos.xy;
-                const uint sample = _MainTex.Load(int3(position, 0));
-                const float3 data = UnpackFromR14G14B4(sample);
-                const float index = data.b;
+                const float2 position = i.pos;
+                const float3 sample = _MainTex.Load(int3(position, 0));
+                const float index = sample.b;
                 const OutlineVariant variant = VariantsBuffer[index - 1];
-                const float distance = length(data.rg - position);
+                const float distance = length(sample.rg - position);
                 const float width = variant.Width * _MainTex_TexelSize.w;
                 const float weight = pow(1 - saturate(distance / width), variant.Softness);
                 float4 outlineColor = variant.Color;

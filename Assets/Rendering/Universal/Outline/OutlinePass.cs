@@ -86,7 +86,7 @@ namespace Dreambox.Rendering.Universal
 
 			RenderingUtils.ReAllocateIfNeeded(ref Mask, renderTextureDescriptor);
 
-			renderTextureDescriptor.graphicsFormat = GraphicsFormat.R32_SFloat;
+			renderTextureDescriptor.graphicsFormat = GraphicsFormat.R32G32B32A32_SFloat;
 			RenderingUtils.ReAllocateIfNeeded(ref JumpBuffer1, renderTextureDescriptor);
 			RenderingUtils.ReAllocateIfNeeded(ref JumpBuffer2, renderTextureDescriptor);
 		}
