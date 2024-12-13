@@ -20,7 +20,7 @@ namespace Dreambox.Rendering.Universal
 
 			public static int VariantsBuffer { get; } = Shader.PropertyToID(nameof(VariantsBuffer));
 
-			public static int VariantIndex { get; } = Shader.PropertyToID(nameof(VariantIndex));
+			public static int Variant { get; } = Shader.PropertyToID(nameof(Variant));
 
 			public static int BaseMap { get; } = Shader.PropertyToID($"_{nameof(BaseMap)}");
 		}
@@ -109,7 +109,7 @@ namespace Dreambox.Rendering.Universal
 
 				foreach (OutlineTarget outlineRenderer in RendererFeature.Targets)
 				{
-					commandBuffer.SetGlobalInteger(ShaderVariables.VariantIndex, outlineRenderer.Variant + 1);
+					commandBuffer.SetGlobalInteger(ShaderVariables.Variant, outlineRenderer.Variant + 1);
 					Texture baseMap = outlineRenderer.Renderer.sharedMaterial.GetTexture(ShaderVariables.BaseMap);
 					commandBuffer.SetGlobalTexture(ShaderVariables.BaseMap, baseMap);
 					commandBuffer.DrawRenderer(outlineRenderer.Renderer, Material, 0, ShaderPasses.Mask);
@@ -122,7 +122,7 @@ namespace Dreambox.Rendering.Universal
 				int iterations = Mathf.CeilToInt(Mathf.Log(maxPixelWidth, 2f)) - 1;
 
 				RTHandle startBuffer = iterations % 2 == 0 ? JumpBuffer2 : JumpBuffer1;
-				commandBuffer.Blit(Mask, startBuffer, Material, ShaderPasses.Init);
+				Blitter.BlitTexture(commandBuffer, Mask, startBuffer, Material, ShaderPasses.Init);
 
 				for (int i = iterations; i >= 0; i--)
 				{
@@ -131,16 +131,16 @@ namespace Dreambox.Rendering.Universal
 
 					if (i % 2 == 1)
 					{
-						commandBuffer.Blit(JumpBuffer1, JumpBuffer2, Material, ShaderPasses.JumpFlood);
+						Blitter.BlitTexture(commandBuffer, JumpBuffer1, JumpBuffer2, Material, ShaderPasses.JumpFlood);
 					}
 					else
 					{
-						commandBuffer.Blit(JumpBuffer2, JumpBuffer1, Material, ShaderPasses.JumpFlood);
+						Blitter.BlitTexture(commandBuffer, JumpBuffer2, JumpBuffer1, Material, ShaderPasses.JumpFlood);
 					}
 				}
 			}
 
-			void Decode() => commandBuffer.Blit(JumpBuffer1, cameraColorTargetHandle, Material, ShaderPasses.Decode);
+			void Decode() => Blitter.BlitTexture(commandBuffer, JumpBuffer1, cameraColorTargetHandle, Material, ShaderPasses.Decode);
 		}
 
 		private void UpdateConfigs()

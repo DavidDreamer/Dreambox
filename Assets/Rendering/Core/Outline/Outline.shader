@@ -6,27 +6,6 @@ Shader "Hidden/Dreambox/Outline"
         [HideInInspector] _MainTex ("MainTex", 2D) = "clear"
     }
 
-    HLSLINCLUDE
-    #define FLOAT_INFINITY ((float)(1e1000))
-
-    #pragma target 4.5
-    
-    #include "UnityCG.cginc"
-
-    struct OutlineVariant
-    {
-        float4 Color;
-        float Width;
-        float Softness;
-        float4 FillColor;
-        float4 FillFlickColor;
-        float FillFlickRate;
-    };
-
-    StructuredBuffer<OutlineVariant> VariantsBuffer;
-
-    ENDHLSL
-
     SubShader
     {
         Cull Off ZWrite Off ZTest Always
@@ -36,37 +15,40 @@ Shader "Hidden/Dreambox/Outline"
             Name "Mask"
 
             HLSLPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
+            #pragma target 4.5
+            #pragma vertex Vert
+            #pragma fragment Frag
 
-            sampler2D _BaseMap;
-            uint VariantIndex;
+            #include "UnityCG.cginc"
 
-            struct appdata
+            UNITY_DECLARE_TEX2D(_BaseMap);
+            uniform uint Variant;
+
+            struct Attributes
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
             };
 
-            struct v2f
+            struct Varyings
             {
                 float4 vertex : SV_POSITION;
                 float2 uv : TEXCOORD0;
             };
 
-            v2f vert(appdata v)
+            Varyings Vert(Attributes input)
             {
-                v2f data;
-                data.vertex = UnityObjectToClipPos(v.vertex);
-                data.uv = v.uv;
-                return data;
+                Varyings output;
+                output.vertex = UnityObjectToClipPos(input.vertex);
+                output.uv = input.uv;
+                return output;
             }
 
-            uint frag(v2f input) : SV_Target
+            uint Frag(Varyings input) : SV_Target
             {
-                const float alpha = tex2D(_BaseMap, input.uv).a;
-                clip(alpha - 1);
-                return VariantIndex;
+                const float4 textureSample = UNITY_SAMPLE_TEX2D(_BaseMap, input.uv);
+                clip(textureSample.a - 1);
+                return Variant;
             }
             ENDHLSL
         }
@@ -76,33 +58,43 @@ Shader "Hidden/Dreambox/Outline"
             Name "Init"
 
             HLSLPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
+            #pragma target 4.5
+            #pragma vertex Vert
+            #pragma fragment Frag
 
-            struct appdata
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+            struct Attributes
             {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
+                uint vertexID : SV_VertexID;
             };
 
-            struct v2f
+            struct Varyings
             {
-                float4 pos : SV_POSITION;
+                float4 positionCS : SV_POSITION;
+                float2 texcoord   : TEXCOORD0;
             };
 
-            Texture2D<uint> _MainTex;
+            Texture2D<uint> _BlitTexture;
+            SamplerState sampler_BlitTexture;
 
-            v2f vert(appdata v)
+            Varyings Vert(Attributes input)
             {
-                v2f o;
-                o.pos = UnityObjectToClipPos(v.vertex);
-                return o;
+                Varyings output;
+
+                float4 pos = GetFullScreenTriangleVertexPosition(input.vertexID);
+                float2 uv  = GetFullScreenTriangleTexCoord(input.vertexID);
+
+                output.positionCS = pos;
+                output.texcoord   = uv;
+
+                return output;
             }
 
-            float4 frag(v2f i) : SV_Target
+            float4 Frag(Varyings input) : SV_Target
             {
-                const float2 position = i.pos;
-                const uint configIndex = _MainTex.Load(int3(position, 0));
+                const float2 position = input.positionCS.xy;
+                const uint configIndex = _BlitTexture.Load(int3(position, 0));
                 const float4 dataPacked = float4(position, configIndex, 0);
                 return dataPacked;
             }
@@ -114,34 +106,46 @@ Shader "Hidden/Dreambox/Outline"
             Name "JumpFlood"
 
             HLSLPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
+            #pragma target 4.5
+            #pragma vertex Vert
+            #pragma fragment Frag
 
-            struct appdata
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+            struct Attributes
             {
-                float4 vertex : POSITION;
+                uint vertexID : SV_VertexID;
             };
 
-            struct v2f
+            struct Varyings
             {
-                float4 pos : SV_POSITION;
+                float4 positionCS : SV_POSITION;
+                float2 texcoord   : TEXCOORD0;
             };
 
-            Texture2D _MainTex;
-            float4 _MainTex_TexelSize;
+            #define FLOAT_INFINITY ((float)(1e1000))
+
+            Texture2D _BlitTexture;
+            float4 _BlitTexture_TexelSize;
 
             int StepWidth;
 
-            v2f vert(appdata v)
+            Varyings Vert(Attributes input)
             {
-                v2f o;
-                o.pos = UnityObjectToClipPos(v.vertex);
-                return o;
+                Varyings output;
+
+                float4 pos = GetFullScreenTriangleVertexPosition(input.vertexID);
+                float2 uv  = GetFullScreenTriangleTexCoord(input.vertexID);
+
+                output.positionCS = pos;
+                output.texcoord   = uv;
+
+                return output;
             }
 
-            float4 frag(v2f i) : SV_Target
+            float4 Frag(Varyings input) : SV_Target
             {
-                const float2 position = i.pos;
+                const float2 position = input.positionCS.xy;
 
                 float minDistance = FLOAT_INFINITY;
                 float2 finalPosition;
@@ -154,8 +158,8 @@ Shader "Hidden/Dreambox/Outline"
                     for (int v = -1; v <= 1; v++)
                     {
                         const int2 offset = int2(u, v) * StepWidth;
-                        const int2 positionWithOffset = clamp(position + offset, 0, _MainTex_TexelSize.zw - 1);
-                        const float3 sample = _MainTex.Load(int3(positionWithOffset, 0));
+                        const int2 positionWithOffset = clamp(position + offset, 0, _BlitTexture_TexelSize.zw - 1);
+                        const float3 sample = _BlitTexture.Load(int3(positionWithOffset, 0)).rgb;
                         const float2 targetPosition = sample.rg;
                         const float variantIndex = sample.b;
 
@@ -188,37 +192,61 @@ Shader "Hidden/Dreambox/Outline"
             Blend SrcAlpha OneMinusSrcAlpha
 
             HLSLPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
+            #pragma target 4.5
+            #pragma vertex Vert
+            #pragma fragment Frag
 
-            struct appdata
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+            #define UNITY_PI 3.14159265359f
+
+            struct Attributes
             {
-                float4 vertex : POSITION;
+                uint vertexID : SV_VertexID;
             };
 
-            struct v2f
+            struct Varyings
             {
-                float4 pos : SV_POSITION;
+                float4 positionCS : SV_POSITION;
+                float2 texcoord   : TEXCOORD0;
             };
 
-            Texture2D _MainTex;
-            float4 _MainTex_TexelSize;
-
-            v2f vert(appdata v)
+            struct OutlineVariant
             {
-                v2f o;
-                o.pos = UnityObjectToClipPos(v.vertex);
-                return o;
+                float4 Color;
+                float Width;
+                float Softness;
+                float4 FillColor;
+                float4 FillFlickColor;
+                float FillFlickRate;
+            };
+
+            StructuredBuffer<OutlineVariant> VariantsBuffer;
+
+            Texture2D _BlitTexture;
+            float4 _BlitTexture_TexelSize;
+
+            Varyings Vert(Attributes input)
+            {
+                Varyings output;
+
+                float4 pos = GetFullScreenTriangleVertexPosition(input.vertexID);
+                float2 uv  = GetFullScreenTriangleTexCoord(input.vertexID);
+
+                output.positionCS = pos;
+                output.texcoord   = uv;
+
+                return output;
             }
 
-            float4 frag(v2f i) : SV_Target
+            float4 Frag(Varyings input) : SV_Target
             {
-                const float2 position = i.pos;
-                const float3 sample = _MainTex.Load(int3(position, 0));
+                const float2 position = input.positionCS.xy;
+                const float3 sample = _BlitTexture.Load(int3(position, 0)).rgb;
                 const float index = sample.b;
                 const OutlineVariant variant = VariantsBuffer[index - 1];
                 const float distance = length(sample.rg - position);
-                const float width = variant.Width * _MainTex_TexelSize.w;
+                const float width = variant.Width * _BlitTexture_TexelSize.w;
                 const float weight = pow(1 - saturate(distance / width), variant.Softness);
                 float4 outlineColor = variant.Color;
                 outlineColor.a *= weight;
