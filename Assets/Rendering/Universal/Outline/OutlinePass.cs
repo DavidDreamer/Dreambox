@@ -4,10 +4,9 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Dreambox.Rendering.Core;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.Universal
@@ -36,17 +35,39 @@ namespace Dreambox.Rendering.Universal
 			public const int Decode = 3;
 		}
 
+		private class OutlineData : ContextItem
+		{
+			public TextureHandle Mask;
+
+			public TextureHandle JumpBuffer1;
+
+			public TextureHandle JumpBuffer2;
+
+			public override void Reset()
+			{
+				Mask = TextureHandle.nullHandle;
+				JumpBuffer1 = TextureHandle.nullHandle;
+				JumpBuffer2 = TextureHandle.nullHandle;
+			}
+		}
+
+		private class JumpFloodPassData
+		{
+			public TextureHandle Source;
+
+			public int Iteration;
+		}
+
+		private class PassData
+		{
+			public TextureHandle Source;
+		}
+
 		private OutlineRenderer RendererFeature { get; }
 
 		private OutlineRendererConfig Config { get; }
 
 		private Material Material { get; set; }
-
-		private RTHandle Mask;
-
-		private RTHandle JumpBuffer1;
-
-		private RTHandle JumpBuffer2;
 
 		private ComputeBuffer VariantsBuffer { get; set; }
 
@@ -68,79 +89,142 @@ namespace Dreambox.Rendering.Universal
 		public void Dispose()
 		{
 			CoreUtils.Destroy(Material);
-			Mask?.Release();
-			JumpBuffer1?.Release();
-			JumpBuffer2?.Release();
 			VariantsBuffer?.Release();
 		}
 
-		public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
+		public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
 		{
-			base.Configure(cmd, cameraTextureDescriptor);
-
-			var renderTextureDescriptor =
-				new RenderTextureDescriptor(cameraTextureDescriptor.width, cameraTextureDescriptor.height)
-				{
-					graphicsFormat = GraphicsFormat.R8_UInt
-				};
-
-			RenderingUtils.ReAllocateIfNeeded(ref Mask, renderTextureDescriptor);
-
-			renderTextureDescriptor.graphicsFormat = GraphicsFormat.R32G32B32A32_SFloat;
-			RenderingUtils.ReAllocateIfNeeded(ref JumpBuffer1, renderTextureDescriptor);
-			RenderingUtils.ReAllocateIfNeeded(ref JumpBuffer2, renderTextureDescriptor);
-		}
-
-		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
-		{
-			using var scope = new CommandBufferContextScope(context, "Outline");
-			CommandBuffer commandBuffer = scope.CommandBuffer;
-
-			RTHandle cameraColorTargetHandle = renderingData.cameraData.renderer.cameraColorTargetHandle;
-
 			UpdateConfigs();
-			PerformMasking();
-			PerformJumpFloodPasses();
-			Decode();
 
-			void PerformMasking()
+			float maxPixelWidth = Screen.height * MaxOffsetWidthOfAllConfigs;
+			int iterations = Mathf.CeilToInt(Mathf.Log(maxPixelWidth, 2f)) - 1;
+
+			using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<PassData>("Outline.Masking", out var data))
 			{
-				CoreUtils.SetRenderTarget(commandBuffer, Mask, ClearFlag.Color);
+				var universalResourceData = frameData.Get<UniversalResourceData>();
 
-				foreach (OutlineTarget outlineRenderer in RendererFeature.Targets)
-				{
-					commandBuffer.SetGlobalInteger(ShaderVariables.Variant, outlineRenderer.Variant + 1);
-					Texture baseMap = outlineRenderer.Renderer.sharedMaterial.GetTexture(ShaderVariables.BaseMap);
-					commandBuffer.SetGlobalTexture(ShaderVariables.BaseMap, baseMap);
-					commandBuffer.DrawRenderer(outlineRenderer.Renderer, Material, 0, ShaderPasses.Mask);
-				}
+				TextureHandle cameraColorTexture = universalResourceData.cameraColor;
+				TextureDesc cameraColorTextureDesc = cameraColorTexture.GetDescriptor(renderGraph);
+
+				RenderTextureDescriptor textureDesc =
+					new(cameraColorTextureDesc.width, cameraColorTextureDesc.height, RenderTextureFormat.RInt, 0, 0, RenderTextureReadWrite.Default);
+				TextureHandle targetTexture = UniversalRenderer.CreateRenderGraphTexture(renderGraph, textureDesc, "Outline.Mask", true);
+				builder.SetRenderAttachment(targetTexture, 0);
+
+				var outlineData = frameData.Create<OutlineData>();
+				outlineData.Mask = targetTexture;
+
+				builder.AllowGlobalStateModification(true);
+
+				builder.SetRenderFunc((PassData data, RasterGraphContext context) => ExecuteMasking(context));
 			}
 
-			void PerformJumpFloodPasses()
+			using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<PassData>("Outline.Init", out var data))
 			{
-				float maxPixelWidth = JumpBuffer1.rt.height * MaxOffsetWidthOfAllConfigs;
-				int iterations = Mathf.CeilToInt(Mathf.Log(maxPixelWidth, 2f)) - 1;
+				var universalResourceData = frameData.Get<UniversalResourceData>();
+				var outlineData = frameData.Get<OutlineData>();
 
-				RTHandle startBuffer = iterations % 2 == 0 ? JumpBuffer2 : JumpBuffer1;
-				Blitter.BlitTexture(commandBuffer, Mask, startBuffer, Material, ShaderPasses.Init);
+				builder.UseTexture(outlineData.Mask);
+				data.Source = outlineData.Mask;
 
-				for (int i = iterations; i >= 0; i--)
+				TextureHandle cameraColorTexture = universalResourceData.cameraColor;
+				TextureDesc cameraColorTextureDesc = cameraColorTexture.GetDescriptor(renderGraph);
+				RenderTextureDescriptor textureDesc =
+					new(cameraColorTextureDesc.width, cameraColorTextureDesc.height, RenderTextureFormat.ARGBFloat, 0, 0, RenderTextureReadWrite.Default);
+				outlineData.JumpBuffer1 = UniversalRenderer.CreateRenderGraphTexture(renderGraph, textureDesc, "Outline.JumpBuffer1", true);
+				outlineData.JumpBuffer2 = UniversalRenderer.CreateRenderGraphTexture(renderGraph, textureDesc, "Outline.JumpBuffer2", true);
+
+				TextureHandle startBuffer = iterations % 2 == 0 ? outlineData.JumpBuffer2 : outlineData.JumpBuffer1;
+				builder.SetRenderAttachment(startBuffer, 0);
+
+				builder.AllowGlobalStateModification(true);
+
+				builder.SetRenderFunc((PassData data, RasterGraphContext context) => ExecuteInit(context, data));
+			}
+
+			for (int i = iterations; i >= 0; i--)
+			{
+				using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<JumpFloodPassData>("Outline.JumpFlood", out var data))
 				{
-					float stepWidth = Mathf.Pow(2, i);
-					commandBuffer.SetGlobalFloat(ShaderVariables.StepWidth, stepWidth);
+					var universalResourceData = frameData.Get<UniversalResourceData>();
+					var outlineData = frameData.Get<OutlineData>();
 
+					TextureHandle source, target;
 					if (i % 2 == 1)
 					{
-						Blitter.BlitTexture(commandBuffer, JumpBuffer1, JumpBuffer2, Material, ShaderPasses.JumpFlood);
+						source = outlineData.JumpBuffer1;
+						target = outlineData.JumpBuffer2;
 					}
 					else
 					{
-						Blitter.BlitTexture(commandBuffer, JumpBuffer2, JumpBuffer1, Material, ShaderPasses.JumpFlood);
+						source = outlineData.JumpBuffer2;
+						target = outlineData.JumpBuffer1;
 					}
+
+					builder.UseTexture(source);
+					data.Source = source;
+					data.Iteration = 1;
+
+					builder.SetRenderAttachment(target, 0);
+
+					builder.AllowGlobalStateModification(true);
+
+					builder.SetRenderFunc((JumpFloodPassData data, RasterGraphContext context) => ExecuteJumpFlood(context, data));
 				}
 			}
 
-			void Decode() => Blitter.BlitTexture(commandBuffer, JumpBuffer1, cameraColorTargetHandle, Material, ShaderPasses.Decode);
+			using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<PassData>("Outline.Decoding", out var data))
+			{
+				var universalResourceData = frameData.Get<UniversalResourceData>();
+				var oulineData = frameData.Get<OutlineData>();
+
+				data.Source = oulineData.JumpBuffer1;
+				builder.UseTexture(oulineData.JumpBuffer1);
+
+				TextureHandle cameraColorTexture = universalResourceData.cameraColor;
+				builder.SetRenderAttachment(cameraColorTexture, 0);
+
+				builder.AllowGlobalStateModification(true);
+
+				builder.SetRenderFunc((PassData data, RasterGraphContext context) => ExecuteDecoding(context, data));
+			}
+		}
+
+		private void ExecuteMasking(RasterGraphContext context)
+		{
+			RasterCommandBuffer commandBuffer = context.cmd;
+
+			commandBuffer.ClearRenderTarget(true, true, Color.clear);
+
+			foreach (OutlineTarget outlineRenderer in RendererFeature.Targets)
+			{
+				commandBuffer.SetGlobalInteger(ShaderVariables.Variant, outlineRenderer.Variant + 1);
+				Texture baseMap = outlineRenderer.Renderer.sharedMaterial.GetTexture(ShaderVariables.BaseMap);
+				//commandBuffer.SetGlobalTexture(ShaderVariables.BaseMap, baseMap);
+				commandBuffer.DrawRenderer(outlineRenderer.Renderer, Material, 0, ShaderPasses.Mask);
+			}
+		}
+
+		private void ExecuteInit(RasterGraphContext context, PassData data)
+		{
+			RasterCommandBuffer commandBuffer = context.cmd;
+			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), Material, ShaderPasses.Init);
+		}
+
+		private void ExecuteJumpFlood(RasterGraphContext context, JumpFloodPassData data)
+		{
+			RasterCommandBuffer commandBuffer = context.cmd;
+
+			float stepWidth = Mathf.Pow(2, data.Iteration);
+			commandBuffer.SetGlobalFloat(ShaderVariables.StepWidth, stepWidth);
+
+			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), Material, ShaderPasses.JumpFlood);
+		}
+
+		private void ExecuteDecoding(RasterGraphContext context, PassData data)
+		{
+			RasterCommandBuffer commandBuffer = context.cmd;
+			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), Material, ShaderPasses.Decode);
 		}
 
 		private void UpdateConfigs()
