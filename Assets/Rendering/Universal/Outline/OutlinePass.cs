@@ -50,6 +50,11 @@ namespace Dreambox.Rendering.Universal
 				JumpBuffer2 = TextureHandle.nullHandle;
 			}
 		}
+		
+		private class MaskingPassData
+		{
+			public TextureHandle Target;
+		}
 
 		private class JumpFloodPassData
 		{
@@ -105,18 +110,18 @@ namespace Dreambox.Rendering.Universal
 			TextureHandle cameraColorTexture = resourceData.cameraColor;
 			TextureDesc cameraColorTextureDesc = cameraColorTexture.GetDescriptor(renderGraph);
 
-			using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<PassData>("Outline.Masking", out var data))
+			using (IUnsafeRenderGraphBuilder builder = renderGraph.AddUnsafePass<MaskingPassData>("Outline.Masking", out var data))
 			{
 				RenderTextureDescriptor textureDesc =
 					new(cameraColorTextureDesc.width, cameraColorTextureDesc.height, RenderTextureFormat.RInt, 0, 0, RenderTextureReadWrite.Default);
 				TextureHandle targetTexture = UniversalRenderer.CreateRenderGraphTexture(renderGraph, textureDesc, "Outline.Mask", true);
-				builder.SetRenderAttachment(targetTexture, 0);
 
-				outlineData.Mask = targetTexture;
+				data.Target = outlineData.Mask = targetTexture;
+				builder.UseTexture(targetTexture);
 
 				builder.AllowGlobalStateModification(true);
 
-				builder.SetRenderFunc((PassData data, RasterGraphContext context) => ExecuteMasking(context));
+				builder.SetRenderFunc((MaskingPassData data, UnsafeGraphContext context) => ExecuteMasking(context, data));
 			}
 
 			using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<PassData>("Outline.Init", out var data))
@@ -178,17 +183,18 @@ namespace Dreambox.Rendering.Universal
 			}
 		}
 
-		private void ExecuteMasking(RasterGraphContext context)
+		private void ExecuteMasking(UnsafeGraphContext context, MaskingPassData data)
 		{
-			RasterCommandBuffer commandBuffer = context.cmd;
+			CommandBuffer commandBuffer = CommandBufferHelpers.GetNativeCommandBuffer(context.cmd);
 
+			commandBuffer.SetRenderTarget(data.Target);
 			commandBuffer.ClearRenderTarget(true, true, Color.clear);
 
 			foreach (OutlineTarget outlineRenderer in RendererFeature.Targets)
 			{
 				commandBuffer.SetGlobalInteger(ShaderVariables.Variant, outlineRenderer.Variant + 1);
 				Texture baseMap = outlineRenderer.Renderer.sharedMaterial.GetTexture(ShaderVariables.BaseMap);
-				//commandBuffer.SetGlobalTexture(ShaderVariables.BaseMap, baseMap);
+				commandBuffer.SetGlobalTexture(ShaderVariables.BaseMap, baseMap);
 				commandBuffer.DrawRenderer(outlineRenderer.Renderer, Material, 0, ShaderPasses.Mask);
 			}
 		}
