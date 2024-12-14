@@ -16,7 +16,7 @@ Shader "Hidden/Dreambox/Blur"
         {
             Name "Horizontal"
             HLSLPROGRAM
-            #pragma vertex vert
+            #pragma vertex Vert
             #pragma fragment FragHorizontal
             #pragma multi_compile_local_fragment ALGORITHM_BOX ALGORITHM_GAUSSIAN
             #pragma multi_compile_local_fragment WRAP_MODE_CLAMP WRAP_MODE_MIRROR
@@ -27,7 +27,7 @@ Shader "Hidden/Dreambox/Blur"
         {
             Name "Vertical"
             HLSLPROGRAM
-            #pragma vertex vert
+            #pragma vertex Vert
             #pragma fragment FragVertical
             #pragma multi_compile_local_fragment ALGORITHM_BOX ALGORITHM_GAUSSIAN
             #pragma multi_compile_local_fragment WRAP_MODE_CLAMP WRAP_MODE_MIRROR

@@ -4,17 +4,12 @@ using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.Universal
 {
-	public abstract class PostProcessRenderFeature<T> : ScriptableRendererFeature where T : ScriptableRenderPass, new()
+	public abstract class PostProcessRenderFeature<T> : CustomRendererFeature<T> where T : ScriptableRenderPass
 	{
-		[field: SerializeField]
-		protected RenderPassEvent RenderPassEvent { get; set; }
-
 		[field: SerializeField]
 		private Shader Shader { get; set; }
 
 		public Material Material { get; private set; }
-
-		protected T Pass { get; set; }
 
 		public override void Create()
 		{
@@ -22,7 +17,7 @@ namespace Dreambox.Rendering.Universal
 
 			Material = CoreUtils.CreateEngineMaterial(Shader);
 
-			Pass = new T { renderPassEvent = RenderPassEvent };
+			base.Create();
 		}
 
 		protected override void Dispose(bool disposing)

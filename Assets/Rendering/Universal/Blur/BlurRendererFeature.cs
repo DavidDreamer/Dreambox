@@ -10,42 +10,17 @@ namespace Dreambox.Rendering.Universal
 		[field: SerializeField]
 		public BlurSettings Settings { get; private set; }
 
-		public RTHandle tempTexture;
-
 		public float Factor { get; private set; }
 
-		public override void Create()
-		{
-			base.Create();
+		public override BlurRenderPass CreatePass() => new(Settings, Material);
 
-			Pass.BlurRendererFeature = this;
-		}
+		//var blurVolumeComponent = VolumeManager.instance.stack.GetComponent<BlurVolumeComponent>();
 
-		protected override void Dispose(bool disposing)
-		{
-			base.Dispose(disposing);
+		//	if (blurVolumeComponent is null || blurVolumeComponent.active is false)
+		//	{
+		//		return;
+		//	}
 
-			tempTexture?.Release();
-		}
-
-		public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
-		{
-			var blurVolumeComponent = VolumeManager.instance.stack.GetComponent<BlurVolumeComponent>();
-
-			if (blurVolumeComponent is null || blurVolumeComponent.active is false)
-			{
-				return;
-			}
-
-			Factor = blurVolumeComponent.Factor.value;
-
-			CameraData cameraData = renderingData.cameraData;
-			if (cameraData.isSceneViewCamera || cameraData.isPreviewCamera)
-			{
-				return;
-			}
-
-			renderer.EnqueuePass(Pass);
-		}
+		//	Factor = blurVolumeComponent.Factor.value;
 	}
 }

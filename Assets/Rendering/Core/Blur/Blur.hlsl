@@ -1,41 +1,19 @@
 ﻿#pragma once
-#include "UnityCG.cginc"
-#define PI 3.14159265
 
-sampler2D _MainTex;
-float4 _MainTex_TexelSize;
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+#include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
 
 float Radius;
 float Factor;
-
-struct appdata
-{
-    float4 vertex : POSITION;
-    float2 uv : TEXCOORD0;
-};
-
-struct v2f
-{
-    float2 uv : TEXCOORD0;
-    float4 vertex : SV_POSITION;
-};
-
-v2f vert(appdata v)
-{
-    v2f o;
-    o.vertex = UnityObjectToClipPos(v.vertex);
-    o.uv = v.uv;
-    return o;
-}
 
 float4 SampleColor(const float2 uv)
 {
     #ifdef WRAP_MODE_MIRROR
     const float2 uvCorrected = uv - 2 * (uv - saturate(uv));
-    return tex2D(_MainTex, uvCorrected);
+    return SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uvCorrected);
     #else
     const float2 uvCorrected = saturate(uv);
-    return tex2D(_MainTex, uvCorrected);
+    return SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uvCorrected);
     #endif
 }
 
@@ -48,16 +26,16 @@ float BlurGaussian(const int distance)
 
 float4 BlurBox(const float2 uv, const float2 direction)
 {
-    float3 totalColor = tex2D(_MainTex, uv).xyz;
+    float3 totalColor = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv).xyz;
     float totalWeight = 1;
 
     for (int i = 1; i <= Radius; ++i)
     {
         totalWeight += 2;
 
-        const float2 offset = i * _MainTex_TexelSize.xy * direction;
-        totalColor += SampleColor(uv + offset);
-        totalColor += SampleColor(uv - offset);
+        const float2 offset = i * _BlitTexture_TexelSize.xy * direction;
+        totalColor += SampleColor(uv + offset).rgb;
+        totalColor += SampleColor(uv - offset).rgb;
     }
 
     totalColor /= totalWeight;
@@ -72,7 +50,7 @@ float4 BlurGaussian(const float2 uv, const float2 direction)
     const float centerWeight = BlurGaussian(0);
     totalWeight += centerWeight;
 
-    const float4 centerColor = tex2D(_MainTex, uv);
+    const float4 centerColor = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv);
     totalColor += centerColor * centerWeight;
 
     for (int i = 1; i <= Radius; ++i)
@@ -80,7 +58,7 @@ float4 BlurGaussian(const float2 uv, const float2 direction)
         const float weight = BlurGaussian(i);
         totalWeight += weight * 2.0f;
 
-        const float2 offset = i * _MainTex_TexelSize.xy * direction;
+        const float2 offset = i * _BlitTexture_TexelSize.xy * direction;
         totalColor += SampleColor(uv + offset) * weight;
         totalColor += SampleColor(uv - offset) * weight;
     }
@@ -101,12 +79,12 @@ float4 Frag(const float2 uv, const float2 direction)
     #endif
 }
 
-float4 FragHorizontal(const v2f input) : SV_Target
+float4 FragHorizontal(Varyings input) : SV_Target
 {
-    return Frag(input.uv, float2(1, 0));
+    return Frag(input.texcoord, float2(1, 0));
 }
 
-float4 FragVertical(const v2f input) : SV_Target
+float4 FragVertical(Varyings input) : SV_Target
 {
-    return Frag(input.uv, float2(0, 1));
+    return Frag(input.texcoord, float2(0, 1));
 }

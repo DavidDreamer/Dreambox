@@ -1,39 +1,48 @@
 ﻿using Dreambox.Rendering.Core;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.RenderGraphModule;
+using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.Universal
 {
 	public class BlurRenderPass : ScriptableRenderPass
 	{
-		public BlurRendererFeature BlurRendererFeature { get; set; }
+		private BlurSettings Settings { get; }
 
-		public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
+		private Material Material { get; }
+
+		public BlurRenderPass(BlurSettings settings, Material material)
 		{
-			RenderTextureDescriptor cameraColorTargetDescriptor =
-				renderingData.cameraData.renderer.cameraColorTargetHandle.rt.descriptor;
-
-			Vector2 scaleFactor = Vector2.one / BlurRendererFeature.Settings.Downsample;
-
-			RenderingUtils.ReAllocateIfNeeded(ref BlurRendererFeature.tempTexture, scaleFactor,
-				in cameraColorTargetDescriptor,
-				name: "TempBlurTexture");
+			Settings = settings;
+			Material = material;
 		}
 
-		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+		public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
 		{
-			var scope = new CommandBufferContextScope(context, nameof(BlurRendererFeature));
-			CommandBuffer commandBuffer = scope.CommandBuffer;
+			var universalResourceData = frameData.Get<UniversalResourceData>();
+			var universalCameraData = frameData.Get<UniversalCameraData>();
 
-			RTHandle cameraColorTargetHandler = renderingData.cameraData.renderer.cameraColorTargetHandle;
+			if (universalResourceData.isActiveTargetBackBuffer)
+				return;
 
-			BlurRendererFeature.Settings.ApplyTo(BlurRendererFeature.Material);
+			TextureHandle cameraColorTexture = universalResourceData.activeColorTexture;
+			RenderTextureDescriptor cameraTargetDescriptor = universalCameraData.cameraTargetDescriptor;
 
-			commandBuffer.Blit(cameraColorTargetHandler, BlurRendererFeature.tempTexture, BlurRendererFeature.Material,
-				0);
-			commandBuffer.Blit(BlurRendererFeature.tempTexture, cameraColorTargetHandler, BlurRendererFeature.Material,
-				1);
+			int width = cameraTargetDescriptor.width / Settings.Downsample;
+			int height = cameraTargetDescriptor.width / Settings.Downsample;
+			RenderTextureDescriptor renderTextureDescriptor = new(width, height, RenderTextureFormat.Default, 0);
+
+			TextureHandle blurTexture = UniversalRenderer.CreateRenderGraphTexture(renderGraph, renderTextureDescriptor, "BlurTexture", true);
+
+			Settings.ApplyTo(Material);
+
+			RenderGraphUtils.BlitMaterialParameters blitMaterialParameters = new(cameraColorTexture, blurTexture, Material, 0);
+			renderGraph.AddBlitPass(blitMaterialParameters, "Blur.Horizontal");
+
+			blitMaterialParameters = new(blurTexture, cameraColorTexture, Material, 1);
+			renderGraph.AddBlitPass(blitMaterialParameters, "Blur.Vertical");
 		}
 	}
 }
