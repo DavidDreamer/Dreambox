@@ -99,19 +99,19 @@ namespace Dreambox.Rendering.Universal
 			float maxPixelWidth = Screen.height * MaxOffsetWidthOfAllConfigs;
 			int iterations = Mathf.CeilToInt(Mathf.Log(maxPixelWidth, 2f)) - 1;
 
+			var resourceData = frameData.Get<UniversalResourceData>();
+			var outlineData = frameData.Create<OutlineData>();
+
+			TextureHandle cameraColorTexture = resourceData.cameraColor;
+			TextureDesc cameraColorTextureDesc = cameraColorTexture.GetDescriptor(renderGraph);
+
 			using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<PassData>("Outline.Masking", out var data))
 			{
-				var universalResourceData = frameData.Get<UniversalResourceData>();
-
-				TextureHandle cameraColorTexture = universalResourceData.cameraColor;
-				TextureDesc cameraColorTextureDesc = cameraColorTexture.GetDescriptor(renderGraph);
-
 				RenderTextureDescriptor textureDesc =
 					new(cameraColorTextureDesc.width, cameraColorTextureDesc.height, RenderTextureFormat.RInt, 0, 0, RenderTextureReadWrite.Default);
 				TextureHandle targetTexture = UniversalRenderer.CreateRenderGraphTexture(renderGraph, textureDesc, "Outline.Mask", true);
 				builder.SetRenderAttachment(targetTexture, 0);
 
-				var outlineData = frameData.Create<OutlineData>();
 				outlineData.Mask = targetTexture;
 
 				builder.AllowGlobalStateModification(true);
@@ -121,14 +121,9 @@ namespace Dreambox.Rendering.Universal
 
 			using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<PassData>("Outline.Init", out var data))
 			{
-				var universalResourceData = frameData.Get<UniversalResourceData>();
-				var outlineData = frameData.Get<OutlineData>();
-
 				builder.UseTexture(outlineData.Mask);
 				data.Source = outlineData.Mask;
 
-				TextureHandle cameraColorTexture = universalResourceData.cameraColor;
-				TextureDesc cameraColorTextureDesc = cameraColorTexture.GetDescriptor(renderGraph);
 				RenderTextureDescriptor textureDesc =
 					new(cameraColorTextureDesc.width, cameraColorTextureDesc.height, RenderTextureFormat.ARGBFloat, 0, 0, RenderTextureReadWrite.Default);
 				outlineData.JumpBuffer1 = UniversalRenderer.CreateRenderGraphTexture(renderGraph, textureDesc, "Outline.JumpBuffer1", true);
@@ -146,9 +141,6 @@ namespace Dreambox.Rendering.Universal
 			{
 				using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<JumpFloodPassData>("Outline.JumpFlood", out var data))
 				{
-					var universalResourceData = frameData.Get<UniversalResourceData>();
-					var outlineData = frameData.Get<OutlineData>();
-
 					TextureHandle source, target;
 					if (i % 2 == 1)
 					{
@@ -175,13 +167,9 @@ namespace Dreambox.Rendering.Universal
 
 			using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<PassData>("Outline.Decoding", out var data))
 			{
-				var universalResourceData = frameData.Get<UniversalResourceData>();
-				var oulineData = frameData.Get<OutlineData>();
+				data.Source = outlineData.JumpBuffer1;
+				builder.UseTexture(outlineData.JumpBuffer1);
 
-				data.Source = oulineData.JumpBuffer1;
-				builder.UseTexture(oulineData.JumpBuffer1);
-
-				TextureHandle cameraColorTexture = universalResourceData.cameraColor;
 				builder.SetRenderAttachment(cameraColorTexture, 0);
 
 				builder.AllowGlobalStateModification(true);
