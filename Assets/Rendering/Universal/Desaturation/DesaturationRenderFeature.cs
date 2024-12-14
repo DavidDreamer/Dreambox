@@ -3,7 +3,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.Universal
 {
-	public class Desaturation : PostProcessRenderFeature<DesaturationRenderPass>
+	public class DesaturationRenderFeature : PostProcessRenderFeature<DesaturationRenderPass>
 	{
 		public RTHandle tempTexture;
 

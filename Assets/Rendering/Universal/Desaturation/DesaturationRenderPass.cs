@@ -7,7 +7,7 @@ namespace Dreambox.Rendering.Universal
 {
 	public class DesaturationRenderPass : ScriptableRenderPass
 	{
-		public Desaturation RendererFeature { get; set; }
+		public DesaturationRenderFeature RendererFeature { get; set; }
 
 		public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
 		{
@@ -21,7 +21,7 @@ namespace Dreambox.Rendering.Universal
 
 		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
 		{
-			CommandBuffer commandBuffer = CommandBufferPool.Get(nameof(Desaturation));
+			CommandBuffer commandBuffer = CommandBufferPool.Get(nameof(DesaturationRenderFeature));
 
 			RTHandle cameraColorTargetHandler = renderingData.cameraData.renderer.cameraColorTargetHandle;
 
