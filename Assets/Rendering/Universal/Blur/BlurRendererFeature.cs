@@ -12,7 +12,7 @@ namespace Dreambox.Rendering.Universal
 
 		public float Factor { get; private set; }
 
-		public override BlurRenderPass CreatePass() => new(Settings, Material);
+		protected override BlurRenderPass CreatePass() => new(Settings, Material);
 
 		//var blurVolumeComponent = VolumeManager.instance.stack.GetComponent<BlurVolumeComponent>();
 

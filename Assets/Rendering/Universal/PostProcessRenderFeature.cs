@@ -24,5 +24,15 @@ namespace Dreambox.Rendering.Universal
 		{
 			CoreUtils.Destroy(Material);
 		}
+
+		protected override bool IsValid()
+		{
+			if (Shader == null)
+			{
+				return false;
+			}
+
+			return true;
+		}
 	}
 }

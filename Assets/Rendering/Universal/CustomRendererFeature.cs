@@ -15,7 +15,7 @@ namespace Dreambox.Rendering.Universal
 
 		public TPass Pass { get; private set; }
 
-		public abstract TPass CreatePass();
+		protected abstract TPass CreatePass();
 
 		public override void Create()
 		{
@@ -23,8 +23,15 @@ namespace Dreambox.Rendering.Universal
 			Pass.renderPassEvent = RenderPassEvent;
 		}
 
+		protected virtual bool IsValid() => true;
+
 		public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
 		{
+			if (!IsValid())
+			{
+				return;
+			}
+
 			if (CameraType.HasFlag(renderingData.cameraData.cameraType))
 			{
 				renderer.EnqueuePass(Pass);

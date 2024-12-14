@@ -43,7 +43,7 @@ namespace Dreambox.Rendering.Universal
 			renderer.EnqueuePass(Pass);
 		}
 
-		public override DesaturationRenderPass CreatePass()
+		protected override DesaturationRenderPass CreatePass()
 		{
 			throw new System.NotImplementedException();
 		}
