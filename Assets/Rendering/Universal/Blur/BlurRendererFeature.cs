@@ -5,7 +5,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.Universal
 {
-	public class Blur : PostProcessRenderFeature<BlurRenderPass>
+	public class BlurRendererFeature : PostProcessRenderFeature<BlurRenderPass>
 	{
 		[field: SerializeField]
 		public BlurSettings Settings { get; private set; }

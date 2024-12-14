@@ -7,7 +7,7 @@ namespace Dreambox.Rendering.Universal
 {
 	public class BlurRenderPass : ScriptableRenderPass
 	{
-		public Blur BlurRendererFeature { get; set; }
+		public BlurRendererFeature BlurRendererFeature { get; set; }
 
 		public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
 		{
