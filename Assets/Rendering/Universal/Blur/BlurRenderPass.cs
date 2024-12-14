@@ -31,7 +31,7 @@ namespace Dreambox.Rendering.Universal
 			RenderTextureDescriptor cameraTargetDescriptor = universalCameraData.cameraTargetDescriptor;
 
 			int width = cameraTargetDescriptor.width / Settings.Downsample;
-			int height = cameraTargetDescriptor.width / Settings.Downsample;
+			int height = cameraTargetDescriptor.height / Settings.Downsample;
 			RenderTextureDescriptor renderTextureDescriptor = new(width, height, RenderTextureFormat.Default, 0);
 
 			TextureHandle blurTexture = UniversalRenderer.CreateRenderGraphTexture(renderGraph, renderTextureDescriptor, "BlurTexture", true);

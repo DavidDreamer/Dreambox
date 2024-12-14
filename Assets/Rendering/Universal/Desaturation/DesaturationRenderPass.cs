@@ -1,41 +1,28 @@
-﻿using Dreambox.Rendering.Core;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.RenderGraphModule;
+using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.Universal
 {
 	public class DesaturationRenderPass : ScriptableRenderPass
 	{
-		public DesaturationRenderFeature RendererFeature { get; set; }
+		private Material Material { get; }
 
-		public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
+		public DesaturationRenderPass(Material material)
 		{
-			RenderTextureDescriptor cameraColorTargetDescriptor =
-				renderingData.cameraData.renderer.cameraColorTargetHandle.rt.descriptor;
-
-			RenderingUtils.ReAllocateIfNeeded(ref RendererFeature.tempTexture, Vector2.one,
-				in cameraColorTargetDescriptor,
-				name: "TempTexture");
+			Material = material;
 		}
 
-		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+		public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
 		{
-			CommandBuffer commandBuffer = CommandBufferPool.Get(nameof(DesaturationRenderFeature));
+			var universalResourceData = frameData.Get<UniversalResourceData>();
 
-			RTHandle cameraColorTargetHandler = renderingData.cameraData.renderer.cameraColorTargetHandle;
+			TextureHandle cameraColorTexture = universalResourceData.activeColorTexture;
 
-			RendererFeature.Material.SetFloat(DesaturationShaderVariables.Factor, RendererFeature.Factor);
-
-			commandBuffer.Blit(cameraColorTargetHandler, RendererFeature.tempTexture,
-				RendererFeature.Material);
-
-			commandBuffer.Blit(RendererFeature.tempTexture, cameraColorTargetHandler);
-
-			context.ExecuteCommandBuffer(commandBuffer);
-
-			commandBuffer.Clear();
-			CommandBufferPool.Release(commandBuffer);
+			RenderGraphUtils.BlitMaterialParameters blitMaterialParameters = new(cameraColorTexture, cameraColorTexture, Material, 0);
+			renderGraph.AddBlitPass(blitMaterialParameters, "Desaturation");
 		}
 	}
 }
