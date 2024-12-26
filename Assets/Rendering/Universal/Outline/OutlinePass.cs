@@ -40,18 +40,33 @@ namespace Dreambox.Rendering.Universal
 
 		private class MaskingPassData
 		{
+			public Material Material;
+
+			public HashSet<OutlineTarget> Targets;
+
 			public TextureHandle Target;
+		}
+
+		private class InitPassData
+		{
+			public Material Material;
+
+			public TextureHandle Source;
 		}
 
 		private class JumpFloodPassData
 		{
+			public Material Material;
+
 			public TextureHandle Source;
 
 			public int Iteration;
 		}
 
-		private class PassData
+		private class DecodingPassData
 		{
+			public Material Material;
+
 			public TextureHandle Source;
 		}
 
@@ -81,6 +96,9 @@ namespace Dreambox.Rendering.Universal
 
 			using (IUnsafeRenderGraphBuilder builder = renderGraph.AddUnsafePass<MaskingPassData>("Outline.Masking", out var data))
 			{
+				data.Material = Material;
+				data.Targets = Targets;
+
 				RenderTextureDescriptor textureDesc =
 					new(cameraColorTextureDesc.width, cameraColorTextureDesc.height, RenderTextureFormat.RInt, 0, 0, RenderTextureReadWrite.Default);
 				TextureHandle targetTexture = UniversalRenderer.CreateRenderGraphTexture(renderGraph, textureDesc, "Outline.Mask", true);
@@ -90,11 +108,13 @@ namespace Dreambox.Rendering.Universal
 
 				builder.AllowGlobalStateModification(true);
 
-				builder.SetRenderFunc((MaskingPassData data, UnsafeGraphContext context) => ExecuteMasking(context, data));
+				builder.SetRenderFunc((MaskingPassData data, UnsafeGraphContext context) => ExecuteMasking(data, context));
 			}
 
-			using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<PassData>("Outline.Init", out var data))
+			using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<InitPassData>("Outline.Init", out var data))
 			{
+				data.Material = Material;
+
 				builder.UseTexture(outlineData.Mask);
 				data.Source = outlineData.Mask;
 
@@ -108,7 +128,7 @@ namespace Dreambox.Rendering.Universal
 
 				builder.AllowGlobalStateModification(true);
 
-				builder.SetRenderFunc((PassData data, RasterGraphContext context) => ExecuteInit(context, data));
+				builder.SetRenderFunc((InitPassData data, RasterGraphContext context) => ExecuteInit(data, context));
 			}
 
 			for (int i = iterations; i >= 0; i--)
@@ -127,6 +147,8 @@ namespace Dreambox.Rendering.Universal
 						target = outlineData.JumpBuffer1;
 					}
 
+					data.Material = Material;
+
 					builder.UseTexture(source);
 					data.Source = source;
 					data.Iteration = 1;
@@ -135,12 +157,14 @@ namespace Dreambox.Rendering.Universal
 
 					builder.AllowGlobalStateModification(true);
 
-					builder.SetRenderFunc((JumpFloodPassData data, RasterGraphContext context) => ExecuteJumpFlood(context, data));
+					builder.SetRenderFunc((JumpFloodPassData data, RasterGraphContext context) => ExecuteJumpFlood(data, context));
 				}
 			}
 
-			using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<PassData>("Outline.Decoding", out var data))
+			using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<DecodingPassData>("Outline.Decoding", out var data))
 			{
+				data.Material = Material;
+
 				data.Source = outlineData.JumpBuffer1;
 				builder.UseTexture(outlineData.JumpBuffer1);
 
@@ -148,46 +172,46 @@ namespace Dreambox.Rendering.Universal
 
 				builder.AllowGlobalStateModification(true);
 
-				builder.SetRenderFunc((PassData data, RasterGraphContext context) => ExecuteDecoding(context, data));
+				builder.SetRenderFunc((DecodingPassData data, RasterGraphContext context) => ExecuteDecoding(data, context));
 			}
 		}
 
-		private void ExecuteMasking(UnsafeGraphContext context, MaskingPassData data)
+		private static void ExecuteMasking(MaskingPassData data, UnsafeGraphContext context)
 		{
 			CommandBuffer commandBuffer = CommandBufferHelpers.GetNativeCommandBuffer(context.cmd);
 
 			commandBuffer.SetRenderTarget(data.Target);
 			commandBuffer.ClearRenderTarget(true, true, Color.clear);
 
-			foreach (OutlineTarget outlineRenderer in Targets)
+			foreach (OutlineTarget outlineRenderer in data.Targets)
 			{
 				commandBuffer.SetGlobalInteger(OutlineShaderVariables.Variant, outlineRenderer.Variant + 1);
 				Texture baseMap = outlineRenderer.Renderer.sharedMaterial.GetTexture(OutlineShaderVariables.BaseMap);
 				commandBuffer.SetGlobalTexture(OutlineShaderVariables.BaseMap, baseMap);
-				commandBuffer.DrawRenderer(outlineRenderer.Renderer, Material, 0, ShaderPasses.Mask);
+				commandBuffer.DrawRenderer(outlineRenderer.Renderer, data.Material, 0, ShaderPasses.Mask);
 			}
 		}
 
-		private void ExecuteInit(RasterGraphContext context, PassData data)
+		private static void ExecuteInit(InitPassData data, RasterGraphContext context)
 		{
 			RasterCommandBuffer commandBuffer = context.cmd;
-			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), Material, ShaderPasses.Init);
+			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), data.Material, ShaderPasses.Init);
 		}
 
-		private void ExecuteJumpFlood(RasterGraphContext context, JumpFloodPassData data)
+		private static void ExecuteJumpFlood(JumpFloodPassData data, RasterGraphContext context)
 		{
 			RasterCommandBuffer commandBuffer = context.cmd;
 
 			float stepWidth = Mathf.Pow(2, data.Iteration);
 			commandBuffer.SetGlobalFloat(OutlineShaderVariables.StepWidth, stepWidth);
 
-			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), Material, ShaderPasses.JumpFlood);
+			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), data.Material, ShaderPasses.JumpFlood);
 		}
 
-		private void ExecuteDecoding(RasterGraphContext context, PassData data)
+		private static void ExecuteDecoding(DecodingPassData data, RasterGraphContext context)
 		{
 			RasterCommandBuffer commandBuffer = context.cmd;
-			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), Material, ShaderPasses.Decode);
+			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), data.Material, ShaderPasses.Decode);
 		}
 	}
 }
