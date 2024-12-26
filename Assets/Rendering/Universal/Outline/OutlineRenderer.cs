@@ -1,4 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Dreambox.Rendering.Universal
 {
@@ -6,7 +10,28 @@ namespace Dreambox.Rendering.Universal
 	{
 		public HashSet<OutlineTarget> Targets { get; } = new();
 
-		protected override OutlinePass CreatePass() => new(this);
+		private Material Material { get; set; }
+
+		private ComputeBuffer VariantsBuffer { get; set; }
+
+		protected override OutlinePass Setup(OutlineRendererConfig config)
+		{
+			Material = CoreUtils.CreateEngineMaterial(config.Shader);
+			VariantsBuffer = new ComputeBuffer(config.Variants.Length, Marshal.SizeOf<OutlineVariant>());
+			Material.SetBuffer(OutlineShaderVariables.VariantsBuffer, VariantsBuffer);
+
+			float width = Config.Variants.Max(config => config.Width);
+			VariantsBuffer.SetData(Config.Variants);
+
+			OutlinePass pass = new(Material, Targets, width);
+			return pass;
+		}
+
+		protected override void Cleanup()
+		{
+			CoreUtils.Destroy(Material);
+			VariantsBuffer.Release();
+		}
 
 		public void AddTarget(OutlineTarget target)
 		{

@@ -1,9 +1,7 @@
 // Copyright (c) Saber BGS 2022. All rights reserved.
 // ---------------------------------------------------------------------------------------------
 
-using System;
-using System.Linq;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
@@ -11,19 +9,8 @@ using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.Universal
 {
-	public class OutlinePass : ScriptableRenderPass, IDisposable
+	public class OutlinePass : ScriptableRenderPass
 	{
-		private static class ShaderVariables
-		{
-			public static int StepWidth { get; } = Shader.PropertyToID(nameof(StepWidth));
-
-			public static int VariantsBuffer { get; } = Shader.PropertyToID(nameof(VariantsBuffer));
-
-			public static int Variant { get; } = Shader.PropertyToID(nameof(Variant));
-
-			public static int BaseMap { get; } = Shader.PropertyToID($"_{nameof(BaseMap)}");
-		}
-
 		private static class ShaderPasses
 		{
 			public const int Mask = 0;
@@ -50,7 +37,7 @@ namespace Dreambox.Rendering.Universal
 				JumpBuffer2 = TextureHandle.nullHandle;
 			}
 		}
-		
+
 		private class MaskingPassData
 		{
 			public TextureHandle Target;
@@ -68,40 +55,22 @@ namespace Dreambox.Rendering.Universal
 			public TextureHandle Source;
 		}
 
-		private OutlineRenderer RendererFeature { get; }
+		private Material Material { get; }
 
-		private OutlineRendererConfig Config { get; }
+		HashSet<OutlineTarget> Targets { get; }
 
-		private Material Material { get; set; }
+		private float Width { get; }
 
-		private ComputeBuffer VariantsBuffer { get; set; }
-
-		private float MaxOffsetWidthOfAllConfigs { get; set; }
-
-		public OutlinePass(OutlineRenderer rendererFeature)
+		public OutlinePass(Material material, HashSet<OutlineTarget> targets, float width)
 		{
-			RendererFeature = rendererFeature;
-
-			Config = RendererFeature.Config;
-
-			Material = CoreUtils.CreateEngineMaterial(Config.Shader);
-
-			VariantsBuffer = new ComputeBuffer(Config.Variants.Length, Marshal.SizeOf<OutlineVariant>());
-
-			Material.SetBuffer(ShaderVariables.VariantsBuffer, VariantsBuffer);
-		}
-
-		public void Dispose()
-		{
-			CoreUtils.Destroy(Material);
-			VariantsBuffer?.Release();
+			Material = material;
+			Targets = targets;
+			Width = width;
 		}
 
 		public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
 		{
-			UpdateConfigs();
-
-			float maxPixelWidth = Screen.height * MaxOffsetWidthOfAllConfigs;
+			float maxPixelWidth = Screen.height * Width;
 			int iterations = Mathf.CeilToInt(Mathf.Log(maxPixelWidth, 2f)) - 1;
 
 			var resourceData = frameData.Get<UniversalResourceData>();
@@ -190,11 +159,11 @@ namespace Dreambox.Rendering.Universal
 			commandBuffer.SetRenderTarget(data.Target);
 			commandBuffer.ClearRenderTarget(true, true, Color.clear);
 
-			foreach (OutlineTarget outlineRenderer in RendererFeature.Targets)
+			foreach (OutlineTarget outlineRenderer in Targets)
 			{
-				commandBuffer.SetGlobalInteger(ShaderVariables.Variant, outlineRenderer.Variant + 1);
-				Texture baseMap = outlineRenderer.Renderer.sharedMaterial.GetTexture(ShaderVariables.BaseMap);
-				commandBuffer.SetGlobalTexture(ShaderVariables.BaseMap, baseMap);
+				commandBuffer.SetGlobalInteger(OutlineShaderVariables.Variant, outlineRenderer.Variant + 1);
+				Texture baseMap = outlineRenderer.Renderer.sharedMaterial.GetTexture(OutlineShaderVariables.BaseMap);
+				commandBuffer.SetGlobalTexture(OutlineShaderVariables.BaseMap, baseMap);
 				commandBuffer.DrawRenderer(outlineRenderer.Renderer, Material, 0, ShaderPasses.Mask);
 			}
 		}
@@ -210,7 +179,7 @@ namespace Dreambox.Rendering.Universal
 			RasterCommandBuffer commandBuffer = context.cmd;
 
 			float stepWidth = Mathf.Pow(2, data.Iteration);
-			commandBuffer.SetGlobalFloat(ShaderVariables.StepWidth, stepWidth);
+			commandBuffer.SetGlobalFloat(OutlineShaderVariables.StepWidth, stepWidth);
 
 			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), Material, ShaderPasses.JumpFlood);
 		}
@@ -219,12 +188,6 @@ namespace Dreambox.Rendering.Universal
 		{
 			RasterCommandBuffer commandBuffer = context.cmd;
 			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), Material, ShaderPasses.Decode);
-		}
-
-		private void UpdateConfigs()
-		{
-			MaxOffsetWidthOfAllConfigs = Config.Variants.Max(config => config.Width);
-			VariantsBuffer.SetData(Config.Variants);
 		}
 	}
 }
