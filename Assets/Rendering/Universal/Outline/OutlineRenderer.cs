@@ -14,10 +14,10 @@ namespace Dreambox.Rendering.Universal
 
 		private ComputeBuffer VariantsBuffer { get; set; }
 
-		protected override OutlinePass Setup(OutlineRendererConfig config)
+		protected override OutlinePass Setup()
 		{
-			Material = CoreUtils.CreateEngineMaterial(config.Shader);
-			VariantsBuffer = new ComputeBuffer(config.Variants.Length, Marshal.SizeOf<OutlineVariant>());
+			Material = CoreUtils.CreateEngineMaterial(Config.Shader);
+			VariantsBuffer = new ComputeBuffer(Config.Variants.Length, Marshal.SizeOf<OutlineVariant>());
 			Material.SetBuffer(OutlineShaderVariables.VariantsBuffer, VariantsBuffer);
 
 			float width = Config.Variants.Max(config => config.Width);

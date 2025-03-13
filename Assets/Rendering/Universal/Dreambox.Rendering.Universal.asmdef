@@ -2,7 +2,6 @@
     "name": "Dreambox.Rendering.Universal",
     "rootNamespace": "Dreambox.Rendering.Universal",
     "references": [
-        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
         "GUID:df380645f10b7bc4b97d4f5eb6303d95",
         "GUID:15fc0a57446b3144c949da3e2b9737a9",
         "GUID:7900f524ca37ee847a70422f636ab5c5",

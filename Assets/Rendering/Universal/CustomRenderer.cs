@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
-using VContainer;
 
 namespace Dreambox.Rendering.Universal
 {
@@ -9,7 +8,7 @@ namespace Dreambox.Rendering.Universal
 		where TConfig : CustomRendererConfig
 		where TPass : ScriptableRenderPass
 	{
-		[Inject]
+		[field: SerializeField]
 		public TConfig Config { get; private set; }
 
 		private TPass Pass { get; set; }
@@ -18,7 +17,7 @@ namespace Dreambox.Rendering.Universal
 		{
 			RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
 
-			Pass = Setup(Config);
+			Pass = Setup();
 			Pass.renderPassEvent = Config.RenderPassEvent;
 		}
 
@@ -29,7 +28,7 @@ namespace Dreambox.Rendering.Universal
 			Cleanup();
 		}
 
-		protected abstract TPass Setup(TConfig config);
+		protected abstract TPass Setup();
 
 		protected virtual void Cleanup()
 		{
