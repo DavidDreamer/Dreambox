@@ -3,6 +3,8 @@ Shader "Hidden/Dreambox/Blur"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        Radius ("Radius", Float) = 1
+        Factor ("Factor", Int) = 0 
     }
     SubShader
     {
