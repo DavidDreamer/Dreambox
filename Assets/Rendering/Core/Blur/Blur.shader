@@ -2,9 +2,10 @@ Shader "Hidden/Dreambox/Blur"
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
+        [KeywordEnum(Box, Gaussian)] ALGORITHM ("Algorithm", Integer) = 0
+        [KeywordEnum(Clamp, Mirror)] WRAP_MODE ("Wrap Mode", Integer) = 0
         Radius ("Radius", Float) = 1
-        Factor ("Factor", Int) = 0 
+        Factor ("Factor", Integer) = 1 
     }
     SubShader
     {

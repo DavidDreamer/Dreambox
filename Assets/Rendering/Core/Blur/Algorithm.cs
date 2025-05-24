@@ -3,7 +3,6 @@
 	public enum Algorithm
 	{
 		Box,
-
 		Gaussian
 	}
 }
