@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Dreambox.Rendering.Core
 {
 	[Serializable]
-	public class MeshInstanceDrawSettings
+	public class MeshDrawSettings
 	{
 		[field: SerializeField]
 		public Mesh Mesh { get; private set; }
