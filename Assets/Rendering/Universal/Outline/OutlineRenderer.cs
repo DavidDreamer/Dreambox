@@ -2,34 +2,29 @@
 using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace Dreambox.Rendering.Universal
 {
-	public partial class OutlineRenderer : CustomRenderer<OutlineRendererConfig, OutlinePass>
+	public partial class OutlineRenderer : CustomRenderer<OutlineRenderSettings, OutlinePass>
 	{
 		public HashSet<OutlineTarget> Targets { get; } = new();
-
-		private Material Material { get; set; }
 
 		private ComputeBuffer VariantsBuffer { get; set; }
 
 		protected override OutlinePass Setup()
 		{
-			Material = CoreUtils.CreateEngineMaterial(Config.Shader);
 			VariantsBuffer = new ComputeBuffer(Config.Variants.Length, Marshal.SizeOf<OutlineVariant>());
-			Material.SetBuffer(OutlineShaderVariables.VariantsBuffer, VariantsBuffer);
+			Config.Material.SetBuffer(OutlineShaderVariables.VariantsBuffer, VariantsBuffer);
 
 			float width = Config.Variants.Max(config => config.Width);
 			VariantsBuffer.SetData(Config.Variants);
 
-			OutlinePass pass = new(Material, Targets, width);
+			OutlinePass pass = new(Config.Material, Targets, width);
 			return pass;
 		}
 
 		protected override void Cleanup()
 		{
-			CoreUtils.Destroy(Material);
 			VariantsBuffer.Release();
 		}
 

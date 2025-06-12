@@ -1,5 +1,5 @@
 //JumpFlood https://bgolus.medium.com/the-quest-for-very-wide-outlines-ba82ed442cd9
-Shader "Hidden/Dreambox/Outline"
+Shader "Dreambox/Outline"
 {
     Properties
     {

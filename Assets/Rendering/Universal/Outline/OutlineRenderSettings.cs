@@ -6,11 +6,11 @@ using UnityEngine;
 
 namespace Dreambox.Rendering
 {
-	[CreateAssetMenu(menuName = "Dreambox/Configs/Rendering/Outline")]
-	public class OutlineRendererConfig : CustomRendererConfig
+	[CreateAssetMenu(menuName = "Dreambox/Settings/Rendering/Outline")]
+	public class OutlineRenderSettings : CustomRendererConfig
 	{
 		[field: SerializeField]
-		public Shader Shader { get; private set; }
+		public Material Material { get; private set; }
 
 		[field: SerializeField]
 		public OutlineVariant[] Variants { get; private set; }
