@@ -46,7 +46,7 @@ Shader "Dreambox/Outline"
 
             uint Frag(Varyings input) : SV_Target
             {
-                const float4 textureSample = UNITY_SAMPLE_TEX2D(_BaseMap, input.uv);
+                float4 textureSample = UNITY_SAMPLE_TEX2D(_BaseMap, input.uv);
                 clip(textureSample.a - 1);
                 return Variant;
             }
@@ -93,9 +93,9 @@ Shader "Dreambox/Outline"
 
             float4 Frag(Varyings input) : SV_Target
             {
-                const float2 position = input.positionCS.xy;
-                const uint configIndex = _BlitTexture.Load(int3(position, 0));
-                const float4 dataPacked = float4(position, configIndex, 0);
+                float2 position = input.positionCS.xy;
+                uint configIndex = _BlitTexture.Load(int3(position, 0));
+                float4 dataPacked = float4(position, configIndex, 0);
                 return dataPacked;
             }
             ENDHLSL
@@ -145,7 +145,7 @@ Shader "Dreambox/Outline"
 
             float4 Frag(Varyings input) : SV_Target
             {
-                const float2 position = input.positionCS.xy;
+                float2 position = input.positionCS.xy;
 
                 float minDistance = FLOAT_INFINITY;
                 float2 finalPosition;
@@ -157,19 +157,19 @@ Shader "Dreambox/Outline"
                     UNITY_UNROLL
                     for (int v = -1; v <= 1; v++)
                     {
-                        const int2 offset = int2(u, v) * StepWidth;
-                        const int2 positionWithOffset = clamp(position + offset, 0, _BlitTexture_TexelSize.zw - 1);
-                        const float3 sample = _BlitTexture.Load(int3(positionWithOffset, 0)).rgb;
-                        const float2 targetPosition = sample.rg;
-                        const float variantIndex = sample.b;
+                        int2 offset = int2(u, v) * StepWidth;
+                        int2 positionWithOffset = clamp(position + offset, 0, _BlitTexture_TexelSize.zw - 1);
+                        float3 sample = _BlitTexture.Load(int3(positionWithOffset, 0)).rgb;
+                        float2 targetPosition = sample.rg;
+                        float variantIndex = sample.b;
 
                         if (variantIndex == 0)
                         {
                             continue;
                         }
                         
-                        const float2 disp = position - targetPosition;
-                        const float distance = dot(disp, disp);
+                        float2 disp = position - targetPosition;
+                        float distance = dot(disp, disp);
 
                         if (distance < minDistance)
                         {
@@ -241,26 +241,26 @@ Shader "Dreambox/Outline"
 
             float4 Frag(Varyings input) : SV_Target
             {
-                const float2 position = input.positionCS.xy;
-                const float3 sample = _BlitTexture.Load(int3(position, 0)).rgb;
-                const float index = sample.b;
+                float2 position = input.positionCS.xy;
+                float3 sample = _BlitTexture.Load(int3(position, 0)).rgb;
+                float index = sample.b;
 
                 if (index == 0)
                 {
                     return 0;
                 }
 
-                const OutlineVariant variant = VariantsBuffer[index - 1];
-                const float distance = length(sample.rg - position);
-                const float width = variant.Width * _BlitTexture_TexelSize.w;
-                const float weight = pow(1 - saturate(distance / width), variant.Softness);
+                OutlineVariant variant = VariantsBuffer[index - 1];
+                float distance = length(sample.rg - position);
+                float width = variant.Width * _BlitTexture_TexelSize.w;
+                float weight = pow(1 - saturate(distance / width), variant.Softness);
                 float4 outlineColor = variant.Color;
                 outlineColor.a *= weight;
                 
                 // Inner filling edge need +1.5 inset for good anti-aliasing
-                const float fill_weight = saturate(1.5 - distance);
+                float fill_weight = saturate(1.5 - distance);
                 
-                const float4 fill_color = lerp(variant.FillColor, variant.FillFlickColor,
+                float4 fill_color = lerp(variant.FillColor, variant.FillFlickColor,
                                                (cos(_Time.y * variant.FillFlickRate - UNITY_PI) + 1) / 2);
 
                 float4 final_color = lerp(outlineColor, fill_color, fill_weight);

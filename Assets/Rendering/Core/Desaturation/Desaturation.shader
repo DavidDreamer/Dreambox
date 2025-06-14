@@ -15,11 +15,11 @@
 
             float Factor;
             
-            float4 FragDesaturation(const Varyings input) : SV_Target
+            float4 FragDesaturation(Varyings input) : SV_Target
             {
-                const float3 color = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, input.texcoord).rgb;
-                const float luminance = Luminance(color);
-                const float4 finalColor = float4(lerp(color, luminance, Factor), 1);
+                float3 color = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, input.texcoord).rgb;
+                float luminance = Luminance(color);
+                float4 finalColor = float4(lerp(color, luminance, Factor), 1);
                 return finalColor;
             }
             ENDHLSL

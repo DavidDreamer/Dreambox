@@ -6,25 +6,25 @@
 float Radius;
 float Factor;
 
-float4 SampleColor(const float2 uv)
+float4 SampleColor(float2 uv)
 {
     #ifdef WRAP_MODE_MIRROR
-    const float2 uvCorrected = uv - 2 * (uv - saturate(uv));
+    float2 uvCorrected = uv - 2 * (uv - saturate(uv));
     return SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uvCorrected);
     #else
-    const float2 uvCorrected = saturate(uv);
+    float2 uvCorrected = saturate(uv);
     return SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uvCorrected);
     #endif
 }
 
-float BlurGaussian(const int distance)
+float BlurGaussian(int distance)
 {
-    const float normalizationFactor = 1.0f / (2.0f * (Radius * Radius / PI));
-    const float distanceFactor = exp(-(distance * distance) / pow(Radius / PI, 2) / 2);
+    float normalizationFactor = 1.0f / (2.0f * (Radius * Radius / PI));
+    float distanceFactor = exp(-(distance * distance) / pow(Radius / PI, 2) / 2);
     return normalizationFactor * distanceFactor;
 }
 
-float4 BlurBox(const float2 uv, const float2 direction)
+float4 BlurBox(float2 uv, float2 direction)
 {
     float3 totalColor = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv).xyz;
     float totalWeight = 1;
@@ -33,7 +33,7 @@ float4 BlurBox(const float2 uv, const float2 direction)
     {
         totalWeight += 2;
 
-        const float2 offset = i * _BlitTexture_TexelSize.xy * direction;
+        float2 offset = i * _BlitTexture_TexelSize.xy * direction;
         totalColor += SampleColor(uv + offset).rgb;
         totalColor += SampleColor(uv - offset).rgb;
     }
@@ -42,35 +42,35 @@ float4 BlurBox(const float2 uv, const float2 direction)
     return float4(totalColor, 1.0f);
 }
 
-float4 BlurGaussian(const float2 uv, const float2 direction)
+float4 BlurGaussian(float2 uv, float2 direction)
 {
     float4 totalColor = 0;
     float totalWeight = 0.0f;
 
-    const float centerWeight = BlurGaussian(0);
+    float centerWeight = BlurGaussian(0);
     totalWeight += centerWeight;
 
-    const float4 centerColor = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv);
+    float4 centerColor = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv);
     totalColor += centerColor * centerWeight;
 
     for (int i = 1; i <= Radius; ++i)
     {
-        const float weight = BlurGaussian(i);
+        float weight = BlurGaussian(i);
         totalWeight += weight * 2.0f;
 
-        const float2 offset = i * _BlitTexture_TexelSize.xy * direction;
+        float2 offset = i * _BlitTexture_TexelSize.xy * direction;
         totalColor += SampleColor(uv + offset) * weight;
         totalColor += SampleColor(uv - offset) * weight;
     }
 
     totalColor /= totalWeight;
     
-    const float4 finalColor = lerp(centerColor, totalColor, Factor);
+    float4 finalColor = lerp(centerColor, totalColor, Factor);
     
     return finalColor;
 }
 
-float4 Frag(const float2 uv, const float2 direction)
+float4 Frag(float2 uv, float2 direction)
 {
     #if ALGORITHM_BOX
     return BlurBox(uv, direction);

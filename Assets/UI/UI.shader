@@ -145,14 +145,14 @@ Shader "Dreambox/UI"
 
             float EvaluateRounding(float2 UV, float Width, float Height)
             {
-                const float radius = max(min(min(abs(RoundingRadius * 2), abs(Width)), abs(Height)), 1e-5);
-                const float2 uv = abs(UV * 2 - 1) - float2(Width, Height) + radius;
-                const float d = length(max(0, uv)) / radius;
-                const float fwd = max(fwidth(d), 1e-5);
+                float radius = max(min(min(abs(RoundingRadius * 2), abs(Width)), abs(Height)), 1e-5);
+                float2 uv = abs(UV * 2 - 1) - float2(Width, Height) + radius;
+                float d = length(max(0, uv)) / radius;
+                float fwd = max(fwidth(d), 1e-5);
                 return saturate((1 - d) / fwd);
             }
 
-            float4 EvaluateGradient(const float2 uv)
+            float4 EvaluateGradient(float2 uv)
             {
                 float gradientFactor = GradientDirection == 0 ? uv.x : uv.y;
                 gradientFactor = GradientMode == 0 ? gradientFactor : length(0.5 - gradientFactor) / 0.5;
@@ -160,9 +160,9 @@ Shader "Dreambox/UI"
                 return lerp(GradientStartColor, GradientEndColor, gradientFactor);        
             }
 
-            float4 EvaluateSaturation(const float4 color)
+            float4 EvaluateSaturation(float4 color)
             {
-                const float luminance = Luminance(color);
+                float luminance = Luminance(color);
                 return float4(lerp(luminance, color, SaturationFactor).rgb, color.a);
             }
         
@@ -171,8 +171,8 @@ Shader "Dreambox/UI"
                 //Round up the alpha color coming from the interpolator (to 1.0/256.0 steps)
                 //The incoming alpha could have numerical instability, which makes it very sensible to
                 //HDR color transparency blend, when it blends with the world's texture.
-                const half alphaPrecision = half(0xff);
-                const half invAlphaPrecision = half(1.0/alphaPrecision);
+                half alphaPrecision = half(0xff);
+                half invAlphaPrecision = half(1.0/alphaPrecision);
                 IN.color.a = round(IN.color.a * alphaPrecision)*invAlphaPrecision;
 
                 half4 color = IN.color * (tex2D(_MainTex, IN.texcoord) + _TextureSampleAdd);
