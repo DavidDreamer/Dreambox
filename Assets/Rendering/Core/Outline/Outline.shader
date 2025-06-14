@@ -244,6 +244,12 @@ Shader "Dreambox/Outline"
                 const float2 position = input.positionCS.xy;
                 const float3 sample = _BlitTexture.Load(int3(position, 0)).rgb;
                 const float index = sample.b;
+
+                if (index == 0)
+                {
+                    return 0;
+                }
+
                 const OutlineVariant variant = VariantsBuffer[index - 1];
                 const float distance = length(sample.rg - position);
                 const float width = variant.Width * _BlitTexture_TexelSize.w;
