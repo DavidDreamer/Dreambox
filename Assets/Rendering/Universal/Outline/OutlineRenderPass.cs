@@ -9,7 +9,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Dreambox.Rendering.Universal
 {
-	public class OutlinePass : ScriptableRenderPass
+	public class OutlineRenderPass : ScriptableRenderPass
 	{
 		private static class ShaderPasses
 		{
@@ -76,7 +76,7 @@ namespace Dreambox.Rendering.Universal
 
 		private float Width { get; }
 
-		public OutlinePass(Material material, HashSet<OutlineTarget> targets, float width)
+		public OutlineRenderPass(Material material, HashSet<OutlineTarget> targets, float width)
 		{
 			Material = material;
 			Targets = targets;
@@ -186,7 +186,7 @@ namespace Dreambox.Rendering.Universal
 			foreach (OutlineTarget target in data.Targets)
 			{
 				commandBuffer.SetGlobalInteger(OutlineShaderVariables.Variant, target.Variant + 1);
-				Texture baseMap = target.Material.HasTexture(OutlineShaderVariables.BaseMap) ? 
+				Texture baseMap = target.Material.HasTexture(OutlineShaderVariables.BaseMap) ?
 					target.Material.GetTexture(OutlineShaderVariables.BaseMap) : Texture2D.whiteTexture;
 				commandBuffer.SetGlobalTexture(OutlineShaderVariables.BaseMap, baseMap);
 				commandBuffer.DrawMesh(target.Mesh, target.Matrix, data.Material, 0, ShaderPasses.Mask);
