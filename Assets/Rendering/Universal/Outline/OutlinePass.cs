@@ -183,12 +183,13 @@ namespace Dreambox.Rendering.Universal
 			commandBuffer.SetRenderTarget(data.Target);
 			commandBuffer.ClearRenderTarget(true, true, Color.clear);
 
-			foreach (OutlineTarget outlineRenderer in data.Targets)
+			foreach (OutlineTarget target in data.Targets)
 			{
-				commandBuffer.SetGlobalInteger(OutlineShaderVariables.Variant, outlineRenderer.Variant + 1);
-				Texture baseMap = outlineRenderer.Renderer.sharedMaterial.GetTexture(OutlineShaderVariables.BaseMap);
+				commandBuffer.SetGlobalInteger(OutlineShaderVariables.Variant, target.Variant + 1);
+				Texture baseMap = target.Material.HasTexture(OutlineShaderVariables.BaseMap) ? 
+					target.Material.GetTexture(OutlineShaderVariables.BaseMap) : Texture2D.whiteTexture;
 				commandBuffer.SetGlobalTexture(OutlineShaderVariables.BaseMap, baseMap);
-				commandBuffer.DrawRenderer(outlineRenderer.Renderer, data.Material, 0, ShaderPasses.Mask);
+				commandBuffer.DrawMesh(target.Mesh, target.Matrix, data.Material, 0, ShaderPasses.Mask);
 			}
 		}
 
