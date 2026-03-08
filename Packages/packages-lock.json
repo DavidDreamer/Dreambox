@@ -8,13 +8,13 @@
       "hash": "9e2163616b9c527fa9461544e2bcc5f93fd12d83"
     },
     "com.david-dreamer.dreambox.core": {
-      "version": "file:com.dreambox.core",
+      "version": "file:com.david-dreamer.dreambox.core",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
     },
     "com.david-dreamer.dreambox.rendering.core": {
-      "version": "file:com.dreambox.rendering.core",
+      "version": "file:com.david-dreamer.dreambox.rendering.core",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
@@ -23,7 +23,7 @@
       }
     },
     "com.david-dreamer.dreambox.rendering.universal": {
-      "version": "file:com.dreambox.rendering.universal",
+      "version": "file:com.david-dreamer.dreambox.rendering.universal",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
