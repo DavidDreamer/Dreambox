@@ -7,6 +7,30 @@
       "dependencies": {},
       "hash": "9e2163616b9c527fa9461544e2bcc5f93fd12d83"
     },
+    "com.david-dreamer.dreambox.core": {
+      "version": "file:com.dreambox.core",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.david-dreamer.dreambox.rendering.core": {
+      "version": "file:com.dreambox.rendering.core",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.render-pipelines.core": "14.0.10",
+        "com.david-dreamer.dreambox.core": "1.0.0"
+      }
+    },
+    "com.david-dreamer.dreambox.rendering.universal": {
+      "version": "file:com.dreambox.rendering.universal",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.render-pipelines.universal": "14.0.10",
+        "com.david-dreamer.dreambox.rendering.core": "1.0.0"
+      }
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.9",
       "depth": 0,
