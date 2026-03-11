@@ -1,4 +1,4 @@
-Shader "Hidden/Dreambox/Blur"
+Shader "Dreambox/PostProcessing/Blur"
 {
     Properties
     {
