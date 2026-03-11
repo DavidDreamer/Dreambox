@@ -13,6 +13,18 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.david-dreamer.dreambox.math": {
+      "version": "file:com.david-dreamer.dreambox.math",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.david-dreamer.dreambox.physics": {
+      "version": "file:com.david-dreamer.dreambox.physics",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.david-dreamer.dreambox.rendering.core": {
       "version": "file:com.david-dreamer.dreambox.rendering.core",
       "depth": 0,
@@ -38,6 +50,22 @@
       "dependencies": {
         "com.unity.render-pipelines.universal": "14.0.10",
         "com.david-dreamer.dreambox.rendering.core": "1.0.0"
+      }
+    },
+    "com.david-dreamer.dreambox.ui": {
+      "version": "file:com.david-dreamer.dreambox.ui",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.david-dreamer.dreambox.core": "1.0.0"
+      }
+    },
+    "com.david-dreamer.yandex-games-sdk": {
+      "version": "file:com.david-dreamer.yandex-games-sdk",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
       }
     },
     "com.unity.ai.navigation": {
