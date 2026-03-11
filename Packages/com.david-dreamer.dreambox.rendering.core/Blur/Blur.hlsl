@@ -1,6 +1,9 @@
 ﻿#pragma once
 
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Packing.hlsl"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/GlobalSamplers.hlsl"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/TextureXR.hlsl"
 #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
 
 float Radius;
@@ -10,10 +13,10 @@ float4 SampleColor(float2 uv)
 {
     #ifdef WRAP_MODE_MIRROR
     float2 uvCorrected = uv - 2 * (uv - saturate(uv));
-    return SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uvCorrected);
+    return SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uvCorrected);
     #else
     float2 uvCorrected = saturate(uv);
-    return SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uvCorrected);
+    return SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uvCorrected);
     #endif
 }
 
@@ -26,7 +29,7 @@ float BlurGaussian(int distance)
 
 float4 BlurBox(float2 uv, float2 direction)
 {
-    float3 totalColor = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv).xyz;
+    float3 totalColor = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv).xyz;
     float totalWeight = 1;
 
     for (int i = 1; i <= Radius; ++i)
@@ -50,7 +53,7 @@ float4 BlurGaussian(float2 uv, float2 direction)
     float centerWeight = BlurGaussian(0);
     totalWeight += centerWeight;
 
-    float4 centerColor = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv);
+    float4 centerColor = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
     totalColor += centerColor * centerWeight;
 
     for (int i = 1; i <= Radius; ++i)
