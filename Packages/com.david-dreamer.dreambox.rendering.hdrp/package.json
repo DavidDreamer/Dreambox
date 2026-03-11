@@ -1,0 +1,14 @@
+{
+  "name": "com.david-dreamer.dreambox.rendering.hdrp",
+  "version": "1.0.0",
+  "displayName": "Dreambox Rendering HDRP",
+  "unity": "2022.3",
+  "author": {
+    "name": "David Dreamer",
+    "email": "davidb.gamedev@gmail.com"
+  },
+  "dependencies": {
+    "com.unity.render-pipelines.high-definition": "17.2.0",
+    "com.david-dreamer.dreambox.rendering.core": "1.0.0"
+  }
+}

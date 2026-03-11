@@ -22,6 +22,15 @@
         "com.david-dreamer.dreambox.core": "1.0.0"
       }
     },
+    "com.david-dreamer.dreambox.rendering.hdrp": {
+      "version": "file:com.david-dreamer.dreambox.rendering.hdrp",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.render-pipelines.high-definition": "17.2.0",
+        "com.david-dreamer.dreambox.rendering.core": "1.0.0"
+      }
+    },
     "com.david-dreamer.dreambox.rendering.urp": {
       "version": "file:com.david-dreamer.dreambox.rendering.urp",
       "depth": 0,
