@@ -12,12 +12,12 @@ float Factor;
 float4 SampleColor(float2 uv)
 {
     #ifdef WRAP_MODE_MIRROR
-    float2 uvCorrected = uv - 2 * (uv - saturate(uv));
-    return SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uvCorrected);
+    uv = uv - 2 * (uv - saturate(uv));
     #else
-    float2 uvCorrected = saturate(uv);
-    return SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uvCorrected);
+	uv = saturate(uv);
     #endif
+    
+	return SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
 }
 
 float BlurGaussian(int distance)
