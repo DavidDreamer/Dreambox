@@ -28,8 +28,8 @@ namespace Dreambox.Rendering.Core
 		{
 			material.SwitchKeyword(Algorithm);
 			material.SwitchKeyword(WrapMode);
-			material.SetInt(BlurShaderVariables.Radius, Radius);
-			material.SetFloat(BlurShaderVariables.Factor, Factor);
+			material.SetInt(BlurShaderVariable.Radius, Radius);
+			material.SetFloat(BlurShaderVariable.Factor, Factor);
 		}
 	}
 }

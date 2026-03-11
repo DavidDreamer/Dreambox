@@ -4,8 +4,8 @@ Shader "Dreambox/PostProcessing/Blur"
     {
         [KeywordEnum(Box, Gaussian)] ALGORITHM ("Algorithm", Integer) = 0
         [KeywordEnum(Clamp, Mirror)] WRAP_MODE ("Wrap Mode", Integer) = 0
-        Radius ("Radius", Float) = 1
-        Factor ("Factor", Integer) = 1 
+        _Radius ("Radius", Float) = 1
+        _Factor ("Factor", Range(0, 1)) = 1 
     }
     SubShader
     {
@@ -21,8 +21,8 @@ Shader "Dreambox/PostProcessing/Blur"
             HLSLPROGRAM
             #pragma vertex Vert
             #pragma fragment FragHorizontal
-            #pragma multi_compile_local_fragment ALGORITHM_BOX ALGORITHM_GAUSSIAN
-            #pragma multi_compile_local_fragment WRAP_MODE_CLAMP WRAP_MODE_MIRROR
+            #pragma shader_feature_local_fragment ALGORITHM_BOX ALGORITHM_GAUSSIAN
+            #pragma shader_feature_local_fragment WRAP_MODE_CLAMP WRAP_MODE_MIRROR
             ENDHLSL
         }
 
@@ -32,8 +32,8 @@ Shader "Dreambox/PostProcessing/Blur"
             HLSLPROGRAM
             #pragma vertex Vert
             #pragma fragment FragVertical
-            #pragma multi_compile_local_fragment ALGORITHM_BOX ALGORITHM_GAUSSIAN
-            #pragma multi_compile_local_fragment WRAP_MODE_CLAMP WRAP_MODE_MIRROR
+            #pragma shader_feature_local_fragment ALGORITHM_BOX ALGORITHM_GAUSSIAN
+            #pragma shader_feature_local_fragment WRAP_MODE_CLAMP WRAP_MODE_MIRROR
             ENDHLSL
         }
     }

@@ -5,6 +5,6 @@ namespace Dreambox.Rendering.Core
 {
 	public static class ShaderVariable
 	{
-		public static int Create([CallerMemberName] string name = "") => Shader.PropertyToID($"_{name}");
+		public static int Create([CallerMemberName] string name = null) => Shader.PropertyToID($"_{name}");
 	}
 }
