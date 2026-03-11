@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Dreambox.Rendering.Core;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
@@ -31,6 +32,11 @@ namespace Dreambox.Rendering.HDRP
 		private RTHandle Texture2 { get; set; }
 
 		protected override bool executeInSceneView => false;
+
+		public override IEnumerable<Material> RegisterMaterialForInspector()
+		{
+			yield return Material;
+		}
 
 		protected override void Setup(ScriptableRenderContext renderContext, CommandBuffer cmd)
 		{
