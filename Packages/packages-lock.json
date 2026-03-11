@@ -22,8 +22,8 @@
         "com.david-dreamer.dreambox.core": "1.0.0"
       }
     },
-    "com.david-dreamer.dreambox.rendering.universal": {
-      "version": "file:com.david-dreamer.dreambox.rendering.universal",
+    "com.david-dreamer.dreambox.rendering.urp": {
+      "version": "file:com.david-dreamer.dreambox.rendering.urp",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
