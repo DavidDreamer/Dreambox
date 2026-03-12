@@ -2,7 +2,8 @@
     "name": "Dreambox.Rendering.Core",
     "rootNamespace": "Dreambox.Rendering.Core",
     "references": [
-        "GUID:df380645f10b7bc4b97d4f5eb6303d95"
+        "GUID:df380645f10b7bc4b97d4f5eb6303d95",
+        "GUID:27955ab605692424a85f77ff6cf21d7d"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

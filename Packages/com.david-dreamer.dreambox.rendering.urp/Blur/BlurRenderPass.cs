@@ -9,13 +9,13 @@ namespace Dreambox.Rendering.Universal
 {
 	public class BlurRenderPass : ScriptableRenderPass
 	{
-		private BlurSettings Settings { get; }
+		private BlurRendererFeature BlurRendererFeature { get; }
 
 		private Material Material { get; }
 
-		public BlurRenderPass(BlurSettings settings, Material material)
+		public BlurRenderPass(BlurRendererFeature blurRendererFeature, Material material)
 		{
-			Settings = settings;
+			BlurRendererFeature = blurRendererFeature;
 			Material = material;
 		}
 
@@ -30,13 +30,11 @@ namespace Dreambox.Rendering.Universal
 			TextureHandle cameraColorTexture = universalResourceData.activeColorTexture;
 			RenderTextureDescriptor cameraTargetDescriptor = universalCameraData.cameraTargetDescriptor;
 
-			int width = cameraTargetDescriptor.width / Settings.Downsample;
-			int height = cameraTargetDescriptor.height / Settings.Downsample;
+			int width = cameraTargetDescriptor.width / BlurRendererFeature.Downsample;
+			int height = cameraTargetDescriptor.height / BlurRendererFeature.Downsample;
 			RenderTextureDescriptor renderTextureDescriptor = new(width, height, RenderTextureFormat.Default, 0);
 
 			TextureHandle blurTexture = UniversalRenderer.CreateRenderGraphTexture(renderGraph, renderTextureDescriptor, "BlurTexture", true);
-
-			Settings.ApplyTo(Material);
 
 			RenderGraphUtils.BlitMaterialParameters blitMaterialParameters = new(cameraColorTexture, blurTexture, Material, 0);
 			renderGraph.AddBlitPass(blitMaterialParameters, "Blur.Horizontal");

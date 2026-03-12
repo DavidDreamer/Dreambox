@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "com.unity.render-pipelines.core": "14.0.10",
-    "com.david-dreamer.dreambox.core": "1.0.0"
+    "com.david-dreamer.dreambox.core": "1.0.0",
+    "com.david-dreamer.dreambox.math": "1.0.0"
   }
 }

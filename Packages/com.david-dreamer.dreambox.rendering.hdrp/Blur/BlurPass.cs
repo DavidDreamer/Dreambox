@@ -18,18 +18,27 @@ namespace Dreambox.Rendering.HDRP
 		private const string TextureName = "BlurTexture";
 
 		[field: SerializeField]
-		private Material Material { get; set; }
+		[field: Range(1, 8)]
+		private int Downsample { get; set; } = 2;
 
 		[field: SerializeField]
-		[field: Range(1, 4)]
-		private int Downsample { get; set; } = 1;
+		[field: Range(1, 256)]
+		private int Radius { get; set; } = 16;
+
+		[field: SerializeField]
+		[field: Range(1f, 5f)]
+		private float Sigma { get; set; } = 1f;
 
 		[field: SerializeField]
 		private OutputTarget Target { get; set; }
 
-		private RTHandle Texture1 { get; set; }
+		private Material Material { get; set; }
 
-		private RTHandle Texture2 { get; set; }
+		private RTHandle RTHorizontal { get; set; }
+
+		private RTHandle RTVertical { get; set; }
+
+		private ComputeBuffer GaussianWeights { get; set; }
 
 		protected override bool executeInSceneView => false;
 
@@ -40,52 +49,63 @@ namespace Dreambox.Rendering.HDRP
 
 		protected override void Setup(ScriptableRenderContext renderContext, CommandBuffer cmd)
 		{
+			Material = CoreUtils.CreateEngineMaterial("Hidden/Dreambox/PostProcessing/Blur");
+
+			Material.SetFloat(BlurShaderVariable.Radius, Radius);
+
+			GaussianWeights = BlurUtils.CalculateGaussianWeights(Radius, Sigma * Sigma);
+			Material.SetBuffer(BlurShaderVariable.GaussianWeights, GaussianWeights);
+
 			Vector2 scaleFactor = Vector2.one / Downsample;
 			GraphicsFormat colorFormat = HDRenderPipelineAssetUtils.GetColorBufferGraphicsFormat();
 			TextureDimension dimension = TextureXR.dimension;
+			int slices = TextureXR.slices;
 
-			Texture1 = RTHandles.Alloc(
-				scaleFactor,
-				dimension: dimension,
-				colorFormat: colorFormat,
-				autoGenerateMips: false,
-				useDynamicScale: true,
-				name: $"{TextureName}_Horizontal"
-			);
+			RTHorizontal = AllocTexture("Horizontal");
+			RTVertical = AllocTexture("Vertical");
 
-			Texture2 = RTHandles.Alloc(
-				scaleFactor,
-				dimension: dimension,
-				colorFormat: colorFormat,
-				autoGenerateMips: false,
-				useDynamicScale: true,
-				name: $"{TextureName}_Vertical"
-			);
+			RTHandle AllocTexture(string name)
+			{
+				return RTHandles.Alloc(
+					scaleFactor,
+					dimension: dimension,
+					slices: slices,
+					colorFormat: colorFormat,
+					autoGenerateMips: false,
+					useDynamicScale: true,
+					name: $"{TextureName}_{name}"
+					);
+			}
 		}
 
 		protected override void Cleanup()
 		{
-			Texture1.Release();
-			Texture2.Release();
+			CoreUtils.Destroy(Material);
+			GaussianWeights.Release();
+			RTHorizontal.Release();
+			RTVertical.Release();
 		}
 
-		protected override void Execute(CustomPassContext ctx)
+		protected override void Execute(CustomPassContext context)
 		{
-			base.Execute(ctx);
+			base.Execute(context);
 
-			CommandBuffer commandBuffer = ctx.cmd;
+			CommandBuffer commandBuffer = context.cmd;
 
-			Blitter.BlitTexture(commandBuffer, ctx.cameraColorBuffer, Texture2, Material, BlurShaderPass.Horizontal);
-			Blitter.BlitTexture(commandBuffer, Texture2, Texture1, Material, BlurShaderPass.Vertical);
+			commandBuffer.SetRenderTarget(RTHorizontal);
+			Blitter.BlitTexture(commandBuffer, context.cameraColorBuffer, new Vector4(1, 1, 0, 0), 0, false);
+
+			Blitter.BlitTexture(commandBuffer, RTHorizontal, RTVertical, Material, BlurShaderPass.Horizontal);
+			Blitter.BlitTexture(commandBuffer, RTVertical, RTHorizontal, Material, BlurShaderPass.Vertical);
 
 			switch (Target)
 			{
 				case OutputTarget.Camera:
-					commandBuffer.SetRenderTarget(ctx.cameraColorBuffer);
-					Blitter.BlitTexture(commandBuffer, Texture1, new Vector4(1, 1, 0, 0), 0, false);
+					commandBuffer.SetRenderTarget(context.cameraColorBuffer);
+					Blitter.BlitTexture(commandBuffer, RTHorizontal, new Vector4(1, 1, 0, 0), 0, false);
 					break;
 				case OutputTarget.Texture:
-					commandBuffer.SetGlobalTexture(TextureName, Texture1);
+					commandBuffer.SetGlobalTexture(TextureName, RTHorizontal);
 					break;
 			}
 		}
