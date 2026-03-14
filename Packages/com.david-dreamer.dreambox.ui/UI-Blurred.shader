@@ -53,7 +53,10 @@ Shader "Dreambox/UI/Blurred"
             #pragma fragment frag
             #pragma target 2.0
 
-            #include "UnityCG.cginc"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/GlobalSamplers.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/TextureXR.hlsl"
             #include "UnityUI.cginc"
 
             #pragma multi_compile_local _ UNITY_UI_CLIP_RECT
@@ -87,6 +90,8 @@ Shader "Dreambox/UI/Blurred"
             float _UIMaskSoftnessY;
             int _UIVertexColorAlwaysGammaSpace;
 
+            TEXTURE2D_X(_BlurTexture);
+
             v2f vert(appdata_t v)
             {
                 v2f OUT;
@@ -107,10 +112,9 @@ Shader "Dreambox/UI/Blurred"
 
                 if (_UIVertexColorAlwaysGammaSpace)
                 {
-                    if(!IsGammaSpace())
-                    {
-                        v.color.rgb = UIGammaToLinear(v.color.rgb);
-                    }
+                    #ifndef UNITY_COLORSPACE_GAMMA
+                    v.color.rgb = UIGammaToLinear(v.color.rgb);
+                    #endif
                 }
 
                 OUT.color = v.color * _Color;
@@ -138,6 +142,15 @@ Shader "Dreambox/UI/Blurred"
                 #endif
 
                 color.rgb *= color.a;
+
+                float2 uv = IN.vertex.xy / _ScreenParams.xy;
+                #if UNITY_UV_STARTS_AT_TOP
+                uv.y = 1 - uv.y;
+                #endif
+
+                float3 backgroundColor = SAMPLE_TEXTURE2D_X(_BlurTexture, sampler_LinearClamp, uv);
+                color.rgb = lerp(backgroundColor.rgb, color.rgb, color.a);
+                color.a = 1;
 
                 return color;
             }
