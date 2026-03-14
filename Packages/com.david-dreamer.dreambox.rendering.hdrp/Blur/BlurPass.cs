@@ -97,7 +97,7 @@ namespace Dreambox.Rendering.HDRP
 
 			Blitter.BlitTexture(commandBuffer, RTHorizontal, RTVertical, Material, BlurShaderPass.Horizontal);
 			Blitter.BlitTexture(commandBuffer, RTVertical, RTHorizontal, Material, BlurShaderPass.Vertical);
-
+			
 			switch (Target)
 			{
 				case OutputTarget.Camera:
@@ -105,7 +105,7 @@ namespace Dreambox.Rendering.HDRP
 					Blitter.BlitTexture(commandBuffer, RTHorizontal, new Vector4(1, 1, 0, 0), 0, false);
 					break;
 				case OutputTarget.Texture:
-					commandBuffer.SetGlobalTexture(TextureName, RTHorizontal);
+					commandBuffer.SetGlobalTexture(BlurShaderVariable.BlurTexture, RTHorizontal);
 					break;
 			}
 		}

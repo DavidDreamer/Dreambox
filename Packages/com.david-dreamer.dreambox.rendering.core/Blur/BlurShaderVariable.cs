@@ -4,5 +4,6 @@
 	{
 		public static int Radius { get; } = ShaderVariable.Create();
 		public static int GaussianWeights { get; } = ShaderVariable.Create();
+		public static int BlurTexture { get; } = ShaderVariable.Create();
 	}
 }
