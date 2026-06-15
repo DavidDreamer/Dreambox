@@ -1,11 +1,8 @@
-﻿// Copyright (c) Saber BGS 2022. All rights reserved.
-// ---------------------------------------------------------------------------------------------
+﻿using UnityEngine;
 
-using UnityEngine;
-
-namespace Dreambox.Rendering.Universal
+namespace Dreambox.Rendering.Core
 {
-	public static class OutlineShaderVariables
+	public static class OutlineShaderVariable
 	{
 		public static int StepWidth { get; } = Shader.PropertyToID(nameof(StepWidth));
 

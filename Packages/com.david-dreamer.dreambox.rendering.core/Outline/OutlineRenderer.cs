@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Dreambox.Rendering.Universal
+namespace Dreambox.Rendering.Core
 {
-	public struct OutlineTarget
+	public struct OutlineRenderer
 	{
 		public Mesh Mesh { get; }
 
@@ -12,7 +12,7 @@ namespace Dreambox.Rendering.Universal
 
 		public int Variant { get; }
 
-		public OutlineTarget(Mesh mesh, Material material, Matrix4x4 matrix, int variant)
+		public OutlineRenderer(Mesh mesh, Material material, Matrix4x4 matrix, int variant)
 		{
 			Mesh = mesh;
 			Material = material;

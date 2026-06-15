@@ -6,22 +6,12 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
+using Dreambox.Rendering.Core;
 
 namespace Dreambox.Rendering.Universal
 {
 	public class OutlineRenderPass : ScriptableRenderPass
 	{
-		private static class ShaderPasses
-		{
-			public const int Mask = 0;
-
-			public const int Init = 1;
-
-			public const int JumpFlood = 2;
-
-			public const int Decode = 3;
-		}
-
 		private class OutlineData : ContextItem
 		{
 			public TextureHandle Mask;
@@ -42,7 +32,7 @@ namespace Dreambox.Rendering.Universal
 		{
 			public Material Material;
 
-			public HashSet<OutlineTarget> Targets;
+			public HashSet<OutlineRenderer> Targets;
 
 			public TextureHandle Target;
 		}
@@ -72,11 +62,11 @@ namespace Dreambox.Rendering.Universal
 
 		private Material Material { get; }
 
-		HashSet<OutlineTarget> Targets { get; }
+		HashSet<OutlineRenderer> Targets { get; }
 
 		private float Width { get; }
 
-		public OutlineRenderPass(Material material, HashSet<OutlineTarget> targets, float width)
+		public OutlineRenderPass(Material material, HashSet<OutlineRenderer> targets, float width)
 		{
 			Material = material;
 			Targets = targets;
@@ -183,20 +173,20 @@ namespace Dreambox.Rendering.Universal
 			commandBuffer.SetRenderTarget(data.Target);
 			commandBuffer.ClearRenderTarget(true, true, Color.clear);
 
-			foreach (OutlineTarget target in data.Targets)
+			foreach (OutlineRenderer target in data.Targets)
 			{
-				commandBuffer.SetGlobalInteger(OutlineShaderVariables.Variant, target.Variant + 1);
-				Texture baseMap = target.Material.HasTexture(OutlineShaderVariables.BaseMap) ?
-					target.Material.GetTexture(OutlineShaderVariables.BaseMap) : Texture2D.whiteTexture;
-				commandBuffer.SetGlobalTexture(OutlineShaderVariables.BaseMap, baseMap);
-				commandBuffer.DrawMesh(target.Mesh, target.Matrix, data.Material, 0, ShaderPasses.Mask);
+				commandBuffer.SetGlobalInteger(OutlineShaderVariable.Variant, target.Variant + 1);
+				Texture baseMap = target.Material.HasTexture(OutlineShaderVariable.BaseMap) ?
+					target.Material.GetTexture(OutlineShaderVariable.BaseMap) : Texture2D.whiteTexture;
+				commandBuffer.SetGlobalTexture(OutlineShaderVariable.BaseMap, baseMap);
+				commandBuffer.DrawMesh(target.Mesh, target.Matrix, data.Material, 0, OutlineShaderPass.Mask);
 			}
 		}
 
 		private static void ExecuteInit(InitPassData data, RasterGraphContext context)
 		{
 			RasterCommandBuffer commandBuffer = context.cmd;
-			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), data.Material, ShaderPasses.Init);
+			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), data.Material, OutlineShaderPass.Init);
 		}
 
 		private static void ExecuteJumpFlood(JumpFloodPassData data, RasterGraphContext context)
@@ -204,15 +194,15 @@ namespace Dreambox.Rendering.Universal
 			RasterCommandBuffer commandBuffer = context.cmd;
 
 			float stepWidth = Mathf.Pow(2, data.Iteration);
-			commandBuffer.SetGlobalFloat(OutlineShaderVariables.StepWidth, stepWidth);
+			commandBuffer.SetGlobalFloat(OutlineShaderVariable.StepWidth, stepWidth);
 
-			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), data.Material, ShaderPasses.JumpFlood);
+			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), data.Material, OutlineShaderPass.JumpFlood);
 		}
 
 		private static void ExecuteDecoding(DecodingPassData data, RasterGraphContext context)
 		{
 			RasterCommandBuffer commandBuffer = context.cmd;
-			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), data.Material, ShaderPasses.Decode);
+			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), data.Material, OutlineShaderPass.Decode);
 		}
 	}
 }

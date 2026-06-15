@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Dreambox.Rendering.Universal
+namespace Dreambox.Rendering.Core
 {
 	[Serializable]
 	public struct OutlineVariant
