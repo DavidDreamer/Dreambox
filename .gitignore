@@ -27,8 +27,10 @@
 ExportedObj/
 .consulo/
 *.csproj
+*.csproj.lscache
 *.unityproj
 *.sln
+*.slnx
 *.suo
 *.tmp
 *.user
@@ -58,4 +60,6 @@ crashlytics-build.properties
 
 # Rider
 .idea
-ProjectSettings/RiderScriptEditorPersistedState.asset
+
+#VS Code
+.vscode
