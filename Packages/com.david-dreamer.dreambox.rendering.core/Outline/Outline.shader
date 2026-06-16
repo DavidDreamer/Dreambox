@@ -62,7 +62,7 @@ Shader "Dreambox/Outline"
             #pragma vertex Vert
             #pragma fragment Frag
 
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
 
             struct Attributes
             {
@@ -110,7 +110,7 @@ Shader "Dreambox/Outline"
             #pragma vertex Vert
             #pragma fragment Frag
 
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
 
             struct Attributes
             {
@@ -196,7 +196,7 @@ Shader "Dreambox/Outline"
             #pragma vertex Vert
             #pragma fragment Frag
 
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
 
             #define UNITY_PI 3.14159265359f
 
@@ -226,6 +226,8 @@ Shader "Dreambox/Outline"
             Texture2D _BlitTexture;
             float4 _BlitTexture_TexelSize;
 
+            uniform float4 _Time;
+             
             Varyings Vert(Attributes input)
             {
                 Varyings output;
