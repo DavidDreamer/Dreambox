@@ -5,6 +5,8 @@ using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 using Dreambox.Rendering.Core;
 using System.Runtime.InteropServices;
+using System;
+using System.Diagnostics;
 
 namespace Dreambox.Rendering.HDRP
 {
@@ -22,9 +24,6 @@ namespace Dreambox.Rendering.HDRP
 		[field: SerializeField]
 		public OutlineVariant[] Variants { get; private set; }
 
-		[field: SerializeField]
-		private float Width { get; set; }
-
 		private Material Material { get; set; }
 
 		private ComputeBuffer VariantsBuffer { get; set; }
@@ -37,6 +36,8 @@ namespace Dreambox.Rendering.HDRP
 
 		public HashSet<OutlineRenderer> Targets { get; } = new();
 
+		private int Iterations { get; set; }
+
 		protected override void Setup(ScriptableRenderContext renderContext, CommandBuffer cmd)
 		{
 			Material = CoreUtils.CreateEngineMaterial(Shader);
@@ -45,6 +46,8 @@ namespace Dreambox.Rendering.HDRP
 			VariantsBuffer.SetData(Variants);
 
 			Material.SetBuffer(OutlineShaderVariable.VariantsBuffer, VariantsBuffer);
+
+			CalculateIterationsCount();
 
 			TextureDimension dimension = TextureDimension.Tex2D;
 			int slices = TextureXR.slices;
@@ -86,14 +89,22 @@ namespace Dreambox.Rendering.HDRP
 			JumpBuffer2RT.Release();
 		}
 
+		private void CalculateIterationsCount()
+		{
+			int maxWidth = 0;
+			foreach (OutlineVariant variant in Variants)
+			{
+				maxWidth = Math.Max(maxWidth, variant.Width);
+			}
+
+			Iterations = Mathf.CeilToInt(Mathf.Log(maxWidth, 2f)) - 1;
+		}
+
 		protected override void Execute(CustomPassContext context)
 		{
 			CommandBuffer commandBuffer = context.cmd;
 
-			float maxPixelWidth = Screen.height * Width;
-			int iterations = Mathf.CeilToInt(Mathf.Log(maxPixelWidth, 2f)) - 1;
-
-			VariantsBuffer.SetData(Variants);
+			RefreshVariantsData();
 
 			Mask();
 			Initialize();
@@ -119,13 +130,13 @@ namespace Dreambox.Rendering.HDRP
 
 			void Initialize()
 			{
-				RTHandle startBuffer = iterations % 2 == 0 ? JumpBuffer2RT : JumpBuffer1RT;
+				RTHandle startBuffer = Iterations % 2 == 0 ? JumpBuffer2RT : JumpBuffer1RT;
 				Blitter.BlitTexture(commandBuffer, MaskRT, startBuffer, Material, OutlineShaderPass.Init);
 			}
 
 			void JumpFlood()
 			{
-				for (int i = iterations; i >= 0; i--)
+				for (int i = Iterations; i >= 0; i--)
 				{
 					RTHandle source, target;
 					if (i % 2 == 1)
@@ -150,6 +161,13 @@ namespace Dreambox.Rendering.HDRP
 			{
 				Blitter.BlitTexture(commandBuffer, JumpBuffer1RT, context.cameraColorBuffer, Material, OutlineShaderPass.Decode);
 			}
+		}
+
+		[Conditional("UNITY_EDITOR")]
+		private void RefreshVariantsData()
+		{
+			CalculateIterationsCount();
+			VariantsBuffer.SetData(Variants);
 		}
 	}
 }

@@ -8,8 +8,8 @@ namespace Dreambox.Rendering.Core
 	{
 		public Color Color;
 
-		[Range(0f, 1f)]
-		public float Width;
+		[Range(1, 1000)]
+		public int Width;
 
 		[Range(1f, 10f)]
 		public float Softness;

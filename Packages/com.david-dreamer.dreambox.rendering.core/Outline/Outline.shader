@@ -205,7 +205,7 @@ Shader "Dreambox/Outline"
             struct OutlineVariant
             {
                 float4 Color;
-                float Width;
+                int Width;
                 float Softness;
             };
 
@@ -244,10 +244,14 @@ Shader "Dreambox/Outline"
                 uint targetMask = OutlineMaskTexture.Load(int3(targetPosition, 0)).r;
 
                 OutlineVariant variant = VariantsBuffer[targetMask - 1];
-                float distance = length(targetPosition.rg - position);
-                float width = variant.Width * _BlitTexture_TexelSize.w;
-                float weight = pow(1 - saturate(distance / width), variant.Softness);
+                float distance = length(targetPosition - position);
+                
+                float distanceFactor = 1 - distance / variant.Width;
+
+                clip(distanceFactor);
+
                 float4 outlineColor = variant.Color;
+                float weight = pow(distanceFactor, variant.Softness);
                 outlineColor.a *= weight;
 
                 return outlineColor;
