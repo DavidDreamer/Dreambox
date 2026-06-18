@@ -91,9 +91,9 @@ Shader "Dreambox/Outline"
                 return output;
             }
 
-            float2 Frag(Varyings input) : SV_Target
+            int2 Frag(Varyings input) : SV_Target
             {
-                float2 position = input.positionCS.xy;
+                int2 position = input.positionCS.xy;
                 uint mask = _BlitTexture.Load(int3(position, 0));
                 return mask > 0 ? position : NULL;
             }
@@ -122,7 +122,7 @@ Shader "Dreambox/Outline"
                 float2 texcoord   : TEXCOORD0;
             };
 
-            Texture2D _BlitTexture;
+            Texture2D<int2> _BlitTexture;
             float4 _BlitTexture_TexelSize;
 
             int StepWidth;
@@ -140,9 +140,9 @@ Shader "Dreambox/Outline"
                 return output;
             }
 
-            float2 Frag(Varyings input) : SV_Target
+            int2 Frag(Varyings input) : SV_Target
             {
-                float2 position = input.positionCS.xy;
+                int2 position = input.positionCS.xy;
 
                 float bestDistance = FLOAT_INFINITY;
                 float2 bestPosition;
@@ -155,14 +155,14 @@ Shader "Dreambox/Outline"
                     {
                         int2 offset = int2(u, v) * StepWidth;
                         int2 positionWithOffset = clamp(position + offset, 0, _BlitTexture_TexelSize.zw - 1);
-                        float2 targetPosition = _BlitTexture.Load(int3(positionWithOffset, 0)).rg;
+                        int2 targetPosition = _BlitTexture.Load(int3(positionWithOffset, 0)).rg;
 
                         if (targetPosition.x == NULL)
                         {
                             continue;
                         }
                         
-                        float2 disp = position - targetPosition;
+                        int2 disp = position - targetPosition;
                         float distance = dot(disp, disp);
 
                         if (distance < bestDistance)
@@ -211,7 +211,7 @@ Shader "Dreambox/Outline"
 
             StructuredBuffer<OutlineVariant> VariantsBuffer;
 
-            Texture2D _BlitTexture;
+            Texture2D<int2> _BlitTexture;
             float4 _BlitTexture_TexelSize;
             
             Texture2D<uint> OutlineMaskTexture;
@@ -232,7 +232,7 @@ Shader "Dreambox/Outline"
 
             float4 Frag(Varyings input) : SV_Target
             {
-                float2 position = input.positionCS.xy;
+                int2 position = input.positionCS.xy;
 
                 uint mask = OutlineMaskTexture.Load(int3(position, 0)).r;
                 if (mask > 0)
@@ -240,7 +240,7 @@ Shader "Dreambox/Outline"
                     return 0;
                 }
 
-                float2 targetPosition = _BlitTexture.Load(int3(position, 0)).rg;
+                int2 targetPosition = _BlitTexture.Load(int3(position, 0)).rg;
                 uint targetMask = OutlineMaskTexture.Load(int3(targetPosition, 0)).r;
 
                 OutlineVariant variant = VariantsBuffer[targetMask - 1];
