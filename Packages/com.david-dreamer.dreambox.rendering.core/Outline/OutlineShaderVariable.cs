@@ -4,6 +4,8 @@ namespace Dreambox.Rendering.Core
 {
 	public static class OutlineShaderVariable
 	{
+		public static int OutlineMaskTexture { get; } = Shader.PropertyToID(nameof(OutlineMaskTexture));
+
 		public static int StepWidth { get; } = Shader.PropertyToID(nameof(StepWidth));
 
 		public static int VariantsBuffer { get; } = Shader.PropertyToID(nameof(VariantsBuffer));

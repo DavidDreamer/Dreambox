@@ -1,14 +1,14 @@
 //JumpFlood https://bgolus.medium.com/the-quest-for-very-wide-outlines-ba82ed442cd9
 Shader "Dreambox/Outline"
 {
-    Properties
-    {
-        [HideInInspector] _MainTex ("MainTex", 2D) = "clear"
-    }
-
     SubShader
     {
         Cull Off ZWrite Off ZTest Always
+
+        HLSLINCLUDE
+        #define NULL -1.0
+        #define FLOAT_INFINITY ((float)(1e1000))
+        ENDHLSL
 
         Pass
         {
@@ -91,12 +91,11 @@ Shader "Dreambox/Outline"
                 return output;
             }
 
-            float4 Frag(Varyings input) : SV_Target
+            float2 Frag(Varyings input) : SV_Target
             {
                 float2 position = input.positionCS.xy;
-                uint configIndex = _BlitTexture.Load(int3(position, 0));
-                float4 dataPacked = float4(position, configIndex, 0);
-                return dataPacked;
+                uint mask = _BlitTexture.Load(int3(position, 0));
+                return mask > 0 ? position : NULL;
             }
             ENDHLSL
         }
@@ -123,8 +122,6 @@ Shader "Dreambox/Outline"
                 float2 texcoord   : TEXCOORD0;
             };
 
-            #define FLOAT_INFINITY ((float)(1e1000))
-
             Texture2D _BlitTexture;
             float4 _BlitTexture_TexelSize;
 
@@ -143,13 +140,12 @@ Shader "Dreambox/Outline"
                 return output;
             }
 
-            float4 Frag(Varyings input) : SV_Target
+            float2 Frag(Varyings input) : SV_Target
             {
                 float2 position = input.positionCS.xy;
 
-                float minDistance = FLOAT_INFINITY;
-                float2 finalPosition;
-                float outputVariantIndex = 0;
+                float bestDistance = FLOAT_INFINITY;
+                float2 bestPosition;
 
                 UNITY_UNROLL
                 for (int u = -1; u <= 1; u++)
@@ -159,11 +155,9 @@ Shader "Dreambox/Outline"
                     {
                         int2 offset = int2(u, v) * StepWidth;
                         int2 positionWithOffset = clamp(position + offset, 0, _BlitTexture_TexelSize.zw - 1);
-                        float3 sample = _BlitTexture.Load(int3(positionWithOffset, 0)).rgb;
-                        float2 targetPosition = sample.rg;
-                        float variantIndex = sample.b;
+                        float2 targetPosition = _BlitTexture.Load(int3(positionWithOffset, 0)).rg;
 
-                        if (variantIndex == 0)
+                        if (targetPosition.x == NULL)
                         {
                             continue;
                         }
@@ -171,16 +165,15 @@ Shader "Dreambox/Outline"
                         float2 disp = position - targetPosition;
                         float distance = dot(disp, disp);
 
-                        if (distance < minDistance)
+                        if (distance < bestDistance)
                         {
-                            minDistance = distance;
-                            outputVariantIndex = variantIndex;
-                            finalPosition = targetPosition;
+                            bestDistance = distance;
+                            bestPosition = targetPosition;
                         }
                     }
                 }
 
-                return float4(finalPosition, outputVariantIndex, 0);
+                return bestPosition;
             }
             ENDHLSL
         }
@@ -198,8 +191,6 @@ Shader "Dreambox/Outline"
 
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
 
-            #define UNITY_PI 3.14159265359f
-
             struct Attributes
             {
                 uint vertexID : SV_VertexID;
@@ -216,17 +207,15 @@ Shader "Dreambox/Outline"
                 float4 Color;
                 float Width;
                 float Softness;
-                float4 FillColor;
-                float4 FillFlickColor;
-                float FillFlickRate;
             };
 
             StructuredBuffer<OutlineVariant> VariantsBuffer;
 
             Texture2D _BlitTexture;
             float4 _BlitTexture_TexelSize;
-
-            uniform float4 _Time;
+            
+            Texture2D<uint> OutlineMaskTexture;
+            SamplerState sampler_OutlineMaskTexture;
              
             Varyings Vert(Attributes input)
             {
@@ -244,30 +233,24 @@ Shader "Dreambox/Outline"
             float4 Frag(Varyings input) : SV_Target
             {
                 float2 position = input.positionCS.xy;
-                float3 sample = _BlitTexture.Load(int3(position, 0)).rgb;
-                float index = sample.b;
 
-                if (index == 0)
+                uint mask = OutlineMaskTexture.Load(int3(position, 0)).r;
+                if (mask > 0)
                 {
                     return 0;
                 }
 
-                OutlineVariant variant = VariantsBuffer[index - 1];
-                float distance = length(sample.rg - position);
+                float2 targetPosition = _BlitTexture.Load(int3(position, 0)).rg;
+                uint targetMask = OutlineMaskTexture.Load(int3(targetPosition, 0)).r;
+
+                OutlineVariant variant = VariantsBuffer[targetMask - 1];
+                float distance = length(targetPosition.rg - position);
                 float width = variant.Width * _BlitTexture_TexelSize.w;
                 float weight = pow(1 - saturate(distance / width), variant.Softness);
                 float4 outlineColor = variant.Color;
                 outlineColor.a *= weight;
-                
-                // Inner filling edge need +1.5 inset for good anti-aliasing
-                float fill_weight = saturate(1.5 - distance);
-                
-                float4 fill_color = lerp(variant.FillColor, variant.FillFlickColor,
-                                               (cos(_Time.y * variant.FillFlickRate - UNITY_PI) + 1) / 2);
 
-                float4 final_color = lerp(outlineColor, fill_color, fill_weight);
-
-                return final_color;
+                return outlineColor;
             }
             ENDHLSL
         }

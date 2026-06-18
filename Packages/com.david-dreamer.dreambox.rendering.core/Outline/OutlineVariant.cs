@@ -13,11 +13,5 @@ namespace Dreambox.Rendering.Core
 
 		[Range(1f, 10f)]
 		public float Softness;
-
-		public Color FillColor;
-
-		public Color FillFlickColor;
-
-		public float FillFlickRate;
 	}
 }

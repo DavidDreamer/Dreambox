@@ -116,6 +116,8 @@ namespace Dreambox.Rendering.HDRP
 					commandBuffer.SetGlobalTexture(OutlineShaderVariable.BaseMap, baseMap);
 					commandBuffer.DrawMesh(target.Mesh, target.Matrix, Material, 0, OutlineShaderPass.Mask);
 				}
+
+				commandBuffer.SetGlobalTexture(OutlineShaderVariable.OutlineMaskTexture, MaskRT);
 			}
 
 			void Initialize()
