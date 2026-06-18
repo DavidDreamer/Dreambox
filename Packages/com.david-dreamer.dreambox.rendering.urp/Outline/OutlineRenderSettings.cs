@@ -1,7 +1,4 @@
-﻿// Copyright (c) Saber BGS 2023. All rights reserved.
-// ---------------------------------------------------------------------------------------------
-
-using Dreambox.Rendering.Core;
+﻿using Dreambox.Rendering.Core;
 using Dreambox.Rendering.Universal;
 using UnityEngine;
 

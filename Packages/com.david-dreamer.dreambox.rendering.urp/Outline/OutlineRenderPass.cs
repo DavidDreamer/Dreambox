@@ -1,6 +1,3 @@
-// Copyright (c) Saber BGS 2022. All rights reserved.
-// ---------------------------------------------------------------------------------------------
-
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
