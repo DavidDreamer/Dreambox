@@ -106,7 +106,7 @@ namespace Dreambox.Rendering.Universal
 				data.Source = outlineData.Mask;
 
 				RenderTextureDescriptor textureDesc =
-					new(cameraColorTextureDesc.width, cameraColorTextureDesc.height, RenderTextureFormat.ARGBFloat, 0, 0, RenderTextureReadWrite.Default);
+					new(cameraColorTextureDesc.width, cameraColorTextureDesc.height, RenderTextureFormat.ARGBInt, 0, 0, RenderTextureReadWrite.Default);
 				outlineData.JumpBuffer1 = UniversalRenderer.CreateRenderGraphTexture(renderGraph, textureDesc, "Outline.JumpBuffer1", true);
 				outlineData.JumpBuffer2 = UniversalRenderer.CreateRenderGraphTexture(renderGraph, textureDesc, "Outline.JumpBuffer2", true);
 
@@ -178,6 +178,8 @@ namespace Dreambox.Rendering.Universal
 				commandBuffer.SetGlobalTexture(OutlineShaderVariable.BaseMap, baseMap);
 				commandBuffer.DrawMesh(target.Mesh, target.Matrix, data.Material, 0, OutlineShaderPass.Mask);
 			}
+
+			commandBuffer.SetGlobalTexture(OutlineShaderVariable.OutlineMaskTexture, data.Target);
 		}
 
 		private static void ExecuteInit(InitPassData data, RasterGraphContext context)
