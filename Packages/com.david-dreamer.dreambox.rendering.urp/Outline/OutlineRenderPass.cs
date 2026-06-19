@@ -72,8 +72,7 @@ namespace Dreambox.Rendering.Universal
 
 		public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
 		{
-			float maxPixelWidth = Screen.height * Width;
-			int iterations = Mathf.CeilToInt(Mathf.Log(maxPixelWidth, 2f)) - 1;
+			int iterations = Mathf.CeilToInt(Mathf.Log(Width, 2f)) - 1;
 
 			var resourceData = frameData.Get<UniversalResourceData>();
 			var outlineData = frameData.Create<OutlineData>();
@@ -138,7 +137,7 @@ namespace Dreambox.Rendering.Universal
 
 					builder.UseTexture(source);
 					data.Source = source;
-					data.Iteration = 1;
+					data.Iteration = i;
 
 					builder.SetRenderAttachment(target, 0);
 
