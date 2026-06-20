@@ -12,7 +12,7 @@ namespace Dreambox.Rendering.HDRP
 {
 	public class OutlineComputePass : CustomPass, IOutlinePass
 	{
-		private const int NUM_THREADS = 8;
+		private const int NUM_THREADS = 16;
 
 		[field: SerializeField]
 		private ComputeShader ComputeShader { get; set; }

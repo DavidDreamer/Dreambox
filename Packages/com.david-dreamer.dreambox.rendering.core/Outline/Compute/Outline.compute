@@ -1,7 +1,7 @@
 #pragma kernel Initialize
 #pragma kernel JumpFlood
 
-#define NUM_THREADS 8
+#define NUM_THREADS 16
 #define NULL -1
 #define FLOAT_INFINITY ((float)(1e1000))
 
