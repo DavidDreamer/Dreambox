@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace Dreambox.Rendering.HDRP
 {
-    public class OutlinePass : CustomPass, IOutlinePass
+	public class OutlinePass : CustomPass, IOutlinePass
 	{
 		[field: SerializeField]
 		private Shader Shader { get; set; }
@@ -30,9 +30,9 @@ namespace Dreambox.Rendering.HDRP
 
 		public RTHandle MaskRT { get; set; }
 
-		public RTHandle JumpBuffer1RT { get; set; }
+		public RTHandle JumpFlood1RT { get; set; }
 
-		public RTHandle JumpBuffer2RT { get; set; }
+		public RTHandle JumpFlood2RT { get; set; }
 
 		public HashSet<OutlineRenderer> Targets { get; } = new();
 
@@ -49,35 +49,18 @@ namespace Dreambox.Rendering.HDRP
 
 			CalculateIterationsCount();
 
-			TextureDimension dimension = TextureDimension.Tex2D;
-			int slices = TextureXR.slices;
+			MaskRT = Alloc(MaskGraphicsFormat, false, "Outline.Mask");
+			JumpFlood1RT = Alloc(MainGraphicsFormat, true, "Outline.JumpFlood1");
+			JumpFlood2RT = Alloc(MainGraphicsFormat, true, "Outline.JumpFlood2");
 
-			MaskRT = RTHandles.Alloc(
+			static RTHandle Alloc(GraphicsFormat graphicsFormat, bool enableRandomWrite, string name) => RTHandles.Alloc(
 				Vector3.one,
-				dimension: dimension,
-				slices: slices,
-				colorFormat: MaskGraphicsFormat,
-				autoGenerateMips: false,
+				dimension: TextureDimension.Tex2D,
+				slices: TextureXR.slices,
+				colorFormat: graphicsFormat,
 				useDynamicScale: true,
-				name: "Outline.Mask");
-
-			JumpBuffer1RT = RTHandles.Alloc(
-				Vector3.one,
-				dimension: dimension,
-				slices: slices,
-				colorFormat: MainGraphicsFormat,
-				autoGenerateMips: false,
-				useDynamicScale: true,
-				name: "Outline.JumpBuffer1");
-
-			JumpBuffer2RT = RTHandles.Alloc(
-				Vector3.one,
-				dimension: dimension,
-				slices: slices,
-				colorFormat: MainGraphicsFormat,
-				autoGenerateMips: false,
-				useDynamicScale: true,
-				name: "Outline.JumpBuffer2");
+				enableRandomWrite: enableRandomWrite,
+				name: name);
 		}
 
 		protected override void Cleanup()
@@ -85,8 +68,8 @@ namespace Dreambox.Rendering.HDRP
 			CoreUtils.Destroy(Material);
 			VariantsBuffer.Dispose();
 			MaskRT.Release();
-			JumpBuffer1RT.Release();
-			JumpBuffer2RT.Release();
+			JumpFlood1RT.Release();
+			JumpFlood2RT.Release();
 		}
 
 		private void CalculateIterationsCount()
@@ -130,7 +113,7 @@ namespace Dreambox.Rendering.HDRP
 
 			void Initialize()
 			{
-				RTHandle startBuffer = Iterations % 2 == 0 ? JumpBuffer2RT : JumpBuffer1RT;
+				RTHandle startBuffer = Iterations % 2 == 0 ? JumpFlood2RT : JumpFlood1RT;
 				Blitter.BlitTexture(commandBuffer, MaskRT, startBuffer, Material, OutlineShaderPass.Initialize);
 			}
 
@@ -141,13 +124,13 @@ namespace Dreambox.Rendering.HDRP
 					RTHandle source, target;
 					if (i % 2 == 1)
 					{
-						source = JumpBuffer1RT;
-						target = JumpBuffer2RT;
+						source = JumpFlood1RT;
+						target = JumpFlood2RT;
 					}
 					else
 					{
-						source = JumpBuffer2RT;
-						target = JumpBuffer1RT;
+						source = JumpFlood2RT;
+						target = JumpFlood1RT;
 					}
 
 					float stepWidth = Mathf.Pow(2, i);
@@ -159,7 +142,7 @@ namespace Dreambox.Rendering.HDRP
 
 			void Decode()
 			{
-				Blitter.BlitTexture(commandBuffer, JumpBuffer1RT, context.cameraColorBuffer, Material, OutlineShaderPass.Decode);
+				Blitter.BlitTexture(commandBuffer, JumpFlood1RT, context.cameraColorBuffer, Material, OutlineShaderPass.Decode);
 			}
 		}
 

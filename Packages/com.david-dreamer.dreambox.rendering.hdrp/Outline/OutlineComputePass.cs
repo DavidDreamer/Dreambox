@@ -121,12 +121,13 @@ namespace Dreambox.Rendering.HDRP
 
 			void JumpFlood()
 			{
+				commandBuffer.SetComputeTextureParam(ComputeShader, OutlineKernel.JumpFlood, "JumpFloodTexture", JumpFloodRT);
+				commandBuffer.SetComputeVectorParam(ComputeShader, "Resolution", new Vector2(Screen.width, Screen.height));
+
 				for (int i = Iterations; i >= 0; i--)
 				{
 					int stepWidth = (int)Mathf.Pow(2, i);
 					commandBuffer.SetComputeIntParam(ComputeShader, OutlineShaderVariable.StepWidth, stepWidth);
-					commandBuffer.SetComputeVectorParam(ComputeShader, "Resolution", new Vector2(Screen.width, Screen.height));
-					commandBuffer.SetComputeTextureParam(ComputeShader, OutlineKernel.JumpFlood, "JumpFloodTexture", JumpFloodRT);
 					commandBuffer.DispatchCompute(ComputeShader, OutlineKernel.JumpFlood, Screen.width / NUM_THREADS, Screen.height / NUM_THREADS, 1);
 				}
 			}
