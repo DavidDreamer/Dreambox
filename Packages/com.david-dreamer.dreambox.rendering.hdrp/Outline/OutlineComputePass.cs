@@ -52,27 +52,17 @@ namespace Dreambox.Rendering.HDRP
 
 			CalculateIterationsCount();
 
-			TextureDimension dimension = TextureDimension.Tex2D;
-			int slices = TextureXR.slices;
+			MaskRT = Alloc(MaskGraphicsFormat, false, "Outline.Mask");
+			JumpFloodRT = Alloc(MainGraphicsFormat, true, "Outline.JumpFlood");
 
-			MaskRT = RTHandles.Alloc(
+			static RTHandle Alloc(GraphicsFormat graphicsFormat, bool enableRandomWrite, string name) => RTHandles.Alloc(
 				Vector3.one,
-				dimension: dimension,
-				slices: slices,
-				colorFormat: MaskGraphicsFormat,
-				autoGenerateMips: false,
+				dimension: TextureDimension.Tex2D,
+				slices: TextureXR.slices,
+				colorFormat: graphicsFormat,
 				useDynamicScale: true,
-				name: "Outline.Mask");
-
-			JumpFloodRT = RTHandles.Alloc(
-				Vector3.one,
-				dimension: dimension,
-				slices: slices,
-				colorFormat: MainGraphicsFormat,
-				autoGenerateMips: false,
-				useDynamicScale: true,
-				enableRandomWrite: true,
-				name: "Outline.JumpFlood");
+				enableRandomWrite: enableRandomWrite,
+				name: name);
 		}
 
 		protected override void Cleanup()
@@ -124,8 +114,8 @@ namespace Dreambox.Rendering.HDRP
 
 			void Initialize()
 			{
-				commandBuffer.SetComputeTextureParam(ComputeShader, 0, "MaskTexture", MaskRT);
-				commandBuffer.SetComputeTextureParam(ComputeShader, 0, "JumpFloodTexture", JumpFloodRT);
+				commandBuffer.SetComputeTextureParam(ComputeShader, OutlineKernel.Initialize, "MaskTexture", MaskRT);
+				commandBuffer.SetComputeTextureParam(ComputeShader, OutlineKernel.Initialize, "JumpFloodTexture", JumpFloodRT);
 				commandBuffer.DispatchCompute(ComputeShader, OutlineKernel.Initialize, Screen.width / NUM_THREADS, Screen.height / NUM_THREADS, 1);
 			}
 
@@ -136,7 +126,7 @@ namespace Dreambox.Rendering.HDRP
 					int stepWidth = (int)Mathf.Pow(2, i);
 					commandBuffer.SetComputeIntParam(ComputeShader, OutlineShaderVariable.StepWidth, stepWidth);
 					commandBuffer.SetComputeVectorParam(ComputeShader, "Resolution", new Vector2(Screen.width, Screen.height));
-					commandBuffer.SetComputeTextureParam(ComputeShader, 1, "JumpFloodTexture", JumpFloodRT);
+					commandBuffer.SetComputeTextureParam(ComputeShader, OutlineKernel.JumpFlood, "JumpFloodTexture", JumpFloodRT);
 					commandBuffer.DispatchCompute(ComputeShader, OutlineKernel.JumpFlood, Screen.width / NUM_THREADS, Screen.height / NUM_THREADS, 1);
 				}
 			}
