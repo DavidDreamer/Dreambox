@@ -184,7 +184,7 @@ namespace Dreambox.Rendering.Universal
 		private static void ExecuteInit(InitPassData data, RasterGraphContext context)
 		{
 			RasterCommandBuffer commandBuffer = context.cmd;
-			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), data.Material, OutlineShaderPass.Init);
+			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), data.Material, OutlineShaderPass.Initialize);
 		}
 
 		private static void ExecuteJumpFlood(JumpFloodPassData data, RasterGraphContext context)

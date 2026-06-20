@@ -1,0 +1,57 @@
+#pragma kernel Initialize
+#pragma kernel JumpFlood
+
+#define NUM_THREADS 8
+#define NULL -1
+#define FLOAT_INFINITY ((float)(1e1000))
+
+Texture2D<uint> MaskTexture;
+RWTexture2D<int2> JumpFloodTexture; 
+
+[numthreads(NUM_THREADS, NUM_THREADS, 1)]
+void Initialize(uint3 id : SV_DispatchThreadID)
+{
+    uint3 uv = int3(id.x, id.y, 0);
+    uint mask = MaskTexture.Load(uv);
+    JumpFloodTexture[id.xy] = mask > 0 ? id.xy : NULL;
+}
+
+int2 Resolution;
+int StepWidth;
+
+[numthreads(NUM_THREADS, NUM_THREADS, 1)]
+void JumpFlood(uint3 id : SV_DispatchThreadID)
+{
+    int2 position = id.xy;
+
+    float bestDistance = FLOAT_INFINITY;
+    int2 bestPosition;
+
+    [unroll(3)]
+    for (int u = -1; u <= 1; u++)
+    {
+        [unroll(3)]
+        for (int v = -1; v <= 1; v++)
+        {
+            int2 offset = int2(u, v) * StepWidth;
+            int3 uvWithOffset = int3(clamp(position + offset, 0, Resolution - 1), 0);
+            int2 targetPosition = JumpFloodTexture.Load(uvWithOffset).xy;
+
+            if (targetPosition.x == NULL)
+            {
+                continue;
+            }
+            
+            int2 disp = position - targetPosition;
+            float distance = dot(disp, disp);
+
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                bestPosition = targetPosition;
+            }
+        }
+    }
+
+    JumpFloodTexture[position] = bestPosition;
+}

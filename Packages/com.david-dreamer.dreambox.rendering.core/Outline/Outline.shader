@@ -6,7 +6,7 @@ Shader "Dreambox/Outline"
         Cull Off ZWrite Off ZTest Always
 
         HLSLINCLUDE
-        #define NULL -1.0
+        #define NULL -1
         #define FLOAT_INFINITY ((float)(1e1000))
         ENDHLSL
 
@@ -55,7 +55,7 @@ Shader "Dreambox/Outline"
 
         Pass
         {
-            Name "Init"
+            Name "Initialize"
 
             HLSLPROGRAM
             #pragma target 4.5

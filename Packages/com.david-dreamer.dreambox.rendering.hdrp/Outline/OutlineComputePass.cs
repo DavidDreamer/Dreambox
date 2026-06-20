@@ -10,8 +10,13 @@ using System.Diagnostics;
 
 namespace Dreambox.Rendering.HDRP
 {
-    public class OutlinePass : CustomPass, IOutlinePass
+	public class OutlineComputePass : CustomPass, IOutlinePass
 	{
+		private const int NUM_THREADS = 8;
+
+		[field: SerializeField]
+		private ComputeShader ComputeShader { get; set; }
+
 		[field: SerializeField]
 		private Shader Shader { get; set; }
 
@@ -30,9 +35,7 @@ namespace Dreambox.Rendering.HDRP
 
 		public RTHandle MaskRT { get; set; }
 
-		public RTHandle JumpBuffer1RT { get; set; }
-
-		public RTHandle JumpBuffer2RT { get; set; }
+		public RTHandle JumpFloodRT { get; set; }
 
 		public HashSet<OutlineRenderer> Targets { get; } = new();
 
@@ -61,23 +64,15 @@ namespace Dreambox.Rendering.HDRP
 				useDynamicScale: true,
 				name: "Outline.Mask");
 
-			JumpBuffer1RT = RTHandles.Alloc(
+			JumpFloodRT = RTHandles.Alloc(
 				Vector3.one,
 				dimension: dimension,
 				slices: slices,
 				colorFormat: MainGraphicsFormat,
 				autoGenerateMips: false,
 				useDynamicScale: true,
-				name: "Outline.JumpBuffer1");
-
-			JumpBuffer2RT = RTHandles.Alloc(
-				Vector3.one,
-				dimension: dimension,
-				slices: slices,
-				colorFormat: MainGraphicsFormat,
-				autoGenerateMips: false,
-				useDynamicScale: true,
-				name: "Outline.JumpBuffer2");
+				enableRandomWrite: true,
+				name: "Outline.JumpFlood");
 		}
 
 		protected override void Cleanup()
@@ -85,8 +80,7 @@ namespace Dreambox.Rendering.HDRP
 			CoreUtils.Destroy(Material);
 			VariantsBuffer.Dispose();
 			MaskRT.Release();
-			JumpBuffer1RT.Release();
-			JumpBuffer2RT.Release();
+			JumpFloodRT.Release();
 		}
 
 		private void CalculateIterationsCount()
@@ -130,36 +124,26 @@ namespace Dreambox.Rendering.HDRP
 
 			void Initialize()
 			{
-				RTHandle startBuffer = Iterations % 2 == 0 ? JumpBuffer2RT : JumpBuffer1RT;
-				Blitter.BlitTexture(commandBuffer, MaskRT, startBuffer, Material, OutlineShaderPass.Initialize);
+				commandBuffer.SetComputeTextureParam(ComputeShader, 0, "MaskTexture", MaskRT);
+				commandBuffer.SetComputeTextureParam(ComputeShader, 0, "JumpFloodTexture", JumpFloodRT);
+				commandBuffer.DispatchCompute(ComputeShader, OutlineKernel.Initialize, Screen.width / NUM_THREADS, Screen.height / NUM_THREADS, 1);
 			}
 
 			void JumpFlood()
 			{
 				for (int i = Iterations; i >= 0; i--)
 				{
-					RTHandle source, target;
-					if (i % 2 == 1)
-					{
-						source = JumpBuffer1RT;
-						target = JumpBuffer2RT;
-					}
-					else
-					{
-						source = JumpBuffer2RT;
-						target = JumpBuffer1RT;
-					}
-
-					float stepWidth = Mathf.Pow(2, i);
-					commandBuffer.SetGlobalFloat(OutlineShaderVariable.StepWidth, stepWidth);
-
-					Blitter.BlitTexture(commandBuffer, source, target, Material, OutlineShaderPass.JumpFlood);
+					int stepWidth = (int)Mathf.Pow(2, i);
+					commandBuffer.SetComputeIntParam(ComputeShader, OutlineShaderVariable.StepWidth, stepWidth);
+					commandBuffer.SetComputeVectorParam(ComputeShader, "Resolution", new Vector2(Screen.width, Screen.height));
+					commandBuffer.SetComputeTextureParam(ComputeShader, 1, "JumpFloodTexture", JumpFloodRT);
+					commandBuffer.DispatchCompute(ComputeShader, OutlineKernel.JumpFlood, Screen.width / NUM_THREADS, Screen.height / NUM_THREADS, 1);
 				}
 			}
 
 			void Decode()
 			{
-				Blitter.BlitTexture(commandBuffer, JumpBuffer1RT, context.cameraColorBuffer, Material, OutlineShaderPass.Decode);
+				Blitter.BlitTexture(commandBuffer, JumpFloodRT, context.cameraColorBuffer, Material, OutlineShaderPass.Decode);
 			}
 		}
 
