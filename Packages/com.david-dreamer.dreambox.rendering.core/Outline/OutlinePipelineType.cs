@@ -1,6 +1,6 @@
 namespace Dreambox.Rendering.Core
 {
-	public enum OutlinePipeline
+	public enum OutlinePipelineType
 	{
 		Graphics,
 		Compute

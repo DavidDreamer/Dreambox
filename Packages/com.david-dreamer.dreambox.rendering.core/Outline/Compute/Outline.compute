@@ -5,23 +5,34 @@
 #define NULL -1
 #define FLOAT_INFINITY ((float)(1e1000))
 
+int2 Resolution;
+int StepWidth;
+
 Texture2D<uint> MaskTexture;
-RWTexture2D<int2> JumpFloodTexture; 
+Texture2D<int2> JumpFloodSourceTexture; 
+RWTexture2D<int2> JumpFloodTargetTexture;
 
 [numthreads(NUM_THREADS, NUM_THREADS, 1)]
 void Initialize(uint3 id : SV_DispatchThreadID)
 {
+    if (id.x > Resolution.x - 1 || id.y > Resolution.y - 1)
+    {
+        return;
+    }
+
     uint3 uv = int3(id.x, id.y, 0);
     uint mask = MaskTexture.Load(uv);
-    JumpFloodTexture[id.xy] = mask > 0 ? id.xy : NULL;
+    JumpFloodTargetTexture[id.xy] = mask > 0 ? id.xy : NULL;
 }
-
-int2 Resolution;
-int StepWidth;
 
 [numthreads(NUM_THREADS, NUM_THREADS, 1)]
 void JumpFlood(uint3 id : SV_DispatchThreadID)
 {
+    if (id.x > Resolution.x - 1 || id.y > Resolution.y - 1)
+    {
+        return;
+    }
+    
     int2 position = id.xy;
 
     float bestDistance = FLOAT_INFINITY;
@@ -35,7 +46,7 @@ void JumpFlood(uint3 id : SV_DispatchThreadID)
         {
             int2 offset = int2(u, v) * StepWidth;
             int3 uvWithOffset = int3(clamp(position + offset, 0, Resolution - 1), 0);
-            int2 targetPosition = JumpFloodTexture.Load(uvWithOffset).xy;
+            int2 targetPosition = JumpFloodSourceTexture.Load(uvWithOffset).xy;
 
             if (targetPosition.x == NULL)
             {
@@ -53,5 +64,5 @@ void JumpFlood(uint3 id : SV_DispatchThreadID)
         }
     }
 
-    JumpFloodTexture[position] = bestPosition;
+    JumpFloodTargetTexture[position] = bestPosition;
 }
