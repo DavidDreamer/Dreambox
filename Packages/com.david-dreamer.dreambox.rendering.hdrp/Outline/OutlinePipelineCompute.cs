@@ -25,23 +25,23 @@ namespace Dreambox.Rendering.HDRP
 			int height = JumpFlood1RT.rt.height;
 
 			Vector2 resolution = new(width - 1, height - 1);
-			commandBuffer.SetComputeVectorParam(ComputeShader, "Resolution", resolution);
+			commandBuffer.SetComputeVectorParam(ComputeShader, OutlineShaderVariable.TextureResolution, resolution);
 
 			ThreadGroupsX = Mathf.CeilToInt(width / NUM_THREADS);
 			ThreadGroupsY = Mathf.CeilToInt(height / NUM_THREADS);
 
-			commandBuffer.SetComputeTextureParam(ComputeShader, OutlineKernel.Initialize, "MaskTexture", MaskRT);
+			commandBuffer.SetComputeTextureParam(ComputeShader, OutlineKernel.Initialize, OutlineShaderVariable.MaskTexture, MaskRT);
 
 			RTHandle startBuffer = Iterations % 2 == 0 ? JumpFlood2RT : JumpFlood1RT;
-			commandBuffer.SetComputeTextureParam(ComputeShader, OutlineKernel.Initialize, "JumpFloodTargetTexture", startBuffer);
+			commandBuffer.SetComputeTextureParam(ComputeShader, OutlineKernel.Initialize, OutlineShaderVariable.JumpFloodTargetTexture, startBuffer);
 
 			commandBuffer.DispatchCompute(ComputeShader, OutlineKernel.Initialize, ThreadGroupsX, ThreadGroupsY, ThreadGroupsZ);
 		}
 
 		public override void JumpFlood(CommandBuffer commandBuffer, RTHandle source, RTHandle target, int stepWidth)
 		{
-			commandBuffer.SetComputeTextureParam(ComputeShader, OutlineKernel.JumpFlood, "JumpFloodSourceTexture", source);
-			commandBuffer.SetComputeTextureParam(ComputeShader, OutlineKernel.JumpFlood, "JumpFloodTargetTexture", target);
+			commandBuffer.SetComputeTextureParam(ComputeShader, OutlineKernel.JumpFlood, OutlineShaderVariable.JumpFloodSourceTexture, source);
+			commandBuffer.SetComputeTextureParam(ComputeShader, OutlineKernel.JumpFlood, OutlineShaderVariable.JumpFloodTargetTexture, target);
 			commandBuffer.SetComputeIntParam(ComputeShader, OutlineShaderVariable.StepWidth, stepWidth);
 
 			commandBuffer.DispatchCompute(ComputeShader, OutlineKernel.JumpFlood, ThreadGroupsX, ThreadGroupsY, ThreadGroupsZ);

@@ -122,7 +122,7 @@ namespace Dreambox.Rendering.HDRP
 
 		public void Decode(CommandBuffer commandBuffer, RTHandle target)
 		{
-			commandBuffer.SetGlobalTexture(OutlineShaderVariable.OutlineMaskTexture, MaskRT);
+			commandBuffer.SetGlobalTexture(OutlineShaderVariable.MaskTexture, MaskRT);
 			Blitter.BlitTexture(commandBuffer, JumpFlood1RT, target, Material, OutlineShaderPass.Decode);
 		}
 

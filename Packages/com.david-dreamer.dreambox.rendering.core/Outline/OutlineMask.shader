@@ -14,7 +14,7 @@ Shader "Hidden/Dreambox/Outline/Mask"
             #include "UnityCG.cginc"
 
             UNITY_DECLARE_TEX2D(_BaseMap);
-            uniform uint Variant;
+            uniform uint _Variant;
 
             struct Attributes
             {
@@ -40,7 +40,7 @@ Shader "Hidden/Dreambox/Outline/Mask"
             {
                 float4 textureSample = UNITY_SAMPLE_TEX2D(_BaseMap, input.uv);
                 clip(textureSample.a - 1);
-                return Variant;
+                return _Variant;
             }
             ENDHLSL
         }

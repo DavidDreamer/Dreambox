@@ -178,7 +178,7 @@ namespace Dreambox.Rendering.Universal
 				commandBuffer.DrawMesh(target.Mesh, target.Matrix, data.Material, 0, OutlineShaderPass.Mask);
 			}
 
-			commandBuffer.SetGlobalTexture(OutlineShaderVariable.OutlineMaskTexture, data.Target);
+			commandBuffer.SetGlobalTexture(OutlineShaderVariable.MaskTexture, data.Target);
 		}
 
 		private static void ExecuteInit(InitPassData data, RasterGraphContext context)

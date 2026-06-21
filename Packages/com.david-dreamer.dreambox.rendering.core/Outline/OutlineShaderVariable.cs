@@ -4,14 +4,20 @@ namespace Dreambox.Rendering.Core
 {
 	public static class OutlineShaderVariable
 	{
-		public static int OutlineMaskTexture { get; } = Shader.PropertyToID(nameof(OutlineMaskTexture));
+		public static int MaskTexture { get; } = ShaderVariable.Create();
 
-		public static int StepWidth { get; } = Shader.PropertyToID(nameof(StepWidth));
+		public static int JumpFloodSourceTexture { get; } = ShaderVariable.Create();
 
-		public static int VariantsBuffer { get; } = Shader.PropertyToID(nameof(VariantsBuffer));
+		public static int JumpFloodTargetTexture { get; } = ShaderVariable.Create();
 
-		public static int Variant { get; } = Shader.PropertyToID(nameof(Variant));
+		public static int TextureResolution { get; } = ShaderVariable.Create();
 
-		public static int BaseMap { get; } = Shader.PropertyToID($"_{nameof(BaseMap)}");
+		public static int StepWidth { get; } = ShaderVariable.Create();
+
+		public static int VariantsBuffer { get; } = ShaderVariable.Create();
+
+		public static int Variant { get; } = ShaderVariable.Create();
+
+		public static int BaseMap { get; } = ShaderVariable.Create();
 	}
 }
