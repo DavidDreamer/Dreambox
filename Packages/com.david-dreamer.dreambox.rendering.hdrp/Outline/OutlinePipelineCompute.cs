@@ -24,7 +24,7 @@ namespace Dreambox.Rendering.HDRP
 			int width = JumpFlood1RT.rt.width;
 			int height = JumpFlood1RT.rt.height;
 
-			Vector2 resolution = new(width, height);
+			Vector2 resolution = new(width - 1, height - 1);
 			commandBuffer.SetComputeVectorParam(ComputeShader, "Resolution", resolution);
 
 			ThreadGroupsX = Mathf.CeilToInt(width / NUM_THREADS);

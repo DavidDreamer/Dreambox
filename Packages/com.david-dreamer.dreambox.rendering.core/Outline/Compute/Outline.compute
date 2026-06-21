@@ -15,7 +15,7 @@ RWTexture2D<int2> JumpFloodTargetTexture;
 [numthreads(NUM_THREADS, NUM_THREADS, 1)]
 void Initialize(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x > Resolution.x - 1 || id.y > Resolution.y - 1)
+    if (id.x > Resolution.x || id.y > Resolution.y)
     {
         return;
     }
@@ -28,11 +28,11 @@ void Initialize(uint3 id : SV_DispatchThreadID)
 [numthreads(NUM_THREADS, NUM_THREADS, 1)]
 void JumpFlood(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x > Resolution.x - 1 || id.y > Resolution.y - 1)
+    if (id.x > Resolution.x || id.y > Resolution.y)
     {
         return;
     }
-    
+
     int2 position = id.xy;
 
     float bestDistance = FLOAT_INFINITY;
@@ -45,7 +45,7 @@ void JumpFlood(uint3 id : SV_DispatchThreadID)
         for (int v = -1; v <= 1; v++)
         {
             int2 offset = int2(u, v) * StepWidth;
-            int3 uvWithOffset = int3(clamp(position + offset, 0, Resolution - 1), 0);
+            int3 uvWithOffset = int3(clamp(position + offset, 0, Resolution), 0);
             int2 targetPosition = JumpFloodSourceTexture.Load(uvWithOffset).xy;
 
             if (targetPosition.x == NULL)

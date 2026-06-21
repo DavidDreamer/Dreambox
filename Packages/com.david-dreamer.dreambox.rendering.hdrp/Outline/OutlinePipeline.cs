@@ -87,8 +87,6 @@ namespace Dreambox.Rendering.HDRP
 				commandBuffer.SetGlobalTexture(OutlineShaderVariable.BaseMap, baseMap);
 				commandBuffer.DrawMesh(renderer.Mesh, renderer.Matrix, Material, 0, OutlineShaderPass.Mask);
 			}
-
-			commandBuffer.SetGlobalTexture(OutlineShaderVariable.OutlineMaskTexture, MaskRT);
 		}
 
 		public abstract void Initialize(CommandBuffer commandBuffer);
@@ -119,6 +117,7 @@ namespace Dreambox.Rendering.HDRP
 
 		public void Decode(CommandBuffer commandBuffer, RTHandle target)
 		{
+			commandBuffer.SetGlobalTexture(OutlineShaderVariable.OutlineMaskTexture, MaskRT);
 			Blitter.BlitTexture(commandBuffer, JumpFlood1RT, target, Material, OutlineShaderPass.Decode);
 		}
 
