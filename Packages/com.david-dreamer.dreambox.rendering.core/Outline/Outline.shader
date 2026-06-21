@@ -1,5 +1,5 @@
 //JumpFlood https://bgolus.medium.com/the-quest-for-very-wide-outlines-ba82ed442cd9
-Shader "Dreambox/Outline"
+Shader "Hidden/Dreambox/Outline/JumpFlood"
 {
     SubShader
     {
@@ -9,49 +9,6 @@ Shader "Dreambox/Outline"
         #define NULL -1
         #define FLOAT_INFINITY ((float)(1e1000))
         ENDHLSL
-
-        Pass
-        {
-            Name "Mask"
-
-            HLSLPROGRAM
-            #pragma target 4.5
-            #pragma vertex Vert
-            #pragma fragment Frag
-
-            #include "UnityCG.cginc"
-
-            UNITY_DECLARE_TEX2D(_BaseMap);
-            uniform uint Variant;
-
-            struct Attributes
-            {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-            };
-
-            struct Varyings
-            {
-                float4 vertex : SV_POSITION;
-                float2 uv : TEXCOORD0;
-            };
-
-            Varyings Vert(Attributes input)
-            {
-                Varyings output;
-                output.vertex = UnityObjectToClipPos(input.vertex);
-                output.uv = input.uv;
-                return output;
-            }
-
-            uint Frag(Varyings input) : SV_Target
-            {
-                float4 textureSample = UNITY_SAMPLE_TEX2D(_BaseMap, input.uv);
-                clip(textureSample.a - 1);
-                return Variant;
-            }
-            ENDHLSL
-        }
 
         Pass
         {

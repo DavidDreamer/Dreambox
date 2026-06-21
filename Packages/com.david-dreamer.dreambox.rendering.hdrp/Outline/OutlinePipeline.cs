@@ -15,6 +15,8 @@ namespace Dreambox.Rendering.HDRP
 
 		private const GraphicsFormat JumpFloodGraphicsFormat = GraphicsFormat.R16G16_SInt;
 
+		protected Material MaskMaterial { get; }
+
 		protected Material Material { get; }
 
 		protected ComputeBuffer VariantsBuffer { get; }
@@ -29,6 +31,9 @@ namespace Dreambox.Rendering.HDRP
 
 		public OutlinePipeline(Shader shader, OutlineVariant[] variants)
 		{
+			Shader maskShader = Shader.Find("Hidden/Dreambox/Outline/Mask");
+			MaskMaterial = CoreUtils.CreateEngineMaterial(maskShader);
+
 			Material = CoreUtils.CreateEngineMaterial(shader);
 
 			VariantsBuffer = new ComputeBuffer(variants.Length, Marshal.SizeOf<OutlineVariant>());
@@ -85,7 +90,7 @@ namespace Dreambox.Rendering.HDRP
 				Texture baseMap = renderer.Material.HasTexture(OutlineShaderVariable.BaseMap) ?
 					renderer.Material.GetTexture(OutlineShaderVariable.BaseMap) : Texture2D.whiteTexture;
 				commandBuffer.SetGlobalTexture(OutlineShaderVariable.BaseMap, baseMap);
-				commandBuffer.DrawMesh(renderer.Mesh, renderer.Matrix, Material, 0, OutlineShaderPass.Mask);
+				commandBuffer.DrawMesh(renderer.Mesh, renderer.Matrix, MaskMaterial, 0, OutlineShaderPass.Mask);
 			}
 		}
 
