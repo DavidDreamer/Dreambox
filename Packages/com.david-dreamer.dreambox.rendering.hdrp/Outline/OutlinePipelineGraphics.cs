@@ -6,20 +6,20 @@ namespace Dreambox.Rendering.HDRP
 {
 	internal class OutlinePipelineGraphics : OutlinePipeline
 	{
-		public OutlinePipelineGraphics(Shader shader, OutlineVariant[] variants) : base(shader, variants)
+		public OutlinePipelineGraphics(OutlineVariant[] variants) : base(variants)
 		{
 		}
 
 		public override void Initialize(CommandBuffer commandBuffer)
 		{
 			RTHandle startBuffer = Iterations % 2 == 0 ? JumpFlood2RT : JumpFlood1RT;
-			Blitter.BlitTexture(commandBuffer, MaskRT, startBuffer, Material, OutlineShaderPass.Initialize);
+			Blitter.BlitTexture(commandBuffer, MaskRT, startBuffer, JumpFloodMaterial, OutlineShaderPass.Initialize);
 		}
 
 		public override void JumpFlood(CommandBuffer commandBuffer, RTHandle source, RTHandle target, int stepWidth)
 		{
 			commandBuffer.SetGlobalFloat(OutlineShaderVariable.StepWidth, stepWidth);
-			Blitter.BlitTexture(commandBuffer, source, target, Material, OutlineShaderPass.JumpFlood);
+			Blitter.BlitTexture(commandBuffer, source, target, JumpFloodMaterial, OutlineShaderPass.JumpFlood);
 		}
 	}
 }

@@ -12,12 +12,6 @@ namespace Dreambox.Rendering.HDRP
 		private OutlinePipelineType PipelineType { get; set; }
 
 		[field: SerializeField]
-		private Shader Shader { get; set; }
-
-		[field: SerializeField]
-		private ComputeShader ComputeShader { get; set; }
-
-		[field: SerializeField]
 		public OutlineVariant[] Variants { get; private set; }
 
 		public HashSet<OutlineRenderer> Renderers { get; } = new();
@@ -27,8 +21,8 @@ namespace Dreambox.Rendering.HDRP
 		protected override void Setup(ScriptableRenderContext renderContext, CommandBuffer cmd)
 		{
 			Pipeline = PipelineType is OutlinePipelineType.Compute && SystemInfo.supportsComputeShaders
-				? new OutlinePipelineCompute(Shader, ComputeShader, Variants)
-				: new OutlinePipelineGraphics(Shader, Variants);
+				? new OutlinePipelineCompute(Variants)
+				: new OutlinePipelineGraphics(Variants);
 		}
 
 		protected override void Cleanup()

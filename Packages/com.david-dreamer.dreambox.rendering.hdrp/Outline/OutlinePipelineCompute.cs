@@ -14,9 +14,10 @@ namespace Dreambox.Rendering.HDRP
 		private int ThreadGroupsY { get; set; }
 		private int ThreadGroupsZ { get; set; } = 1;
 
-		public OutlinePipelineCompute(Shader shader, ComputeShader computeShader, OutlineVariant[] variants) : base(shader, variants)
+		public OutlinePipelineCompute(OutlineVariant[] variants) : base(variants)
 		{
-			ComputeShader = computeShader;
+			var shaders = GraphicsSettings.GetRenderPipelineSettings<OutlineShaders>();
+			ComputeShader = shaders.JumpFloodCompute;
 		}
 
 		public override void Initialize(CommandBuffer commandBuffer)

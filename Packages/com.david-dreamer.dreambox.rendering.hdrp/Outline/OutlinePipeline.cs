@@ -17,7 +17,7 @@ namespace Dreambox.Rendering.HDRP
 
 		protected Material MaskMaterial { get; }
 
-		protected Material Material { get; }
+		protected Material JumpFloodMaterial { get; }
 
 		protected ComputeBuffer VariantsBuffer { get; }
 
@@ -29,17 +29,17 @@ namespace Dreambox.Rendering.HDRP
 
 		protected int Iterations { get; set; }
 
-		public OutlinePipeline(Shader shader, OutlineVariant[] variants)
+		public OutlinePipeline(OutlineVariant[] variants)
 		{
-			Shader maskShader = Shader.Find("Hidden/Dreambox/Outline/Mask");
-			MaskMaterial = CoreUtils.CreateEngineMaterial(maskShader);
+			OutlineShaders shaders = GraphicsSettings.GetRenderPipelineSettings<OutlineShaders>();
 
-			Material = CoreUtils.CreateEngineMaterial(shader);
+			MaskMaterial = CoreUtils.CreateEngineMaterial(shaders.Mask);
+			JumpFloodMaterial = CoreUtils.CreateEngineMaterial(shaders.JumpFlood);
 
 			VariantsBuffer = new ComputeBuffer(variants.Length, Marshal.SizeOf<OutlineVariant>());
 			VariantsBuffer.SetData(variants);
 
-			Material.SetBuffer(OutlineShaderVariable.VariantsBuffer, VariantsBuffer);
+			JumpFloodMaterial.SetBuffer(OutlineShaderVariable.VariantsBuffer, VariantsBuffer);
 
 			MaskRT = Alloc(MaskGraphicsFormat, false, "Outline.Mask");
 			JumpFlood1RT = Alloc(JumpFloodGraphicsFormat, true, "Outline.JumpFlood1");
@@ -59,7 +59,7 @@ namespace Dreambox.Rendering.HDRP
 
 		public void Dispose()
 		{
-			CoreUtils.Destroy(Material);
+			CoreUtils.Destroy(JumpFloodMaterial);
 
 			VariantsBuffer.Dispose();
 
@@ -123,7 +123,7 @@ namespace Dreambox.Rendering.HDRP
 		public void Decode(CommandBuffer commandBuffer, RTHandle target)
 		{
 			commandBuffer.SetGlobalTexture(OutlineShaderVariable.MaskTexture, MaskRT);
-			Blitter.BlitTexture(commandBuffer, JumpFlood1RT, target, Material, OutlineShaderPass.Decode);
+			Blitter.BlitTexture(commandBuffer, JumpFlood1RT, target, JumpFloodMaterial, OutlineShaderPass.Decode);
 		}
 
 		[Conditional("UNITY_EDITOR")]

@@ -193,6 +193,7 @@ MonoBehaviour:
       - rid: 8558206186232479964
       - rid: 8558206186232479965
       - rid: 8558206186232479966
+      - rid: 6973956100588830720
     m_RuntimeSettings:
       m_List: []
   renderingLayerNames:
@@ -224,6 +225,12 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 6973956100588830720
+      type: {class: OutlineShaders, ns: Dreambox.Rendering.Core, asm: Dreambox.Rendering.Core}
+      data:
+        <Mask>k__BackingField: {fileID: 4800000, guid: a87bd742d92c40b46b42e069d1989021, type: 3}
+        <JumpFlood>k__BackingField: {fileID: 4800000, guid: 62aeba9a50974035a3dd879297cde487, type: 3}
+        <JumpFloodCompute>k__BackingField: {fileID: 7200000, guid: ecbfb955986bf624399b647718511831, type: 3}
     - rid: 8558206186232479931
       type: {class: HDRenderPipelineRuntimeTextures, ns: UnityEngine.Rendering.HighDefinition, asm: Unity.RenderPipelines.HighDefinition.Runtime}
       data:
