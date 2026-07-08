@@ -57,14 +57,17 @@ namespace Dreambox.Rendering.Universal
 			public TextureHandle Source;
 		}
 
+		private Material MaskMaterial { get; }
+
 		private Material Material { get; }
 
 		HashSet<OutlineRenderer> Targets { get; }
 
 		private float Width { get; }
 
-		public OutlineRenderPass(Material material, HashSet<OutlineRenderer> targets, float width)
+		public OutlineRenderPass(Material maskMaterial, Material material, HashSet<OutlineRenderer> targets, float width)
 		{
+			MaskMaterial = maskMaterial; ;
 			Material = material;
 			Targets = targets;
 			Width = width;
@@ -82,7 +85,7 @@ namespace Dreambox.Rendering.Universal
 
 			using (IUnsafeRenderGraphBuilder builder = renderGraph.AddUnsafePass<MaskingPassData>("Outline.Masking", out var data))
 			{
-				data.Material = Material;
+				data.Material = MaskMaterial;
 				data.Targets = Targets;
 
 				RenderTextureDescriptor textureDesc =
