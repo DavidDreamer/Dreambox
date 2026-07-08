@@ -62,6 +62,7 @@ MonoBehaviour:
       - rid: 5821436461044727812
       - rid: 5821436461044727813
       - rid: 5821436461044727814
+      - rid: 6973956166334021803
     m_RuntimeSettings:
       m_List: []
   m_AssetVersion: 8
@@ -384,3 +385,9 @@ MonoBehaviour:
       data:
         m_Version: 1
         m_UseBicubicLightmapSampling: 0
+    - rid: 6973956166334021803
+      type: {class: OutlineShaders, ns: Dreambox.Rendering.Core, asm: Dreambox.Rendering.Core}
+      data:
+        <Mask>k__BackingField: {fileID: 4800000, guid: a87bd742d92c40b46b42e069d1989021, type: 3}
+        <JumpFlood>k__BackingField: {fileID: 4800000, guid: 62aeba9a50974035a3dd879297cde487, type: 3}
+        <JumpFloodCompute>k__BackingField: {fileID: 7200000, guid: ecbfb955986bf624399b647718511831, type: 3}

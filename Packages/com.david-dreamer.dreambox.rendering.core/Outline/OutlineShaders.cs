@@ -6,6 +6,7 @@ namespace Dreambox.Rendering.Core
 {
 	[Serializable]
 	[HideInInspector]
+	[SupportedOnRenderPipeline(typeof(RenderPipelineAsset))]
 	public class OutlineShaders : IRenderPipelineResources
 	{
 		[field: SerializeField]
