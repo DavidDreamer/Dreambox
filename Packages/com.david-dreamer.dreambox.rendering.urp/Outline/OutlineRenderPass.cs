@@ -160,6 +160,7 @@ namespace Dreambox.Rendering.Universal
 				data.Source = outlineData.JumpBuffer1;
 
 				builder.UseTexture(outlineData.JumpBuffer1);
+				builder.UseTexture(outlineData.Mask);
 
 				builder.SetRenderAttachment(cameraColorTexture, 0);
 
