@@ -8,9 +8,6 @@ namespace Dreambox.Rendering
 	public class OutlineRenderSettings : CustomRendererConfig
 	{
 		[field: SerializeField]
-		public Material Material { get; private set; }
-
-		[field: SerializeField]
 		public OutlineVariant[] Variants { get; private set; }
 	}
 }

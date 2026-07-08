@@ -52,6 +52,8 @@ namespace Dreambox.Rendering.Universal
 
 		private class DecodingPassData
 		{
+			public TextureHandle Mask;
+
 			public Material Material;
 
 			public TextureHandle Source;
@@ -154,7 +156,9 @@ namespace Dreambox.Rendering.Universal
 			{
 				data.Material = Material;
 
+				data.Mask = outlineData.Mask;
 				data.Source = outlineData.JumpBuffer1;
+
 				builder.UseTexture(outlineData.JumpBuffer1);
 
 				builder.SetRenderAttachment(cameraColorTexture, 0);
@@ -203,6 +207,7 @@ namespace Dreambox.Rendering.Universal
 		private static void ExecuteDecoding(DecodingPassData data, RasterGraphContext context)
 		{
 			RasterCommandBuffer commandBuffer = context.cmd;
+			commandBuffer.SetGlobalTexture(OutlineShaderVariable.MaskTexture, data.Mask);
 			Blitter.BlitTexture(commandBuffer, data.Source, new Vector4(1, 1, 0, 0), data.Material, OutlineShaderPass.Decode);
 		}
 	}
