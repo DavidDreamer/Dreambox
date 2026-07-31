@@ -1,0 +1,21 @@
+{
+    "name": "Dreambox.HDRP.Rendering.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:457756d89b35d2941b3e7b37b4ece6f1",
+        "GUID:78bd2ddd6e276394a9615c203e574844",
+        "GUID:3fb1b789163aee44286c63be4af9384f",
+        "GUID:1cc200852fd36d94498aee8a5def73b3"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

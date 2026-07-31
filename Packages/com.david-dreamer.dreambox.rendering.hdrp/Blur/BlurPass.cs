@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Dreambox.Rendering.Core;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
@@ -9,7 +10,7 @@ namespace Dreambox.Rendering.HDRP
 {
 	public class BlurPass : CustomPass
 	{
-		private enum OutputTarget
+		public enum OutputTarget
 		{
 			Camera,
 			Texture
@@ -19,18 +20,18 @@ namespace Dreambox.Rendering.HDRP
 
 		[field: SerializeField]
 		[field: Range(1, 8)]
-		private int Downsample { get; set; } = 2;
+		public int Downsample { get; private set; } = 2;
 
 		[field: SerializeField]
 		[field: Range(1, 256)]
-		private int Radius { get; set; } = 16;
+		public int Radius { get; private set; } = 16;
 
 		[field: SerializeField]
 		[field: Range(1f, 5f)]
-		private float Sigma { get; set; } = 1f;
+		public float Sigma { get; private set; } = 1f;
 
 		[field: SerializeField]
-		private OutputTarget Target { get; set; }
+		public OutputTarget Target { get; private set; }
 
 		private Material Material { get; set; }
 
@@ -48,6 +49,11 @@ namespace Dreambox.Rendering.HDRP
 		}
 
 		protected override void Setup(ScriptableRenderContext renderContext, CommandBuffer cmd)
+		{
+			Setup();
+		}
+
+		private void Setup()
 		{
 			Material = CoreUtils.CreateEngineMaterial("Hidden/Dreambox/PostProcessing/Blur");
 
@@ -86,6 +92,13 @@ namespace Dreambox.Rendering.HDRP
 			RTVertical.Release();
 		}
 
+		[Conditional("UNITY_EDITOR")]
+		public void Reset()
+		{
+			Cleanup();
+			Setup();
+		}
+
 		protected override void Execute(CustomPassContext context)
 		{
 			base.Execute(context);
@@ -97,7 +110,7 @@ namespace Dreambox.Rendering.HDRP
 
 			Blitter.BlitTexture(commandBuffer, RTHorizontal, RTVertical, Material, BlurShaderPass.Horizontal);
 			Blitter.BlitTexture(commandBuffer, RTVertical, RTHorizontal, Material, BlurShaderPass.Vertical);
-			
+
 			switch (Target)
 			{
 				case OutputTarget.Camera:
