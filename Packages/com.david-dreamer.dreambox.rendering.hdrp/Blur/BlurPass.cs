@@ -28,7 +28,7 @@ namespace Dreambox.Rendering.HDRP
 
 		[field: SerializeField]
 		[field: Range(1, 10)]
-		public float Multiplier { get; private set; } = 1;
+		public float Scale { get; private set; } = 1;
 
 		[field: SerializeField]
 		[field: Range(1f, 10f)]
@@ -63,7 +63,7 @@ namespace Dreambox.Rendering.HDRP
 
 			float radius = KernelSize / 2;
 			Material.SetFloat(BlurShaderVariable.Radius, radius);
-			Material.SetFloat(BlurShaderVariable.Multiplier, Multiplier);
+			Material.SetFloat(BlurShaderVariable.Scale, Scale);
 
 			Kernel = BlurUtils.CalculateGaussianKernel(KernelSize, Sigma);
 			Material.SetBuffer(BlurShaderVariable.Kernel, Kernel);

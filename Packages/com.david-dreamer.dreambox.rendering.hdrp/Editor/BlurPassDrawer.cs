@@ -10,7 +10,7 @@ namespace Dreambox.Rendering.HDRP
     {
         private SerializedProperty Downsample { get; set; }
         private SerializedProperty KernelSize { get; set; }
-        private SerializedProperty Multiplier { get; set; }
+        private SerializedProperty Scale { get; set; }
         private SerializedProperty Sigma { get; set; }
         private SerializedProperty Target { get; set; }
 
@@ -22,20 +22,30 @@ namespace Dreambox.Rendering.HDRP
 
             Downsample = customPass.FindPropertyRelative(nameof(BlurPass.Downsample).ToBackingField());
             KernelSize = customPass.FindPropertyRelative(nameof(BlurPass.KernelSize).ToBackingField());
-            Multiplier = customPass.FindPropertyRelative(nameof(BlurPass.Multiplier).ToBackingField());
+            Scale = customPass.FindPropertyRelative(nameof(BlurPass.Scale).ToBackingField());
             Sigma = customPass.FindPropertyRelative(nameof(BlurPass.Sigma).ToBackingField());
             Target = customPass.FindPropertyRelative(nameof(BlurPass.Target).ToBackingField());
         }
 
         protected override void DoPassGUI(SerializedProperty customPassProp, Rect rect)
         {
+            customPassProp.serializedObject.Update();
+
             using var changeScope = new EditorGUI.ChangeCheckScope();
 
             EditorGUILayout.PropertyField(Downsample);
+
             EditorGUILayout.PropertyField(KernelSize);
-            EditorGUILayout.PropertyField(Multiplier);
+            if (KernelSize.intValue % 2 == 0)
+            {
+                KernelSize.intValue += 1;
+            }
+
+            EditorGUILayout.PropertyField(Scale);
             EditorGUILayout.PropertyField(Sigma);
             EditorGUILayout.PropertyField(Target);
+
+            customPassProp.serializedObject.ApplyModifiedProperties();
 
             if (changeScope.changed)
             {

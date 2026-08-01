@@ -17,7 +17,7 @@ Shader "Hidden/Dreambox/PostProcessing/Blur"
         #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
 
         uniform int _Radius;
-        uniform int _Multiplier;
+        uniform int _Scale;
         uniform Buffer<float> _Kernel;
 
         float4 Frag(float2 uv, float2 direction)
@@ -26,7 +26,7 @@ Shader "Hidden/Dreambox/PostProcessing/Blur"
 
 	        for (int i = -_Radius; i <= _Radius; i++)
 	        {
-		        float2 offset = uv + direction * i * _Multiplier * _BlitTexture_TexelSize.xy;
+		        float2 offset = uv + direction * i * _Scale * _BlitTexture_TexelSize.xy;
 		        float4 color = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, offset);
                 float weight = _Kernel[i + _Radius];
 		        result += color * weight;
