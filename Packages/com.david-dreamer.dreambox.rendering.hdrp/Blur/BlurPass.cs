@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.Diagnostics;
-using Dreambox.Core;
 using Dreambox.Rendering.Core;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
@@ -20,23 +18,10 @@ namespace Dreambox.Rendering.HDRP
 		private const string TextureName = "BlurTexture";
 
 		[field: SerializeField]
-		[field: Range(1, 8)]
-		public int Downsample { get; private set; } = 2;
-
-		[field: SerializeField]
-		[field: RangeOdd(3, 51)]
-		public int KernelSize { get; private set; } = 15;
-
-		[field: SerializeField]
-		[field: Range(1, 10)]
-		public float Scale { get; private set; } = 1;
-
-		[field: SerializeField]
-		[field: Range(1f, 10f)]
-		public float Sigma { get; private set; } = 3f;
-
-		[field: SerializeField]
 		public OutputTarget Target { get; private set; }
+
+		[field: SerializeField]
+		public BlurSettings Settings { get; private set; }
 
 		private Material Material { get; set; }
 
@@ -59,14 +44,14 @@ namespace Dreambox.Rendering.HDRP
 
 			Material = CoreUtils.CreateEngineMaterial("Hidden/Dreambox/PostProcessing/Blur");
 
-			float radius = KernelSize / 2;
+			float radius = Settings.KernelSize / 2;
 			Material.SetFloat(BlurShaderVariable.Radius, radius);
-			Material.SetFloat(BlurShaderVariable.Scale, Scale);
+			Material.SetFloat(BlurShaderVariable.Scale, Settings.Scale);
 
-			Kernel = BlurUtils.CalculateGaussianKernel(KernelSize, Sigma);
+			Kernel = BlurUtils.CalculateGaussianKernel(Settings.KernelSize, Settings.Sigma);
 			Material.SetBuffer(BlurShaderVariable.Kernel, Kernel);
 
-			Vector2 scaleFactor = Vector2.one / Downsample;
+			Vector2 scaleFactor = Vector2.one / Settings.Downsample;
 			GraphicsFormat colorFormat = HDRenderPipelineAssetUtils.GetColorBufferGraphicsFormat();
 			TextureDimension dimension = TextureXR.dimension;
 			int slices = TextureXR.slices;
