@@ -97,8 +97,11 @@ namespace Dreambox.Rendering.HDRP
 			commandBuffer.SetRenderTarget(RTHorizontal);
 			Blitter.BlitTexture(commandBuffer, context.cameraColorBuffer, new Vector4(1, 1, 0, 0), 0, false);
 
-			Blitter.BlitTexture(commandBuffer, RTHorizontal, RTVertical, Material, BlurShaderPass.Horizontal);
-			Blitter.BlitTexture(commandBuffer, RTVertical, RTHorizontal, Material, BlurShaderPass.Vertical);
+			for (int i = 0; i < Settings.Iterations; i++)
+			{
+				Blitter.BlitTexture(commandBuffer, RTHorizontal, RTVertical, Material, BlurShaderPass.Horizontal);
+				Blitter.BlitTexture(commandBuffer, RTVertical, RTHorizontal, Material, BlurShaderPass.Vertical);
+			}
 
 			switch (Target)
 			{

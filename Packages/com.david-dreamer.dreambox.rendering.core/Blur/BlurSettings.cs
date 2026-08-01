@@ -10,6 +10,9 @@ namespace Dreambox.Rendering.Core
 		[field: Range(1, 8)]
 		public int Downsample = 2;
 
+		[field: Range(1, 4)]
+		public int Iterations = 1;
+
 		[field: RangeOdd(3, 51)]
 		public int KernelSize = 15;
 
