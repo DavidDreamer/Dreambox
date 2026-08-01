@@ -1,7 +1,9 @@
 {
     "name": "Dreambox.Core",
     "rootNamespace": "Dreambox.Core",
-    "references": [],
+    "references": [
+        "GUID:27955ab605692424a85f77ff6cf21d7d"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

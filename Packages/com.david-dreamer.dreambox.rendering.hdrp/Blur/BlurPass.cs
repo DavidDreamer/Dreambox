@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using Dreambox.Core;
 using Dreambox.Rendering.Core;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
@@ -23,7 +24,7 @@ namespace Dreambox.Rendering.HDRP
 		public int Downsample { get; private set; } = 2;
 
 		[field: SerializeField]
-		[field: Range(3, 51)]
+		[field: RangeOdd(3, 51)]
 		public int KernelSize { get; private set; } = 15;
 
 		[field: SerializeField]
