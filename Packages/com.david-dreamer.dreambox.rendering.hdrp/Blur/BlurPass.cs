@@ -40,7 +40,7 @@ namespace Dreambox.Rendering.HDRP
 
 		private void Setup()
 		{
-			name = "Blur";
+			name = $"Blur - {Settings.Mode}";
 
 			Material = CoreUtils.CreateEngineMaterial("Hidden/Dreambox/PostProcessing/Blur");
 

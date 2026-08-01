@@ -7,6 +7,8 @@ namespace Dreambox.Rendering.Core
 	[Serializable]
 	public class BlurSettings
 	{
+		public BlurMode Mode;
+
 		[field: Range(1, 8)]
 		public int Downsample = 2;
 
