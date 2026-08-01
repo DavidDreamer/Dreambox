@@ -16,6 +16,8 @@ namespace Dreambox.Rendering.HDRP
 
         private BlurPass Pass => (BlurPass)target;
 
+        protected override PassUIFlag commonPassUIFlags => PassUIFlag.None;
+
         protected override void Initialize(SerializedProperty customPass)
         {
             base.Initialize(customPass);
@@ -29,21 +31,14 @@ namespace Dreambox.Rendering.HDRP
 
         protected override void DoPassGUI(SerializedProperty customPassProp, Rect rect)
         {
-            customPassProp.serializedObject.Update();
-
             using var changeScope = new EditorGUI.ChangeCheckScope();
 
-            EditorGUILayout.PropertyField(Downsample);
+            base.DoPassGUI(customPassProp, rect);
 
-            EditorGUILayout.PropertyField(KernelSize);
             if (KernelSize.intValue % 2 == 0)
             {
                 KernelSize.intValue += 1;
             }
-
-            EditorGUILayout.PropertyField(Scale);
-            EditorGUILayout.PropertyField(Sigma);
-            EditorGUILayout.PropertyField(Target);
 
             customPassProp.serializedObject.ApplyModifiedProperties();
 

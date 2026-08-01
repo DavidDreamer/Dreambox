@@ -1,10 +1,5 @@
 Shader "Hidden/Dreambox/PostProcessing/Blur"
 {
-    Properties
-    {
-        _Radius ("Radius", Float) = 1
-    }
-
     SubShader
     {
         Cull Off ZWrite Off ZTest Always
