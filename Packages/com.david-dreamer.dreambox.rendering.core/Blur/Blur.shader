@@ -17,25 +17,22 @@ Shader "Hidden/Dreambox/PostProcessing/Blur"
         #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
 
         uniform int _Radius;
-        uniform Buffer<float> _GaussianWeights;
+        uniform int _Multiplier;
+        uniform Buffer<float> _Kernel;
 
-        float4 BlurGaussian(float2 uv, float2 direction)
+        float4 Frag(float2 uv, float2 direction)
         {
-	        float4 result = 0;
+            float4 result = 0;
+
 	        for (int i = -_Radius; i <= _Radius; i++)
 	        {
-		        float2 offset = uv + direction * i * _BlitTexture_TexelSize.xy;
+		        float2 offset = uv + direction * i * _Multiplier * _BlitTexture_TexelSize.xy;
 		        float4 color = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, offset);
-                float weight = _GaussianWeights[i + _Radius];
+                float weight = _Kernel[i + _Radius];
 		        result += color * weight;
 	        }
 
 	        return result;
-        }
-
-        float4 Frag(float2 uv, float2 direction)
-        {
-	        return BlurGaussian(uv, direction);
         }
         ENDHLSL
 

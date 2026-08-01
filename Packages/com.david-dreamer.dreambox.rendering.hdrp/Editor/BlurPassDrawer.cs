@@ -9,7 +9,8 @@ namespace Dreambox.Rendering.HDRP
     public class BlurPassDrawer : CustomPassDrawer
     {
         private SerializedProperty Downsample { get; set; }
-        private SerializedProperty Radius { get; set; }
+        private SerializedProperty KernelSize { get; set; }
+        private SerializedProperty Multiplier { get; set; }
         private SerializedProperty Sigma { get; set; }
         private SerializedProperty Target { get; set; }
 
@@ -20,7 +21,8 @@ namespace Dreambox.Rendering.HDRP
             base.Initialize(customPass);
 
             Downsample = customPass.FindPropertyRelative(nameof(BlurPass.Downsample).ToBackingField());
-            Radius = customPass.FindPropertyRelative(nameof(BlurPass.Radius).ToBackingField());
+            KernelSize = customPass.FindPropertyRelative(nameof(BlurPass.KernelSize).ToBackingField());
+            Multiplier = customPass.FindPropertyRelative(nameof(BlurPass.Multiplier).ToBackingField());
             Sigma = customPass.FindPropertyRelative(nameof(BlurPass.Sigma).ToBackingField());
             Target = customPass.FindPropertyRelative(nameof(BlurPass.Target).ToBackingField());
         }
@@ -30,7 +32,8 @@ namespace Dreambox.Rendering.HDRP
             using var changeScope = new EditorGUI.ChangeCheckScope();
 
             EditorGUILayout.PropertyField(Downsample);
-            EditorGUILayout.PropertyField(Radius);
+            EditorGUILayout.PropertyField(KernelSize);
+            EditorGUILayout.PropertyField(Multiplier);
             EditorGUILayout.PropertyField(Sigma);
             EditorGUILayout.PropertyField(Target);
 

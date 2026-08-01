@@ -23,12 +23,16 @@ namespace Dreambox.Rendering.HDRP
 		public int Downsample { get; private set; } = 2;
 
 		[field: SerializeField]
-		[field: Range(1, 256)]
-		public int Radius { get; private set; } = 16;
+		[field: Range(3, 51)]
+		public int KernelSize { get; private set; } = 15;
 
 		[field: SerializeField]
-		[field: Range(1f, 5f)]
-		public float Sigma { get; private set; } = 1f;
+		[field: Range(1, 10)]
+		public float Multiplier { get; private set; } = 1;
+
+		[field: SerializeField]
+		[field: Range(1f, 10f)]
+		public float Sigma { get; private set; } = 3f;
 
 		[field: SerializeField]
 		public OutputTarget Target { get; private set; }
@@ -39,7 +43,7 @@ namespace Dreambox.Rendering.HDRP
 
 		private RTHandle RTVertical { get; set; }
 
-		private ComputeBuffer GaussianWeights { get; set; }
+		private ComputeBuffer Kernel { get; set; }
 
 		protected override bool executeInSceneView => false;
 
@@ -57,10 +61,12 @@ namespace Dreambox.Rendering.HDRP
 		{
 			Material = CoreUtils.CreateEngineMaterial("Hidden/Dreambox/PostProcessing/Blur");
 
-			Material.SetFloat(BlurShaderVariable.Radius, Radius);
+			float radius = KernelSize / 2;
+			Material.SetFloat(BlurShaderVariable.Radius, radius);
+			Material.SetFloat(BlurShaderVariable.Multiplier, Multiplier);
 
-			GaussianWeights = BlurUtils.CalculateGaussianWeights(Radius, Sigma * Sigma);
-			Material.SetBuffer(BlurShaderVariable.GaussianWeights, GaussianWeights);
+			Kernel = BlurUtils.CalculateGaussianKernel(KernelSize, Sigma);
+			Material.SetBuffer(BlurShaderVariable.Kernel, Kernel);
 
 			Vector2 scaleFactor = Vector2.one / Downsample;
 			GraphicsFormat colorFormat = HDRenderPipelineAssetUtils.GetColorBufferGraphicsFormat();
@@ -87,7 +93,7 @@ namespace Dreambox.Rendering.HDRP
 		protected override void Cleanup()
 		{
 			CoreUtils.Destroy(Material);
-			GaussianWeights.Release();
+			Kernel.Release();
 			RTHorizontal.Release();
 			RTVertical.Release();
 		}

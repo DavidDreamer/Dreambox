@@ -5,20 +5,21 @@ namespace Dreambox.Rendering.Core
 {
 	public static class BlurUtils
 	{
-		public static ComputeBuffer CalculateGaussianWeights(int radius, float sigmaSqr)
+		public static ComputeBuffer CalculateGaussianKernel(int kernelSize, float sigma)
 		{
-			const int maxDistance = 3;
-
-			float[] weights = new float[radius * 2 + 1];
+			float[] weights = new float[kernelSize];
 			ComputeBuffer computeBuffer = new(weights.Length, sizeof(float));
+
+			int radius = kernelSize / 2;
+			float sigmaSqr = sigma * sigma;
 
 			float totalWeight = 0;
 
-			for (int i = -radius; i <= radius; i++)
+			for (int i = 0; i < kernelSize; i++)
 			{
-				float distance = i / (float)radius * maxDistance;
+				float distance = i - radius;
 				float weight = Gaussian.CalculateWeight(distance, sigmaSqr);
-				weights[i + radius] = weight;
+				weights[i] = weight;
 				totalWeight += weight;
 			}
 
