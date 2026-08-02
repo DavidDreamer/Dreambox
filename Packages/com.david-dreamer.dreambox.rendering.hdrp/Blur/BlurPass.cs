@@ -15,21 +15,16 @@ namespace Dreambox.Rendering.HDRP
 			Texture
 		}
 
-		private const string TextureName = "BlurTexture";
-
 		[field: SerializeField]
-		public OutputTarget Target { get; private set; }
+		public BlurMode Mode { get; private set; }
 
 		[field: SerializeField]
 		public BlurSettings Settings { get; private set; }
 
-		private Material Material { get; set; }
+		[field: SerializeField]
+		public OutputTarget Target { get; private set; }
 
-		private RTHandle RTHorizontal { get; set; }
-
-		private RTHandle RTVertical { get; set; }
-
-		private ComputeBuffer Kernel { get; set; }
+		private IBlur Blur { get; set; }
 
 		protected override bool executeInSceneView => false;
 
@@ -40,45 +35,31 @@ namespace Dreambox.Rendering.HDRP
 
 		private void Setup()
 		{
-			name = $"Blur - {Settings.Mode}";
+			name = $"Blur - {Mode}";
 
-			Material = CoreUtils.CreateEngineMaterial("Hidden/Dreambox/PostProcessing/Blur");
+			GraphicsFormat graphicsFormat = HDRenderPipelineAssetUtils.GetColorBufferGraphicsFormat();
 
-			float radius = Settings.KernelSize / 2;
-			Material.SetFloat(BlurShaderVariable.Radius, radius);
-			Material.SetFloat(BlurShaderVariable.Scale, Settings.Scale);
+			Blur = Initialize();
 
-			Kernel = BlurUtils.CalculateGaussianKernel(Settings.KernelSize, Settings.Sigma);
-			Material.SetBuffer(BlurShaderVariable.Kernel, Kernel);
-
-			Vector2 scaleFactor = Vector2.one / Settings.Downsample;
-			GraphicsFormat colorFormat = HDRenderPipelineAssetUtils.GetColorBufferGraphicsFormat();
-			TextureDimension dimension = TextureXR.dimension;
-			int slices = TextureXR.slices;
-
-			RTHorizontal = AllocTexture("Horizontal");
-			RTVertical = AllocTexture("Vertical");
-
-			RTHandle AllocTexture(string name)
+			IBlur Initialize()
 			{
-				return RTHandles.Alloc(
-					scaleFactor,
-					dimension: dimension,
-					slices: slices,
-					colorFormat: colorFormat,
-					autoGenerateMips: false,
-					useDynamicScale: true,
-					name: $"{TextureName}_{name}"
-					);
+				switch (Mode)
+				{
+					case BlurMode.Box:
+						return new BoxBlur(Settings, graphicsFormat);
+					case BlurMode.Gaussian:
+						return new GaussianBlur(Settings, graphicsFormat);
+					case BlurMode.Kawase:
+						return new KawaseBlur(Settings, graphicsFormat);
+					default:
+						return new GaussianBlur(Settings, graphicsFormat);
+				}
 			}
 		}
 
 		protected override void Cleanup()
 		{
-			CoreUtils.Destroy(Material);
-			Kernel.Release();
-			RTHorizontal.Release();
-			RTVertical.Release();
+			Blur.Dispose();
 		}
 
 		[Conditional("UNITY_EDITOR")]
@@ -94,23 +75,16 @@ namespace Dreambox.Rendering.HDRP
 
 			CommandBuffer commandBuffer = context.cmd;
 
-			commandBuffer.SetRenderTarget(RTHorizontal);
-			Blitter.BlitTexture(commandBuffer, context.cameraColorBuffer, new Vector4(1, 1, 0, 0), 0, false);
-
-			for (int i = 0; i < Settings.Iterations; i++)
-			{
-				Blitter.BlitTexture(commandBuffer, RTHorizontal, RTVertical, Material, BlurShaderPass.Horizontal);
-				Blitter.BlitTexture(commandBuffer, RTVertical, RTHorizontal, Material, BlurShaderPass.Vertical);
-			}
+			Blur.Execute(commandBuffer, context.cameraColorBuffer);
 
 			switch (Target)
 			{
 				case OutputTarget.Camera:
 					commandBuffer.SetRenderTarget(context.cameraColorBuffer);
-					Blitter.BlitTexture(commandBuffer, RTHorizontal, new Vector4(1, 1, 0, 0), 0, false);
+					Blitter.BlitTexture(commandBuffer, Blur.Result, new Vector4(1, 1, 0, 0), 0, false);
 					break;
 				case OutputTarget.Texture:
-					commandBuffer.SetGlobalTexture(BlurShaderVariable.BlurTexture, RTHorizontal);
+					commandBuffer.SetGlobalTexture(BlurShaderVariable.BlurTexture, Blur.Result);
 					break;
 			}
 		}

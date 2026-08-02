@@ -1,4 +1,4 @@
-Shader "Hidden/Dreambox/PostProcessing/Blur"
+Shader "Hidden/Dreambox/PostProcessing/Blur/Gaussian"
 {
     SubShader
     {
@@ -12,7 +12,7 @@ Shader "Hidden/Dreambox/PostProcessing/Blur"
         #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
 
         uniform int _Radius;
-        uniform int _Scale;
+        uniform float _Scale;
         uniform Buffer<float> _Kernel;
 
         float4 Frag(float2 uv, float2 direction)
