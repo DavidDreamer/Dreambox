@@ -61,7 +61,7 @@ namespace Dreambox.Rendering.Core
         public void Execute(CommandBuffer commandBuffer, RTHandle source)
         {
             commandBuffer.SetRenderTarget(RTHorizontal);
-            Blitter.BlitTexture(commandBuffer, source, new Vector4(1, 1, 0, 0), 0, false);
+            Blitter.BlitTexture(commandBuffer, source, new Vector4(1, 1, 0, 0), 0, true);
 
             if (Settings.Separable)
             {
