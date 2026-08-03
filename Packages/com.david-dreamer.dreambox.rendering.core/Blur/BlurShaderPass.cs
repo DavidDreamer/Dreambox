@@ -8,7 +8,7 @@
 
 		public const int Kawase = 0;
 
-		public const int KawaseDownsamle = 0;
-		public const int KawaseUpsample = 0;
+		public const int DualKawaseDownsamle = 0;
+		public const int DualKawaseUpsample = 0;
 	}
 }

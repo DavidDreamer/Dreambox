@@ -51,6 +51,8 @@ namespace Dreambox.Rendering.HDRP
 						return new GaussianBlur(Settings, graphicsFormat);
 					case BlurMode.Kawase:
 						return new KawaseBlur(Settings, graphicsFormat);
+					case BlurMode.DualKawase:
+						return new DualKawaseBlur(Settings, graphicsFormat);
 					default:
 						return new GaussianBlur(Settings, graphicsFormat);
 				}
