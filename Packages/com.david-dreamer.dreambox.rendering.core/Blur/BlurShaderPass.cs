@@ -2,8 +2,9 @@
 {
 	public static class BlurShaderPass
 	{
-		public const int Horizontal = 0;
-		public const int Vertical = 1;
+		public const int NonSeparable = 0;
+		public const int Horizontal = 1;
+		public const int Vertical = 2;
 
 		public const int Kawase = 0;
 

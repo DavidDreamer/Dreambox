@@ -33,7 +33,23 @@ Shader "Hidden/Dreambox/PostProcessing/Blur/Gaussian"
 
         Pass
         {
+            Name "NonSeparable"
+
+            HLSLPROGRAM
+            #pragma vertex Vert
+            #pragma fragment Frag
+
+            float4 Frag(Varyings input) : SV_Target
+            {
+	            return Frag(input.texcoord, float2(1, 0));
+            }
+            ENDHLSL
+        }
+
+        Pass
+        {
             Name "Horizontal"
+
             HLSLPROGRAM
             #pragma vertex Vert
             #pragma fragment Frag
@@ -48,6 +64,7 @@ Shader "Hidden/Dreambox/PostProcessing/Blur/Gaussian"
         Pass
         {
             Name "Vertical"
+            
             HLSLPROGRAM
             #pragma vertex Vert
             #pragma fragment Frag

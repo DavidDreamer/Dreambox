@@ -10,6 +10,9 @@ namespace Dreambox.Rendering.Core
 		[field: Range(1, 8)]
 		public int Downsample = 2;
 
+		[field: SerializeField]
+		public bool Separable = true;
+
 		[field: Range(1, 10)]
 		public int Iterations = 1;
 
