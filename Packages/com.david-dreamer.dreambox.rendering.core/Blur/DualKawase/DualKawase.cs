@@ -18,7 +18,8 @@ namespace Dreambox.Rendering.Core
 		{
 			Settings = settings;
 
-			Material = CoreUtils.CreateEngineMaterial("Hidden/Dreambox/PostProcessing/Blur/DualKawase");
+			var shaders = GraphicsSettings.GetRenderPipelineSettings<BlurShaders>();
+			Material = CoreUtils.CreateEngineMaterial(shaders.DualKawase);
 
 			TextureDimension dimension = TextureXR.dimension;
 			int slices = TextureXR.slices;

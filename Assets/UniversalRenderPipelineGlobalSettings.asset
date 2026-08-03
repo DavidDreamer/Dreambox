@@ -63,6 +63,7 @@ MonoBehaviour:
       - rid: 5821436461044727813
       - rid: 5821436461044727814
       - rid: 6973956166334021803
+      - rid: 5038308710876971069
     m_RuntimeSettings:
       m_List: []
   m_AssetVersion: 8
@@ -262,6 +263,13 @@ MonoBehaviour:
         m_xrOcclusionMeshPS: {fileID: 4800000, guid: 4431b1f1f743fbf4eb310a967890cbea, type: 3}
         m_xrMirrorViewPS: {fileID: 4800000, guid: d5a307c014552314b9f560906d708772, type: 3}
         m_xrMotionVector: {fileID: 4800000, guid: f89aac1e4f84468418fe30e611dff395, type: 3}
+    - rid: 5038308710876971069
+      type: {class: BlurShaders, ns: Dreambox.Rendering.Core, asm: Dreambox.Rendering.Core}
+      data:
+        <Box>k__BackingField: {fileID: 4800000, guid: c2f0d915908e3bd4eacf5435ed8fb6fc, type: 3}
+        <Gaussian>k__BackingField: {fileID: 4800000, guid: 54060db8c13c6594e8d1a1e51fd4fa9c, type: 3}
+        <Kawase>k__BackingField: {fileID: 4800000, guid: edcb0afdc1915e940b3d07693e3994d0, type: 3}
+        <DualKawase>k__BackingField: {fileID: 4800000, guid: 1235d43461df3e54bb3fe93a86af54ba, type: 3}
     - rid: 5821436461044727808
       type: {class: ScreenSpaceAmbientOcclusionDynamicResources, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.Runtime}
       data:

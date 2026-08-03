@@ -20,7 +20,8 @@ namespace Dreambox.Rendering.Core
 		{
 			Settings = settings;
 
-			Material = CoreUtils.CreateEngineMaterial("Hidden/Dreambox/PostProcessing/Blur/Kawase");
+			var shaders = GraphicsSettings.GetRenderPipelineSettings<BlurShaders>();
+			Material = CoreUtils.CreateEngineMaterial(shaders.Kawase);
 
 			Material.SetFloat(BlurShaderVariable.Scale, Settings.Scale);
 

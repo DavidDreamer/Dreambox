@@ -20,7 +20,8 @@ namespace Dreambox.Rendering.Core
         {
             Settings = settings;
 
-            Material = CoreUtils.CreateEngineMaterial("Hidden/Dreambox/PostProcessing/Blur/Box");
+            var shaders = GraphicsSettings.GetRenderPipelineSettings<BlurShaders>();
+            Material = CoreUtils.CreateEngineMaterial(shaders.Box);
 
             Material.SetInteger(BlurShaderVariable.KernelSize, Settings.KernelSize * Settings.KernelSize);
 
