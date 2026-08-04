@@ -2,7 +2,9 @@ Shader "Hidden/Dreambox/PostProcessing/Blur/DualKawase"
 {
     SubShader
     {
-        Cull Off ZWrite Off ZTest Always
+        Cull Off
+		ZWrite Off
+		ZTest Always
 
         HLSLINCLUDE
         #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"

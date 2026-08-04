@@ -25,8 +25,8 @@ namespace Dreambox.Rendering.Core
 			var shaders = GraphicsSettings.GetRenderPipelineSettings<BlurShaders>();
 			Material = CoreUtils.CreateEngineMaterial(shaders.Gaussian);
 
-			float radius = Settings.KernelSize / 2;
-			Material.SetFloat(BlurShaderVariable.Radius, radius);
+			int radius = Settings.KernelSize / 2;
+			Material.SetInteger(BlurShaderVariable.Radius, radius);
 			Material.SetFloat(BlurShaderVariable.Scale, Settings.Scale);
 
 			Kernel = BlurUtils.CalculateGaussianKernel(Settings.KernelSize, Settings.Sigma);

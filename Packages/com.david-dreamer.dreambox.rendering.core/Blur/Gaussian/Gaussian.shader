@@ -1,8 +1,16 @@
 Shader "Hidden/Dreambox/PostProcessing/Blur/Gaussian"
 {
+	Properties
+	{
+		_Radius ("Radius", Integer) = 3
+		_Scale ("Scale", Float) = 1
+	}
+
     SubShader
     {
-        Cull Off ZWrite Off ZTest Always
+		Cull Off
+        ZWrite Off
+        ZTest Always
 
         HLSLINCLUDE
         #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"

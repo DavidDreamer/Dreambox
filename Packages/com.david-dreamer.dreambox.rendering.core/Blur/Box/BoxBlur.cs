@@ -23,10 +23,11 @@ namespace Dreambox.Rendering.Core
             var shaders = GraphicsSettings.GetRenderPipelineSettings<BlurShaders>();
             Material = CoreUtils.CreateEngineMaterial(shaders.Box);
 
-            Material.SetInteger(BlurShaderVariable.KernelSize, Settings.KernelSize * Settings.KernelSize);
+            Material.SetInteger(BlurShaderVariable.KernelSize, Settings.KernelSize);
 
-            float radius = Settings.KernelSize / 2;
-            Material.SetFloat(BlurShaderVariable.Radius, radius);
+            int radius = Settings.KernelSize / 2;
+            Material.SetInteger(BlurShaderVariable.Radius, radius);
+            
             Material.SetFloat(BlurShaderVariable.Scale, Settings.Scale);
 
             Vector2 scaleFactor = Vector2.one / Settings.Downsample;

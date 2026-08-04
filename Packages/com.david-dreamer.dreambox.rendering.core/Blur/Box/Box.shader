@@ -1,8 +1,17 @@
 Shader "Hidden/Dreambox/PostProcessing/Blur/Box"
 {
+    Properties
+    {
+        _KernelSize ("KernelSize", Integer) = 3
+        _Radius ("Radius", Integer) = 1
+        _Scale ("Scale", Float) = 1
+    }
+
     SubShader
     {
-        Cull Off ZWrite Off ZTest Always
+        Cull Off
+		ZWrite Off
+		ZTest Always
 
         HLSLINCLUDE
         #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
@@ -26,7 +35,7 @@ Shader "Hidden/Dreambox/PostProcessing/Blur/Box"
 		        result += color;
 	        }
 
-            result /= _Radius * 2 + 1;
+            result /= _KernelSize;
 
 	        return result;
         }
@@ -56,7 +65,7 @@ Shader "Hidden/Dreambox/PostProcessing/Blur/Box"
                     }
                 }
 
-                result /= _KernelSize;
+                result /= _KernelSize * _KernelSize;
 
                 return result;
             }
